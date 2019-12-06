@@ -1,0 +1,10 @@
+{layout='default/_master_layout'}
+
+{layout:set name='thread'}{segment_2}{/layout:set}
+{layout:set name='path'}{segment_3}{/layout:set}
+
+{if segment_1 == 'thread'}
+{embed=default/_articles thread='{segment_2}''}
+{if:else}
+{embed=default/_threads}
+{/if}
