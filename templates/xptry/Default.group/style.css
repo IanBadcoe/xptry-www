@@ -31,6 +31,8 @@
     top: 0;
     bottom: 0;
     margin: auto;
+    perspective: 50vmin;
+    perspective-origin: 50%, 75%;
 }
 
 .article-placement {
@@ -39,4 +41,24 @@
     height: 100%;
     left: 0;
     right: 0;
+}
+
+.article-emanation-placement {
+    width: 5vmin;
+    height: 5vmin;
+    border-radius: 50%;
+    position: absolute;
+    overflow: hidden;
+    background-color: #888;
+}
+
+.centred {
+	position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: min-content;
+    height: min-content;
 }

@@ -15,7 +15,38 @@ function vmin(v) {
 function vmax(v) {
   return Math.max(vh(v), vw(v));
 }
-console.info(vh(20), Math.max(document.documentElement.clientHeight, window.innerHeight || 0));
-console.info(vw(30), Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
-console.info(vmin(20));
-console.info(vmax(20));
+// console.info(vh(20), Math.max(document.documentElement.clientHeight, window.innerHeight || 0));
+// console.info(vw(30), Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
+// console.info(vmin(20));
+// console.info(vmax(20));
+
+function apply_path(selector, fn)
+{
+    $(selector).each(function() {
+        var idx = $(this).attr("path_p");
+        var p = fn(idx);
+        $(this).css(
+            {
+                "transform" : "translate3d(" + p.x + "vmin, " + p.y + "vmin, " + p.z + "vmin)"
+            }
+        );
+    });
+}
+
+function apply_path_indices(selector, start, inc)
+{
+    var idx = start;
+    $(selector).each(function() {
+        $(this).attr("path_p", idx);
+        idx += inc;
+    });
+}
+
+function insert_clones(sel_ins, sel_ins_after, num) {
+    var ins_after = $(sel_ins_after);
+    var ins = $(sel_ins);
+
+    for(var i = 0; i < num; i++) {
+        ins_after.after(ins.clone());
+    }
+}
