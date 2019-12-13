@@ -15,10 +15,6 @@ function vmin(v) {
 function vmax(v) {
   return Math.max(vh(v), vw(v));
 }
-// console.info(vh(20), Math.max(document.documentElement.clientHeight, window.innerHeight || 0));
-// console.info(vw(30), Math.max(document.documentElement.clientWidth, window.innerWidth || 0));
-// console.info(vmin(20));
-// console.info(vmax(20));
 
 function apply_path(selector, fn)
 {
@@ -50,3 +46,18 @@ function insert_clones(sel_ins, sel_ins_after, num) {
         ins_after.after(ins.clone());
     }
 }
+
+// feed this an svg element for draw lines
+// handy for testing splines etc...
+function add_line(el, p1, p2, style) {
+    var line = $(document.createElementNS('http://www.w3.org/2000/svg', 'line')).attr({
+        x1: p1[0],
+      y1: p1[1],
+        x2: p2[0],
+      y2: p2[1],
+      style: style
+    });
+
+    el.append(line);
+  }
+
