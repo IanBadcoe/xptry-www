@@ -3,48 +3,34 @@ $(document).ready(function() {
     // first clickable item at zero, a few more clickables between zero and some low-ish number
     // (like 3) and then moving off screen again after that...
 
-    // so this scales up from -infinity to 1, then stays at a max radius after that
-    function radius(p) {
-        if (p < 1)
-        {
-            return 100 / (3 - p);
-        }
+    var points = [
+        [  0, 50,   0],
+        [ 10, 45,   0],
+        [  0, 40,  10],
+        [-10, 40,   0],
+        [  0, 40, -10],
+        [ 15, 35,   0],
+        [  0, 30,  15],
+        [-15, 30,   0],
+        [  0, 30, -15],
+        [  7, 25,   0],
+        [  0, 20,   7],
+        [ -7, 20,   0],
+        [  0, 20,  -7],
+        [ 30, 15,   0],
+        [  0, 10,  35],
+        [-40, 10,   0],
+        [  0, 10, -40]
+    ];
 
-        return 50;
-    }
-
-    // similarly, we come up from -infinity y to some fixed height at 1
-    // but we want about 3 coming items on screen, so scale the height to
-    // be about on the lower edge (-50vmin) at -3
-    function height(p) {
-        if (p < 1) {
-            return (p - 1) * 50 / 4;
-        }
-
-        return 0;
-    }
-
-    function angle(p) {
-        return p * Math.PI / 3;
-    }
-
-    function spiral_path(p) {
-		var a = angle(p);
-        var r = radius(p);
-        var h = height(p);
-
-		var ret =
-		{
-			x: Math.sin(a) * r,
-            z: Math.cos(a) * r,
-            y: h
-		};
-
-		return ret;
-    }
+    var spiral_path = MakeSpline(points, 3);
 
     insert_clones(".path", ".path", 100);
-    apply_path_indices(".path", -4, 0.1);
+    apply_path_indices(".path", spiral_path);
 	apply_path(".path", spiral_path);
-	// apply_path(".article-placement", spiral_path);
+    // apply_path(".article-placement", spiral_path);
+
+    setInterval(function() {
+        apply_path(".path", spiral_path, 0.1);
+    }, 100);
 });

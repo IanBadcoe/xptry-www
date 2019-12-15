@@ -31,8 +31,8 @@
     top: 0;
     bottom: 0;
     margin: auto;
-    perspective: 50vmin;
-    perspective-origin: 50%, 75%;
+    perspective: 100vmin;
+    perspective-origin: 50%, 60%;
 }
 
 .article-placement {

@@ -16,25 +16,34 @@ function vmax(v) {
   return Math.max(vh(v), vw(v));
 }
 
-function apply_path(selector, fn)
+function apply_path(selector, path, offset)
 {
+    offset = offset || 0;
+
     $(selector).each(function() {
-        var idx = $(this).attr("path_p");
-        var p = fn(idx);
+        var idx = parseFloat($(this).attr("path_p"));
+
+        idx += offset;
+        if (idx > path.EndParam)
+        {
+            idx = idx - path.EndParam + path.StartParam;
+        }
+
+        $(this).attr("path_p", idx);
+
+        var p = path.Interp(idx);
         $(this).css(
             {
-                "transform" : "translate3d(" + p.x + "vmin, " + p.y + "vmin, " + p.z + "vmin)"
+                "transform" : "translate3d(" + p[0] + "vmin, " + p[1] + "vmin, " + p[2] + "vmin)"
             }
         );
     });
 }
 
-function apply_path_indices(selector, start, inc)
+function apply_path_indices(selector, path)
 {
-    var idx = start;
     $(selector).each(function() {
-        $(this).attr("path_p", idx);
-        idx += inc;
+        $(this).attr("path_p", Math.random() * (path.EndParam - path.StartParam) + path.StartParam);
     });
 }
 
