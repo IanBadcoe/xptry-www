@@ -23,7 +23,7 @@ $(document).ready(function() {
         [  0, 10, -40]
     ];
 
-    var spiral_path = MakeSpline(points, 3);
+    var spiral_path = MakeUniformBSpline(points, 3);
 
     insert_clones(".path", ".path", 100);
     apply_path_indices(".path", spiral_path);
