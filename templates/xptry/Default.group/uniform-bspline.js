@@ -1,17 +1,29 @@
 (
     function() {
-        MakeUniformBSpline = function(points, order) {
-            var _here_points = [].concat(
-                Array(order).fill(points[0]),
-                points,
-                Array(order).fill(points.slice(-1)[0])
-            );
+        MakeUniformBSpline = function(points, order, closed) {
+            var _here_points;
+
+            if (!closed) {
+                _here_points = [].concat(
+                    Array(order).fill(points[0]),
+                    points,
+                    Array(order).fill(points.slice(-1)[0])
+                );
+            } else {
+                _here_points = [].concat(
+                    points.slice(-order),
+                    points,
+                    points.slice(0, order)
+                );
+            }
 
             var _orig_size = points.length;
 
             var _orig_points = points;
 
             var _order = order;
+
+            var _closed = closed;
 
             function B(x, i, k) {
                 if (k == 0) {
@@ -53,7 +65,10 @@
                     return 1;
                 },
                 get EndParam() {
-                    return _orig_size + _order - 1;
+                    return _orig_size + 1;
+                },
+                get ParamRange() {
+                    return this.EndParam - this.StartParam;
                 },
                 get Order() {
                     return _order;

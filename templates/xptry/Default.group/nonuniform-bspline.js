@@ -1,5 +1,19 @@
 (
     function() {
+        MakeNonUniformBSplineCombined = function(points, order) {
+            var _points = [];
+            var _knots = [];
+            var _param = 1;
+
+            points.forEach(function(x) {
+                _points.push(x.pnt);
+                _knots.push(_param);
+                _param += x.par;
+            });
+
+            return MakeNonUniformBSpline(_points, _knots, order);
+        }
+
         MakeNonUniformBSpline = function(points, knots, order) {
             var _here_points = [].concat(
                 Array(order).fill(points[0]),
@@ -77,6 +91,9 @@
                 get EndParam() {
                     return _orig_knots.slice(-1)[0];
                 },
+                get ParamRange() {
+                    return this.EndParam - this.StartParam;
+                },
                 get Order() {
                     return _order;
                 },
@@ -96,69 +113,3 @@
         }
     }
 )();
-
-// $(document).ready(function(){
-// //  var points = [
-// //      [250, 250],
-// //      [450, 250],
-// //      [450, 450],
-// //      [ 50, 450],
-// //      [ 50,  50],
-// //  ];
-
-//     var points = [
-//         [100],
-//         [500],
-//         [200],
-//         [300],
-//         [100],
-//     ];
-
-//     var knots = [
-//         1,
-//         2,
-//         3,
-//         4,
-//         5,
-//         6
-//     ];
-
-//     add_line($(".test-line"), [ 50, 0], [ 50, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [100, 0], [100, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [150, 0], [150, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [200, 0], [200, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [250, 0], [250, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [300, 0], [300, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [350, 0], [350, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [400, 0], [400, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [450, 0], [450, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [500, 0], [500, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [550, 0], [550, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [600, 0], [600, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [650, 0], [650, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [700, 0], [700, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [750, 0], [750, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [800, 0], [800, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [850, 0], [850, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-//     add_line($(".test-line"), [900, 0], [900, 500], 'stroke:rgb(0,0,255);stroke-width:2');
-
-//     var lp = null;
-
-//     spline = MakeNonUniformBSpline(points, knots, 2);
-
-//     for(p = spline.StartParam - 0.5; p < spline.EndParam + 0.5; p += 0.01) {
-//         var hp = p;
-//         // if (p > spline.EndParam)
-//         // {
-//         //     hp = spline.EndParam;
-//         // }
-//         var c = spline.Interp(hp);
-//         var cp = [hp * 50, c];
-
-//         if (lp) {
-//             add_line($(".test-line"), cp, lp, 'stroke:rgb(255,0,0);stroke-width:2');
-//         }
-
-//         lp = cp;
-//     }
-// });

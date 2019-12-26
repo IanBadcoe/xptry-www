@@ -32,7 +32,8 @@
     bottom: 0;
     margin: auto;
     perspective: 100vmin;
-    perspective-origin: 50%, 60%;
+    perspective-origin: 50% 200%;
+    transform-style: preserve-3d;
 }
 
 .article-placement {
