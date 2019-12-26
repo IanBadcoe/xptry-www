@@ -46,9 +46,13 @@ $(document).ready(function(){
     //     lp = cp;
     // }
 
-    add_polyline($(".test-line"), knot.StartParam, knot.EndParam, 10, knot, 'stroke:rgb(255,0,0);stroke-width:2');
+    add_polyline($(".test-line"), knot.StartParam, knot.EndParam, 10, knot,
+        'stroke:rgb(255,0,0);stroke-width:4;fill:none');
 
-//    knot.OverlayRanges.forEach(el => {
-//
-//    });
+    knot.OverlayRanges.forEach(el => {
+        add_polyline($(".test-line"), el[0], el[1], 10, knot,
+            'stroke:rgb(255,255,255);stroke-width:8;fill:none');
+        add_polyline($(".test-line"), el[0], el[1], 10, knot,
+            'stroke:rgb(255,0,0);stroke-width:4;fill:none');
+    });
 });

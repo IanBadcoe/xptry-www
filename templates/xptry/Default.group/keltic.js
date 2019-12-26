@@ -53,7 +53,9 @@
 
             _anno_points.forEach((el, idx) => {
                 if (el.over) {
-                    _overlay_ranges.push([idx - 0.5, idx + 0.5]);
+                    // we index from zero, the spline starts from StartParam
+                    // and there's another +1 here because points actually appear at the _end_ of there range...
+                    _overlay_ranges.push([idx + _spline.StartParam + 0.5, idx + _spline.StartParam + 1.5]);
                 }
             });
 
