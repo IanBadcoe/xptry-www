@@ -1,58 +1,86 @@
 $(document).ready(function(){
     var points = {
-        A: [-50, -50],
-        B: [-75, -50],
-        C: [-75, -75],
-        D: [-50, -75],
-        E: [ 50, -50],
-        F: [ 75, -50],
-        G: [ 75, -75],
-        H: [ 50, -75],
-        I: [-50,  50],
-        J: [-75,  50],
-        K: [-75,  75],
-        L: [-50,  75],
-        M: [ 50,  50],
-        N: [ 75,  50],
-        O: [ 75,  75],
-        P: [ 50,  75],
+        A0: [ -25, -100],
+        B0: [  25, -100],
+        C0: [ -50,  -75],
+        C0: [ -50,  -75],
+        C0: [ -50,  -75],
+        C0: [ -50,  -75],
+        D0: [ -25,  -75],
+        D0: [ -25,  -75],
+        D0: [ -25,  -75],
+        D0: [ -25,  -75],
+        E0: [  25,  -75],
+        E0: [  25,  -75],
+        E0: [  25,  -75],
+        E0: [  25,  -75],
+        F0: [  50,  -75],
+        F0: [  50,  -75],
+        F0: [  50,  -75],
+        F0: [  50,  -75],
+        G0: [ -75,  -50],
+        G0: [ -75,  -50],
+        G0: [ -75,  -50],
+        G0: [ -75,  -50],
+        H0: [ -50,  -50],
+        I0: [ -25,  -50],
+        J0: [  25,  -50],
+        K0: [  50,  -50],
+        L0: [  75,  -50],
+        M0: [-100,  -25],
+        N0: [ -75,  -25],
+        O0: [ -50,  -25],
+        P0: [ -25,  -25],
+        Q0: [  25,  -25],
+        R0: [  50,  -25],
+        S0: [  75,  -25],
+        T0: [ 100,  -25],
+        U0: [-100,   25],
+        V0: [ -75,   25],
+        W0: [ -50,   25],
+        X0: [ -25,   25],
+        Y0: [  25,   25],
+        Z0: [  50,   25],
+        A1: [  75,   25],
+        B1: [ 100,   25],
+        C1: [ -75,   50],
+        D1: [ -50,   50],
+        E1: [ -25,   50],
+        F1: [  25,   50],
+        G1: [  50,   50],
+        H1: [  75,   50],
+        I1: [ -50,   75],
+        J1: [ -25,   75],
+        K1: [  25,   75],
+        L1: [  50,   75],
+        M1: [ -25,  100],
+        N1: [  25,  100]
     };
 
-    var knot = MakeKKnot(points, [ "A", "B", "C", "D", "A", "I", "L", "K", "J", "I", "M", "N", "O", "P", "M", "E", "H", "G", "F", "E"]);
+    var knots = MakeKKnot(points,
+        [
+            [ "G0", "H0", "I0", "J0", "K0", "L0", "S0", "A1",
+              "H1", "G1", "F1", "E1", "D1", "C1", "V0", "N0"],
+            [ "A0", "B0", "E0", "J0", "Q0", "R0", "S0",
+              "T0", "B1", "A1", "Z0", "Y0", "F1", "K1",
+              "N1", "M1", "J1", "E1", "X0", "W0", "V0",
+              "U0", "M0", "N0", "O0", "P0", "I0", "D0"],
+            [ "C0", "D0", "E0", "F0", "K0", "R0", "Z0", "G1",
+              "L1", "K1", "J1", "I1", "D1", "W0", "O0", "H0"],
+        ]
+    );
 
-    //-150-100     100 150
-    //
-    //  C   D       H   G   -150
-    //
-    //  B   A       E   F   -100
-    //
-    //
-    //
-    //  J   I       M   N   100
-    //
-    //  K   L       P   O   150
-
-    // var lp = null;
-
-    // for(var p = 0; p <= knot.ParamRange * 10; p ++) {
-    //     var hp = p / 10 + knot.StartParam;
-
-    //     var cp = knot.Interp(hp);
-
-    //     if (lp) {
-    //         add_line($(".test-line"), cp, lp, 'stroke:rgb(255,0,0);stroke-width:2');
-    //     }
-
-    //     lp = cp;
-    // }
-
-    add_polyline($(".test-line"), knot[0].StartParam, knot[0].EndParam, 10, knot[0],
+    knots.forEach(knot => {
+        add_polyline($(".test-line"), knot.StartParam, knot.EndParam, 10, knot,
         'stroke:rgb(255,0,0);stroke-width:4;fill:none');
+    });
 
-    knot[0].OverlayRanges.forEach(el => {
-        add_polyline($(".test-line"), el[0], el[1], 10, knot[0],
-            'stroke:rgb(255,255,255);stroke-width:8;fill:none');
-        add_polyline($(".test-line"), el[0], el[1], 10, knot[0],
-            'stroke:rgb(255,0,0);stroke-width:4;fill:none');
+    knots.forEach(knot => {
+        knot.OverlayRanges.forEach(el => {
+            add_polyline($(".test-line"), el[0], el[1], 10, knot,
+                'stroke:rgb(255,255,255);stroke-width:8;fill:none');
+            add_polyline($(".test-line"), el[0], el[1], 10, knot,
+                'stroke:rgb(255,0,0);stroke-width:4;fill:none');
+        });
     });
 });

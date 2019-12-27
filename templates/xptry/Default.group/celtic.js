@@ -22,12 +22,13 @@
                     _intersects[el].count++;
 
                     if (_intersects[el].count > 2) {
-                        throw "tripple and greater intersections are not supported"
+                        throw "triple and greater intersections are not supported"
                     }
                 });
             });
 
-            var sequence = sequences.pop();
+            var sequence = sequences[0];
+            sequences.splice(0, 1);
             var next_over = false;
             var ret = [];
 
@@ -102,6 +103,54 @@
                 });
 
                 sequence = null;
+
+                if (sequences.length == 0)
+                    break;
+
+                var found_idx = -1;
+                var start_el = -1;
+
+                try {
+                    // find a sequence that shares an intersect with what we already have
+                    sequences.forEach((seq, seq_idx) => {
+                        seq.forEach((el, el_idx) => {
+                            var inter = _intersects[el];
+
+                            if (inter.is_over != null) {
+                                found_idx = seq_idx;
+                                // this will be the first intersecting element we hit, so set next_over
+                                // to send it the right way
+                                next_over = !inter.is_over;
+                                start_el = el_idx;
+
+                                throw "got one!"
+                            }
+                        });
+                    });
+                }
+                catch (e) {
+                    if (e != "got one!")
+                        throw e;
+                }
+
+                if (found_idx == -1) {
+                    // didn't find a connected sequence, take an unconnected one...
+                    found_idx = 0;
+                    // arbitrary but for consistency
+                    next_over = false;
+                }
+
+                sequence = sequences[found_idx];
+                sequences.splice(found_idx, 1)
+
+                // to make it the first intersect we hit, we first have to move it first
+                // otherwise we could hit one from some other loop that we didn't process yet...
+                if (start_el != -1) {
+                    sequence = [].concat(
+                        sequence.slice(start_el),
+                        sequence.slice(0, start_el - 1)
+                    );
+                }
             }
 
             return ret;
