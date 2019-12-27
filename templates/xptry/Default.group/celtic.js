@@ -148,7 +148,7 @@
                 if (start_el != -1) {
                     sequence = [].concat(
                         sequence.slice(start_el),
-                        sequence.slice(0, start_el - 1)
+                        sequence.slice(0, start_el)
                     );
                 }
             }
