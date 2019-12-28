@@ -57,7 +57,26 @@ $(document).ready(function(){
         N1: [  25,  100]
     };
 
-    var knots = MakeKKnot(points,
+    var foredraw = {
+        DrawKnot: function(insert_element, startparam, endparam, divide, knot) {
+            add_polyline(insert_element, startparam, endparam, divide, knot,
+                'stroke:rgb(255,0,0);stroke-width:6;fill:none');
+            add_polyline(insert_element, startparam, endparam, divide, knot,
+                'stroke:rgb(255,255,255);stroke-width:4;fill:none');
+            add_polyline(insert_element, startparam, endparam, divide, knot,
+                'stroke:rgb(0,0,0);stroke-width:2;fill:none');
+        }
+    };
+
+    var backdraw = {
+        DrawKnot: function(insert_element, startparam, endparam, divide, knot) {
+            add_polyline(insert_element, startparam, endparam, divide, knot,
+                'stroke:rgb(255,255,255);stroke-width:8;fill:none');
+        }
+    };
+
+    var knot = MakeKKnot(
+        points,
         [
             [ "G0", "H0", "I0", "J0", "K0", "L0", "S0", "A1",
               "H1", "G1", "F1", "E1", "D1", "C1", "V0", "N0"],
@@ -67,20 +86,9 @@ $(document).ready(function(){
               "U0", "M0", "N0", "O0", "P0", "I0", "D0"],
             [ "C0", "D0", "E0", "F0", "K0", "R0", "Z0", "G1",
               "L1", "K1", "J1", "I1", "D1", "W0", "O0", "H0"],
-        ]
+        ],
+        foredraw, backdraw, 10
     );
 
-    knots.forEach(knot => {
-        add_polyline($(".test-line"), knot.StartParam, knot.EndParam, 10, knot,
-        'stroke:rgb(255,0,0);stroke-width:4;fill:none');
-    });
-
-    knots.forEach(knot => {
-        knot.OverlayRanges.forEach(el => {
-            add_polyline($(".test-line"), el[0], el[1], 10, knot,
-                'stroke:rgb(255,255,255);stroke-width:8;fill:none');
-            add_polyline($(".test-line"), el[0], el[1], 10, knot,
-                'stroke:rgb(255,0,0);stroke-width:4;fill:none');
-        });
-    });
+    knot.Draw($(".test-line"));
 });
