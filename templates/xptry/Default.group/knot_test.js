@@ -32,9 +32,20 @@ $(document).ready(function(){
             add_polyline(insert_element, startparam, endparam, divide, knot,
                 'stroke:rgb(255,255,255);stroke-width:2;fill:none;stroke-linecap:butt;', close, 2);
         },
-        BackDrawKnot: function(insert_element, startparam, endparam, divide, knot) {
+        BackDrawKnot: function(insert_element, startparam, endparam, divide, knot, close) {
             add_polyline(insert_element, startparam, endparam, divide, knot,
                 'stroke:rgb(255,255,255);stroke-width:10;fill:none;stroke-linecap:butt;', close);
+        }
+    };
+
+    var draw4 = {
+        ForeDrawKnot: function(insert_element, startparam, endparam, divide, knot, close) {
+            add_polyline(insert_element, startparam, endparam, divide, knot,
+                'stroke:rgb(200,0,0);stroke-width:18;fill:none;stroke-linecap:butt;', close, 1);
+        },
+        BackDrawKnot: function(insert_element, startparam, endparam, divide, knot, close) {
+            add_polyline(insert_element, startparam, endparam, divide, knot,
+                'stroke:rgb(255,255,255);stroke-width:20;fill:none;stroke-linecap:butt;', close);
         }
     };
 
@@ -54,7 +65,7 @@ $(document).ready(function(){
                 Drawer: draw3,
                 Divide: 10,
                 Points: [ [-50,-75], [-25,-75], [25,-75], [50,-75], [50,-50], [50,-25], [50,25], [50,50], [50,75], [25,75], [-25,75], [-50,75], [-50,50], [-50,25], [-50,-25], [-50,-50] ]
-            }
+            },
         ]
     );
 

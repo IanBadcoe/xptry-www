@@ -106,11 +106,15 @@
                     break;
 
                 var found_idx = -1;
-                var start_el = -1;
 
                 try {
                     // find a sequence that shares an intersect with what we already have
                     loops.forEach((loop, loop_idx) => {
+                        // by toggling this at each intersection with unknown state,
+                        // we can back-calculate to how we have to start in order to arrive with the
+                        // correct next_over when we hit on with known state
+                        var invert = false;
+
                         loop.Points.forEach((pnt, pnt_idx) => {
                             var inter = intersects[pnt];
 
@@ -118,10 +122,11 @@
                                 found_idx = loop_idx;
                                 // this will be the first intersecting element we hit, so set next_over
                                 // to send it the right way
-                                next_over = !inter.is_over;
-                                start_el = pnt_idx;
+                                next_over = inter.is_over == invert;
 
                                 throw "got one!"
+                            } else if (inter.count > 1) {
+                                invert = !invert;
                             }
                         });
                     });
@@ -140,15 +145,6 @@
 
                 loop = loops[found_idx];
                 loops.splice(found_idx, 1)
-
-                // to make it the first intersect we hit, we first have to move it first
-                // otherwise we could hit one from some other loop that we didn't process yet...
-                if (start_el != -1) {
-                    loop.Points = [].concat(
-                        loop.Points.slice(start_el),
-                        loop.Points.slice(0, start_el)
-                    );
-                }
             }
 
             return {
