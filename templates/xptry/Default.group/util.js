@@ -70,12 +70,17 @@ function add_line(el, p1, p2, style) {
     el.append(line);
 }
 
-function add_polyline(el, start_p, end_p, divide, interpable, style) {
+function add_polyline(el, start_p, end_p, divide, interpable, style,
+    close, nudge = 0) {
+
+    if (close)
+        nudge = 0;
+        
     var coords = "";
 
     var range = end_p - start_p;
 
-    for(var p = 0; p <= range * divide; p ++) {
+    for(var p = -nudge; p <= range * divide + nudge; p ++) {
         var hp = p / divide + start_p;
 
         var cp = interpable.Interp(hp);
@@ -83,10 +88,22 @@ function add_polyline(el, start_p, end_p, divide, interpable, style) {
         coords += cp[0] + ", " + cp[1] + " ";
     }
 
-    var polyline = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
-        points: coords,
-        style: style
-    });
+    var line;
 
-    el.append(polyline);
+    if (!close)
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
+            points: coords,
+            style: style
+        });
+    }
+    else
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
+            points: coords,
+            style: style
+        });
+    }
+
+    el.append(line);
 }

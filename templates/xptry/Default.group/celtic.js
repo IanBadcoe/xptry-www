@@ -1,61 +1,53 @@
 (
     function() {
-        MakeKKnot = function(points, sequences, foredraw, backdraw, divide) {
-            var _foredraw = foredraw;
-            var _backdraw = backdraw;
-            var _divide = divide;
-
-            if (!Array.isArray(sequences[0]))
+        MakeCKnot = function(loops) {
+            if (!Array.isArray(loops))
             {
-                sequences = [sequences];
+                loops = [loops];
             }
 
             var intersects = [];
 
-            Object.keys(points).forEach(el => {
-                intersects[el] = {
-                    pnt: points[el],
-                    name: el,
-                    count: 0,
-                    is_over: null       // three valued logic, null = unset...
-                };
+            loops.forEach(loop => {
+                loop.Points.forEach(pnt => {
+                    intersects[pnt] = {
+                        count: 0,
+                        is_over: null       // three valued logic, null = unset...
+                    };
+                });
             });
 
-            sequences.forEach(seq => {
-                seq.forEach(el => {
-                    intersects[el].count++;
+            loops.forEach(loop => {
+                loop.Points.forEach(pnt => {
+                    intersects[pnt].count++;
 
-                    if (intersects[el].count > 2) {
+                    if (intersects[pnt].count > 2) {
                         throw "triple and greater intersections are not supported"
                     }
                 });
             });
 
-            var sequence = sequences[0];
-            sequences.splice(0, 1);
+            var loop = loops[0];
+            loops.splice(0, 1);
             var next_over = false;
             var _knots = [];
 
-            while(sequence)
+            while(loop)
             {
                 var anno_points = [];
                 var points = [];
 
-                sequence.forEach(el => {
-                    var inter = intersects[el];
+                loop.Points.forEach(pnt => {
+                    var inter = intersects[pnt];
 
                     if (inter.count < 2)
                     {
                         anno_points.push({
-                            over: null,
-                            pnt: inter.pnt,
-                            name: el
+                            over: null
                         });
                     } else {
                         anno_points.push({
-                            over: next_over,
-                            pnt: inter.pnt,
-                            name: el
+                            over: next_over
                         });
 
                         inter.is_over = next_over;
@@ -63,7 +55,7 @@
                         next_over = !next_over;
                     }
 
-                    points.push(inter.pnt);
+                    points.push(pnt);
                 });
 
                 var spline = MakeUniformBSpline(points, 3, true);
@@ -81,6 +73,8 @@
                 _knots.push({
                     Spline: spline,
                     OverlayRanges: overlay_ranges,
+                    Drawer: loop.Drawer,
+                    Divide: loop.Divide,
                     get StartParam() {
                         return this.Spline.StartParam;
                     },
@@ -106,9 +100,9 @@
                     }
                 });
 
-                sequence = null;
+                loop = null;
 
-                if (sequences.length == 0)
+                if (loops.length == 0)
                     break;
 
                 var found_idx = -1;
@@ -116,16 +110,16 @@
 
                 try {
                     // find a sequence that shares an intersect with what we already have
-                    sequences.forEach((seq, seq_idx) => {
-                        seq.forEach((el, el_idx) => {
-                            var inter = intersects[el];
+                    loops.forEach((loop, loop_idx) => {
+                        loop.Points.forEach((pnt, pnt_idx) => {
+                            var inter = intersects[pnt];
 
                             if (inter.is_over != null) {
-                                found_idx = seq_idx;
+                                found_idx = loop_idx;
                                 // this will be the first intersecting element we hit, so set next_over
                                 // to send it the right way
                                 next_over = !inter.is_over;
-                                start_el = el_idx;
+                                start_el = pnt_idx;
 
                                 throw "got one!"
                             }
@@ -144,30 +138,36 @@
                     next_over = false;
                 }
 
-                sequence = sequences[found_idx];
-                sequences.splice(found_idx, 1)
+                loop = loops[found_idx];
+                loops.splice(found_idx, 1)
 
                 // to make it the first intersect we hit, we first have to move it first
                 // otherwise we could hit one from some other loop that we didn't process yet...
                 if (start_el != -1) {
-                    sequence = [].concat(
-                        sequence.slice(start_el),
-                        sequence.slice(0, start_el)
+                    loop.Points = [].concat(
+                        loop.Points.slice(start_el),
+                        loop.Points.slice(0, start_el)
                     );
                 }
             }
 
             return {
-                Draw: function(insert_element, foredraw = _foredraw, backdraw = _backdraw, divide = _divide) {
+                Draw: function(insert_element) {
                     _knots.forEach(knot => {
-                        foredraw.DrawKnot(insert_element, knot.StartParam, knot.EndParam, divide, knot);
+                        knot.Drawer.ForeDrawKnot(insert_element,
+                            knot.StartParam, knot.EndParam, knot.Divide, knot,
+                            true);
                     });
 
                     _knots.forEach(knot => {
                         knot.OverlayRanges.forEach(el => {
-                            backdraw.DrawKnot(insert_element, el[0], el[1], divide, knot);
-                            foredraw.DrawKnot(insert_element, el[0], el[1], divide, knot);
-                        });
+                            knot.Drawer.BackDrawKnot(insert_element,
+                                el[0], el[1], knot.Divide, knot,
+                                false);
+                            knot.Drawer.ForeDrawKnot(insert_element,
+                                el[0], el[1], knot.Divide + 1, knot,
+                                false);
+                         });
                     });
                 }
             };
