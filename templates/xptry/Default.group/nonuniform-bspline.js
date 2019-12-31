@@ -1,69 +1,27 @@
 (
     function() {
-        MakeNonUniformBSplineCombined = function(points, order) {
-            var _points = [];
-            var _knots = [];
-            var _param = 1;
+        MakeNonUniformBSpline = function(points, order, closed) {
+            var _knots = null;
+            var _max_knot;
+            var _max_param;
 
-            points.forEach(function(x) {
-                _points.push(x.pnt);
-                _knots.push(_param);
-                _param += x.par;
-            });
-
-            return MakeNonUniformBSpline(_points, _knots, order);
-        }
-
-        MakeNonUniformBSpline = function(points, knots, order) {
-            var _here_points = [].concat(
-                Array(order).fill(points[0]),
-                points,
-                Array(order).fill(points.slice(-1)[0])
-            );
-
-            var _here_knots = [].concat(
-                Array(order).fill(knots[0]),
-                knots,
-                Array(order).fill(knots.slice(-1)[0])
-            );
-
-            var _orig_size = points.length;
-
-            var _orig_points = points;
-            var _orig_knots = knots;
-
-            var _order = order;
-
-            function B(x, i, k, knots) {
-                if (k == 0) {
-                    if (x >= knots[i] && x <= knots[i + 1])
-                    {
-                        return 1;
-                    }
-
-                    return 0;
-                }
-
-                var ret = 0;
-
-                var left_recurse = B(x, i, k - 1, knots);
-                if (left_recurse) {
-                    var left_div = knots[i + k] - knots[i];
-                    if (left_div) {
-                        ret += (x - knots[i]) / left_div * left_recurse;
-                    }
-                }
-
-                var right_recurse = B(x, i + 1, k - 1, knots);
-                if (right_recurse) {
-                    var right_div = knots[i + k + 1] - knots[i + 1];
-                    if (right_div) {
-                        ret += (knots[i + k + 1] - x) / right_div * right_recurse;
-                    }
-                }
-
-                return  ret;
+            if (!closed) {
+                _knots = MakeClampedKnotVector(points.length, order);
+                _max_param = _max_knot = _knots[_knots.length - 1];
+            } else {
+                _knots = MakeCyclicKnotVector(points.length, order);
+                _max_param = _knots[points.length];
+                // for closed curves, we want knot range, not max_knot, but I don't want
+                // to add another parameter to BPlineBasis
+                //
+                // at the moment subtracting knot zero isn't technically required, as knot zero is
+                // always zero, but it doesn't _have_ to be and subtracting keeps us honest...
+                _max_knot = _max_param - _knots[0];
             }
+
+            var _points = points;
+            var _closed = closed;
+            var _order = order;
 
             function spline_interp(x, p, knots, k)
             {
@@ -71,8 +29,8 @@
                 ret.length = p[0].length;
                 ret.fill(0);
 
-                _here_points.forEach(function(el, idx) {
-                    var f = B(x, idx, k, knots);
+                _points.forEach(function(el, idx) {
+                    var f = BSplineBasis(x, idx, k, knots, _max_knot, _closed);
 
                     var t = el.map(function(q) { return f * q; });
 
@@ -86,10 +44,10 @@
 
             return {
                 get StartParam() {
-                    return _orig_knots[1];
+                    return _knots[0];
                 },
                 get EndParam() {
-                    return _orig_knots.slice(-1)[0];
+                    return _max_param;
                 },
                 get ParamRange() {
                     return this.EndParam - this.StartParam;
@@ -98,16 +56,16 @@
                     return _order;
                 },
                 get Points() {
-                    return _orig_points;
+                    return _points;
                 },
                 get Knots() {
-                    return _orig_knots;
+                    return _knots;
                 },
                 Interp: function(p) {
-                    return spline_interp(p, _here_points, _here_knots, _order);
+                    return spline_interp(p, _points, _knots, _order);
                 },
                 Basis: function(p, i) {
-                    return B(p, i, _order, _here_knots);
+                    return BSplineBasis(p, i, _order, _knots, _max_knot);
                 }
             };
         }

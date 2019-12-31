@@ -75,7 +75,7 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
 
     if (close)
         nudge = 0;
-        
+
     var coords = "";
 
     var range = end_p - start_p;
