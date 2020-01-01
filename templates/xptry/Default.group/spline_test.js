@@ -7,7 +7,7 @@ $(document).ready(function() {
             [xoffset + 50, yoffset + 50],
         ], order, closed);
 
-        add_polyline($(where), spline.StartParam, spline.EndParam, 10, spline,
+        add_polyline($(where), 0, spline.EndParam, 10, spline,
            'stroke:rgb(255,0,255);stroke-width:2;fill:none;stroke-linecap:butt;', closed, 0);
     }
 

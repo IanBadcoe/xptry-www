@@ -70,8 +70,6 @@
                     if (el.over) {
                         var f = spline.Point2Param(idx - 0.5);
                         var t = spline.Point2Param(idx + 0.5);
-                        // we index from zero, the spline starts from StartParam
-                        // and there's another +1 here because points actually appear at the _end_ of their range...
                         overlay_ranges.push([f, t]);
                     }
                 });
@@ -81,25 +79,19 @@
                     OverlayRanges: overlay_ranges,
                     Drawer: loop.Drawer,
                     Divide: loop.Divide,
-                    get StartParam() {
-                        return this.Spline.StartParam;
-                    },
                     get EndParam() {
                         return this.Spline.EndParam;
-                    },
-                    get ParamRange() {
-                        return this.Spline.ParamRange;
                     },
                     Interp: function(x) {
                         var hx = x;
 
                         while(hx > this.EndParam)
                         {
-                            hx -= this.ParamRange;
+                            hx -= this.EndParam;
                         }
-                        while(hx < this.StartParam)
+                        while(hx < 0)
                         {
-                            hx += this.ParamRange;
+                            hx += this.EndParam;
                         }
 
                         return this.Spline.Interp(hx);
@@ -158,7 +150,7 @@
                 Draw: function(insert_element) {
                     _knots.forEach(knot => {
                         knot.Drawer.ForeDrawKnot(insert_element,
-                            knot.StartParam, knot.EndParam, knot.Divide, knot,
+                            0, knot.EndParam, knot.Divide, knot,
                             !knot.Open);
                     });
 

@@ -61,14 +61,8 @@
             }
 
             return {
-                get StartParam() {
-                    return 1;
-                },
                 get EndParam() {
                     return _orig_size + 1;
-                },
-                get ParamRange() {
-                    return this.EndParam - this.StartParam;
                 },
                 get Order() {
                     return _order;

@@ -2,10 +2,10 @@ function MakeParamScaler(interpable) {
     var _lengthish = 0;
     var _interpable = interpable;
 
-    var pp = interpable.Interp(interpable.StartParam);
+    var pp = interpable.Interp(0);
 
     for(var p = 0; p <= interpable.NumPoints; p++) {
-        var hp = interpable.StartParam + p / interpable.NumPoints * interpable.ParamRange;
+        var hp = p / interpable.NumPoints * interpable.EndParam;
 
         var cp = interpable.Interp(hp);
 
@@ -18,13 +18,7 @@ function MakeParamScaler(interpable) {
     }
 
     return {
-        get StartParam() {
-            return 0;
-        },
         get EndParam() {
-            return _lengthish;
-        },
-        get ParamRange() {
             return _lengthish;
         },
         get Order() {
@@ -37,14 +31,14 @@ function MakeParamScaler(interpable) {
             return _interpable.NumKnots;
         },
         Interp: function(p) {
-            var hp = p / _lengthish * _interpable.ParamRange + _interpable.StartParam;
+            var hp = p / _lengthish * _interpable.EndParam;
 
             return _interpable.Interp(hp);
         },
         Point2Param: function(idx) {
             var ip = _interpable.Point2Param(idx);
 
-            return (ip - _interpable.StartParam) / _interpable.ParamRange * _lengthish;
+            return ip / _interpable.EndParam * _lengthish;
         }
     }
 }

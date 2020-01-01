@@ -26,7 +26,7 @@ function apply_path(selector, path, offset)
         idx += offset;
         if (idx > path.EndParam)
         {
-            idx = idx - path.EndParam + path.StartParam;
+            idx = idx - path.EndParam;
         }
 
         $(this).attr("path_p", idx);
@@ -43,7 +43,7 @@ function apply_path(selector, path, offset)
 function apply_path_indices(selector, path)
 {
     $(selector).each(function() {
-        $(this).attr("path_p", Math.random() * (path.EndParam - path.StartParam) + path.StartParam);
+        $(this).attr("path_p", Math.random() * path.EndParam);
     });
 }
 
@@ -84,19 +84,19 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
         var hp = p / divide + start_p;
 
         if (wrap) {
-            if (hp < interpable.StartParam) {
-                hp += interpable.ParamRange;
+            if (hp < 0) {
+                hp += interpable.EndParam;
             }
 
             if (hp > interpable.EndParam) {
-                hp -= interpable.ParamRange;
+                hp -= interpable.EndParam;
             }
         }
 
-        if (hp >= interpable.StartParam && hp <= interpable.EndParam) {
+        if (hp >= 0 && hp <= interpable.EndParam) {
             var cp = interpable.Interp(hp);
 
-            coords += cp[0] + ", " + cp[1] + " ";
+            coords += cp[0] + "," + cp[1] + " ";
         }
     }
 
@@ -139,19 +139,19 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
         var hp = p * act_step + start_p - nudge * p_step / 2;
 
         if (wrap) {
-            if (hp < interpable.StartParam) {
-                hp += interpable.ParamRange;
+            if (hp < 0) {
+                hp += interpable.EndParam;
             }
 
             if (hp > interpable.EndParam) {
-                hp -= interpable.ParamRange;
+                hp -= interpable.EndParam;
             }
         }
 
-        if (hp >= interpable.StartParam && hp <= interpable.EndParam) {
+        if (hp >= 0 && hp <= interpable.EndParam) {
             var cp = interpable.Interp(hp);
 
-            coords += cp[0] + ", " + cp[1] + " ";
+            coords += cp[0] + "," + cp[1] + " ";
         }
     }
 

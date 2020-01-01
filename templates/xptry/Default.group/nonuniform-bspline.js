@@ -41,14 +41,8 @@ MakeNonUniformBSpline = function(points, order, closed) {
     }
 
     return {
-        get StartParam() {
-            return _knots[0];
-        },
         get EndParam() {
             return _max_param;
-        },
-        get ParamRange() {
-            return this.EndParam - this.StartParam;
         },
         get Order() {
             return _order;
@@ -67,7 +61,7 @@ MakeNonUniformBSpline = function(points, order, closed) {
                 return idx + 0.5 + _order / 2;
             }
 
-            return idx / (_points.length - 1) * this.ParamRange + this.StartParam;
+            return idx / (_points.length - 1) * this.EndParam;
         }
     };
 }

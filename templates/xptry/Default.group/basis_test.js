@@ -44,16 +44,16 @@ $(document).ready(function(){
         {
             spline.SetIdx(i);
 
-            add_polyline($(where), spline.StartParam, spline.EndParam, 20, spline,
+            add_polyline($(where), 0, spline.EndParam, 20, spline,
                 styles[i],
                 false, 0);
         }
-        add_polyline($(where), spline.StartParam, spline.EndParam, 20, splwrapper,
+        add_polyline($(where), 0, spline.EndParam, 20, splwrapper,
             styles[9],
             false, 0);
 
-        for(i = spline.StartParam; i < spline.EndParam; i += 0.1) {
-            add_line($(where), [i * 400 / spline.ParamRange, yoffset], [i * 400 / spline.ParamRange, yoffset - 100], 'stroke:rgb(255,0,0);stroke-width:1;fill:none;stroke-linecap:butt;');
+        for(i = 0; i < spline.EndParam; i += 0.1) {
+            add_line($(where), [i * 400 / spline.EndParam, yoffset], [i * 400 / spline.EndParam, yoffset - 100], 'stroke:rgb(255,0,0);stroke-width:1;fill:none;stroke-linecap:butt;');
         }
     }
 

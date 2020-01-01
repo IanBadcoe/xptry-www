@@ -29,20 +29,14 @@
             }
 
             return {
-                get StartParam() {
-                    return _knots[0];
-                },
                 get EndParam() {
                     return _max_param;
-                },
-                get ParamRange() {
-                    return this.EndParam - this.StartParam;
                 },
                 get Order() {
                     return _order;
                 },
                 Interp: function(p) {
-                    var x = (p - this.StartParam) / this.ParamRange * width;
+                    var x = p / this.EndParam * width;
                     return [x, _yoffset - spline_interp(p, _knots, _order, this.idx) * height];
                 },
                 SetIdx: function(idx) { this.idx = idx; },
