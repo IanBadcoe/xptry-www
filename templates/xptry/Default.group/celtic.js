@@ -34,6 +34,10 @@
 
             while(loop)
             {
+                if (!('Open' in loop)) {
+                    loop.Open = false;
+                }
+
                 var anno_points = [];
                 var points = [];
 
@@ -58,15 +62,17 @@
                     points.push(pnt);
                 });
 
-                var spline = MakeUniformBSpline(points, 3, true);
+                var spline = MakeNonUniformBSpline(points, 3, !loop.Open);
 
                 var overlay_ranges = [];
 
                 anno_points.forEach((el, idx) => {
                     if (el.over) {
+                        var f = spline.Point2Param(idx - 0.5);
+                        var t = spline.Point2Param(idx + 0.5);
                         // we index from zero, the spline starts from StartParam
-                        // and there's another +1 here because points actually appear at the _end_ of there range...
-                        overlay_ranges.push([idx + spline.StartParam + 0.5, idx + spline.StartParam + 1.5]);
+                        // and there's another +1 here because points actually appear at the _end_ of their range...
+                        overlay_ranges.push([f, t]);
                     }
                 });
 
@@ -97,7 +103,8 @@
                         }
 
                         return this.Spline.Interp(hx);
-                    }
+                    },
+                    Open: loop.Open
                 });
 
                 loop = null;
@@ -152,7 +159,7 @@
                     _knots.forEach(knot => {
                         knot.Drawer.ForeDrawKnot(insert_element,
                             knot.StartParam, knot.EndParam, knot.Divide, knot,
-                            true);
+                            !knot.Open);
                     });
 
                     _knots.forEach(knot => {

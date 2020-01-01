@@ -1,10 +1,10 @@
 $(document).ready(function() {
     function show_one(order, closed, xoffset, yoffset, where) {
         var spline = MakeNonUniformBSpline([
-            [xoffset - 50, yoffset + 50],
-            [xoffset + 50, yoffset + 50],
             [xoffset + 50, yoffset - 50],
             [xoffset - 50, yoffset - 50],
+            [xoffset - 50, yoffset + 50],
+            [xoffset + 50, yoffset + 50],
         ], order, closed);
 
         add_polyline($(where), spline.StartParam, spline.EndParam, 10, spline,

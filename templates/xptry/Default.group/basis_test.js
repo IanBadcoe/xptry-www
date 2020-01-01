@@ -44,26 +44,26 @@ $(document).ready(function(){
         {
             spline.SetIdx(i);
 
-            add_polyline($(where), spline.StartParam, spline.EndParam, 10, spline,
+            add_polyline($(where), spline.StartParam, spline.EndParam, 20, spline,
                 styles[i],
                 false, 0);
         }
-        add_polyline($(where), spline.StartParam, spline.EndParam, 10, splwrapper,
+        add_polyline($(where), spline.StartParam, spline.EndParam, 20, splwrapper,
             styles[9],
             false, 0);
 
-        for(i = spline.StartParam; i < spline.EndParam; i++) {
+        for(i = spline.StartParam; i < spline.EndParam; i += 0.1) {
             add_line($(where), [i * 400 / spline.ParamRange, yoffset], [i * 400 / spline.ParamRange, yoffset - 100], 'stroke:rgb(255,0,0);stroke-width:1;fill:none;stroke-linecap:butt;');
         }
     }
 
-    show_one(4, 0, false, ".test-line", -0);
-    show_one(4, 1, false, ".test-line", -110);
-    show_one(4, 2, false, ".test-line", -220);
-    show_one(4, 3, false, ".test-line", -330);
+    show_one(5, 0, false, ".test-line", -0);
+    show_one(5, 1, false, ".test-line", -110);
+    show_one(5, 2, false, ".test-line", -220);
+    show_one(5, 3, false, ".test-line", -330);
 
-    show_one(4, 0, true, ".test-line2", -0);
-    show_one(4, 1, true, ".test-line2", -110);
-    show_one(4, 2, true, ".test-line2", -220);
-    show_one(4, 3, true, ".test-line2", -330);
+    show_one(5, 0, true, ".test-line2", -0);
+    show_one(5, 1, true, ".test-line2", -110);
+    show_one(5, 2, true, ".test-line2", -220);
+    show_one(5, 3, true, ".test-line2", -330);
 });

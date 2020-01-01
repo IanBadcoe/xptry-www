@@ -66,6 +66,13 @@
                 },
                 Basis: function(p, i) {
                     return BSplineBasis(p, i, _order, _knots, _max_knot);
+                },
+                Point2Param: function(idx) {
+                    if (_closed) {
+                        return idx + 1;
+                    }
+
+                    return idx / (_points.length - 1) * this.ParamRange + this.StartParam;
                 }
             };
         }

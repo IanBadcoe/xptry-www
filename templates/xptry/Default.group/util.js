@@ -83,9 +83,11 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
     for(var p = -nudge; p <= range * divide + nudge; p ++) {
         var hp = p / divide + start_p;
 
-        var cp = interpable.Interp(hp);
+        if (hp >= interpable.StartParam && hp <= interpable.EndParam) {
+            var cp = interpable.Interp(hp);
 
-        coords += cp[0] + ", " + cp[1] + " ";
+            coords += cp[0] + ", " + cp[1] + " ";
+        }
     }
 
     var line;
