@@ -71,9 +71,9 @@ function add_line(el, p1, p2, style) {
 }
 
 function add_polyline(el, start_p, end_p, divide, interpable, style,
-    close, nudge = 0) {
+    closed, nudge = 0, wrap = false) {
 
-    if (close)
+    if (closed)
         nudge = 0;
 
     var coords = "";
@@ -82,6 +82,16 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
 
     for(var p = -nudge; p <= range * divide + nudge; p ++) {
         var hp = p / divide + start_p;
+
+        if (wrap) {
+            if (hp < interpable.StartParam) {
+                hp += interpable.ParamRange;
+            }
+
+            if (hp > interpable.EndParam) {
+                hp -= interpable.ParamRange;
+            }
+        }
 
         if (hp >= interpable.StartParam && hp <= interpable.EndParam) {
             var cp = interpable.Interp(hp);
@@ -92,7 +102,62 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
 
     var line;
 
-    if (!close)
+    if (!closed)
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
+            points: coords,
+            style: style
+        });
+    }
+    else
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
+            points: coords,
+            style: style
+        });
+    }
+
+    el.append(line);
+}
+
+function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
+    closed, nudge = 0, wrap = false) {
+
+    if (closed)
+        nudge = 0;
+
+    var coords = "";
+
+    var range = end_p - start_p + nudge * p_step;
+
+    // we'll do nudge * 1/2 step on either end...
+    var num_steps = Math.floor(range / p_step) + 1;
+
+    var act_step = range / num_steps;
+
+    for(var p = 0; p <= num_steps; p++) {
+        var hp = p * act_step + start_p - nudge * p_step / 2;
+
+        if (wrap) {
+            if (hp < interpable.StartParam) {
+                hp += interpable.ParamRange;
+            }
+
+            if (hp > interpable.EndParam) {
+                hp -= interpable.ParamRange;
+            }
+        }
+
+        if (hp >= interpable.StartParam && hp <= interpable.EndParam) {
+            var cp = interpable.Interp(hp);
+
+            coords += cp[0] + ", " + cp[1] + " ";
+        }
+    }
+
+    var line;
+
+    if (!closed)
     {
         line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
             points: coords,

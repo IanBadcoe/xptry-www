@@ -19,7 +19,7 @@
             if (closed) {
                 _max_param = _knots[_knots.length - order - 1];
                 // for closed curves, we want knot range, not max_knot, but I don't want
-                // to add another parameter to BPlineBasis
+                // to add another parameter to BSplineBasis
                 _max_knot = _max_param - _knots[0];
             }
 

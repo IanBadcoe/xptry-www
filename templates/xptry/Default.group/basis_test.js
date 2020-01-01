@@ -57,13 +57,13 @@ $(document).ready(function(){
         }
     }
 
-    show_one(5, 0, false, ".test-line", -0);
-    show_one(5, 1, false, ".test-line", -110);
-    show_one(5, 2, false, ".test-line", -220);
-    show_one(5, 3, false, ".test-line", -330);
+    show_one(10, 0, false, ".test-line", -0);
+    show_one(10, 1, false, ".test-line", -110);
+    show_one(10, 2, false, ".test-line", -220);
+    show_one(10, 3, false, ".test-line", -330);
 
-    show_one(5, 0, true, ".test-line2", -0);
-    show_one(5, 1, true, ".test-line2", -110);
-    show_one(5, 2, true, ".test-line2", -220);
-    show_one(5, 3, true, ".test-line2", -330);
+    show_one(10, 0, true, ".test-line2", -0);
+    show_one(10, 1, true, ".test-line2", -110);
+    show_one(10, 2, true, ".test-line2", -220);
+    show_one(10, 3, true, ".test-line2", -330);
 });
