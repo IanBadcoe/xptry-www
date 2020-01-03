@@ -128,7 +128,7 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
 
     var coords = "";
 
-    var range = end_p - start_p + nudge * p_step;
+    var range = end_p - start_p + nudge * 2;
 
     // we'll do nudge * 1/2 step on either end...
     var num_steps = Math.floor(range / p_step) + 1;
@@ -136,7 +136,7 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
     var act_step = range / num_steps;
 
     for(var p = 0; p <= num_steps; p++) {
-        var hp = p * act_step + start_p - nudge * p_step / 2;
+        var hp = p * act_step + start_p - nudge;
 
         if (wrap) {
             if (hp < 0) {

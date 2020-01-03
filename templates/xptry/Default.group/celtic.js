@@ -6,7 +6,7 @@
                 loops = [loops];
             }
 
-            var intersects = [];
+            var intersects = {};
 
             loops.forEach(loop => {
                 loop.Points.forEach(pnt => {
@@ -66,7 +66,7 @@
                     points.push(pnt);
                 });
 
-                var spline = MakeNonUniformBSpline(points, loop.Order, !loop.Open);
+                var spline = MakeParamScaler(MakeNonUniformBSpline(points, loop.Order, !loop.Open));
 
                 var overlay_ranges = [];
 
@@ -82,7 +82,7 @@
                     Spline: spline,
                     OverlayRanges: overlay_ranges,
                     Drawer: loop.Drawer,
-                    Divide: loop.Divide,
+                    Step: loop.Step,
                     get EndParam() {
                         return this.Spline.EndParam;
                     },
@@ -154,17 +154,17 @@
                 Draw: function(insert_element) {
                     _knots.forEach(knot => {
                         knot.Drawer.ForeDrawKnot(insert_element,
-                            0, knot.EndParam, knot.Divide, knot,
+                            0, knot.EndParam, knot.Step, knot,
                             !knot.Open, !knot.Open);
                     });
 
                     _knots.forEach(knot => {
                         knot.OverlayRanges.forEach(el => {
                             knot.Drawer.BackDrawKnot(insert_element,
-                                el[0], el[1], knot.Divide, knot,
+                                el[0], el[1], knot.Step, knot,
                                 false, !knot.Open);
                             knot.Drawer.ForeDrawKnot(insert_element,
-                                el[0], el[1], knot.Divide + 1, knot,
+                                el[0], el[1], knot.Step + 1, knot,
                                 false, !knot.Open);
                          });
                     });

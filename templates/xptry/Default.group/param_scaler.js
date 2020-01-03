@@ -4,7 +4,7 @@ function MakeParamScaler(interpable) {
 
     var pp = interpable.Interp(0);
 
-    for(var p = 0; p <= interpable.NumPoints; p++) {
+    for(var p = 1; p <= interpable.NumPoints; p++) {
         var hp = p / interpable.NumPoints * interpable.EndParam;
 
         var cp = interpable.Interp(hp);
