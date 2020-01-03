@@ -38,6 +38,10 @@
                     loop.Open = false;
                 }
 
+                if (!('Order' in loop)) {
+                    loop.Order = 3;
+                }
+
                 var anno_points = [];
                 var points = [];
 
@@ -62,7 +66,7 @@
                     points.push(pnt);
                 });
 
-                var spline = MakeNonUniformBSpline(points, 3, !loop.Open);
+                var spline = MakeNonUniformBSpline(points, loop.Order, !loop.Open);
 
                 var overlay_ranges = [];
 
@@ -151,17 +155,17 @@
                     _knots.forEach(knot => {
                         knot.Drawer.ForeDrawKnot(insert_element,
                             0, knot.EndParam, knot.Divide, knot,
-                            !knot.Open);
+                            !knot.Open, !knot.Open);
                     });
 
                     _knots.forEach(knot => {
                         knot.OverlayRanges.forEach(el => {
                             knot.Drawer.BackDrawKnot(insert_element,
                                 el[0], el[1], knot.Divide, knot,
-                                false);
+                                false, !knot.Open);
                             knot.Drawer.ForeDrawKnot(insert_element,
                                 el[0], el[1], knot.Divide + 1, knot,
-                                false);
+                                false, !knot.Open);
                          });
                     });
                 }

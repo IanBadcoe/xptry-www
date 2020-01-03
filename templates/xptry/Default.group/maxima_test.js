@@ -86,7 +86,7 @@ $(document).ready(function() {
     var yoffset = -500;
 
     for(var i = 4; i < 10; i++) {
-        results.push(test_one(i, 2, yoffset, ".test-line"));
+        results.push(test_one(i, 3, yoffset, ".test-line"));
 
         yoffset += 100;
     }
