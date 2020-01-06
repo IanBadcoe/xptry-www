@@ -153,6 +153,9 @@
             return {
                 Draw: function(insert_element) {
                     _knots.forEach(knot => {
+                        // knot.Drawer.BackDrawKnot(insert_element,
+                        //     0, knot.EndParam, knot.Step, knot,
+                        //     !knot.Open, !knot.Open);
                         knot.Drawer.ForeDrawKnot(insert_element,
                             0, knot.EndParam, knot.Step, knot,
                             !knot.Open, !knot.Open);

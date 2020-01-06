@@ -36,7 +36,8 @@ $(document).ready(function(){
 
     var knot_tile = {
         Width: 6,       // column 6 will overlap column 0 of next cell
-        Height: 1,
+        Height: 1,      // if we wanted a "next layer out" to come in at the same spacing, would use +1 here
+                        // but currently for ease of sizing an isolated layer...
         Pnts: [
             [1, 1], [2, 0], [4, 0], [4.5, 1], [3, 1], [2, 0], [0.3, 0], [1, 1], [3, 1], [4, 0], [5.5, 0], [5.5, 1],
         ]
@@ -92,7 +93,8 @@ $(document).ready(function(){
     function add_ring(centre, rad) {
         var points = [];
 
-        for(var ang = 0; ang < Math.PI * 2; ang += 0.1) {
+        for(var i = 0; i < 36; i++) {
+            var ang = 2 * Math.PI / 36 * i;
             points.push([ centre[0] + rad * Math.sin(ang), centre[1] + rad * Math.cos(ang)]);
         }
 
@@ -110,4 +112,45 @@ $(document).ready(function(){
     add_ring([0, 0], 112.5);
 
     apply_template(knot_tile, [0, 0], 100, 125, 14);
+
+    // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
+    // x is measured in line thicknesses
+    var tie_tile = [
+        [ [1.5, 1], [0, 1.8], [0, 5] ],
+        [ [0.5, 0], [0.5, 1] ],
+        [ [-0.5, 0], [-0.5, 1] ],
+        [ [-1.5, 0], [-1.5, 1], [0.5, 2] ],
+        [ [-0.7, 1.8], [1, 1.6] ]
+    ];
+
+    function add_tie(ang, thick, inner_rad, outer_rad, tile, style) {
+        var rad_dir = [Math.sin(ang), -Math.cos(ang)];
+        var tang_dir = [rad_dir[1], -rad_dir[0]];
+        var rad_width = outer_rad - inner_rad;
+
+        function transform_point(p) {
+            var rad = inner_rad + rad_width * p[1];
+            var tang = p[0] * thick;
+
+            return [rad * rad_dir[0] + tang * tang_dir[0],
+                rad * rad_dir[1] + tang * tang_dir[1]];
+        }
+
+        tile.forEach(seq => {
+            var points = [];
+
+            seq.forEach(pnt => {
+                points.push(transform_point(pnt));
+            });
+
+            add_raw_polyline($(".test-line"), points, style, false);
+        });
+    }
+
+    add_tie(Math.PI * 0.66, 8, 94, 131, tie_tile,
+        'stroke:rgb(64,64,128);stroke-width:8;fill:none;stroke-linecap:round;')
+    add_tie(Math.PI * 1.33, 8, 94, 131, tie_tile,
+        'stroke:rgb(64,128,64);stroke-width:8;fill:none;stroke-linecap:round;')
+    add_tie(Math.PI * -0.2, 8, 94, 131, tie_tile,
+        'stroke:rgb(128,64,128);stroke-width:8;fill:none;stroke-linecap:round;')
 });

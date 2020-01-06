@@ -174,3 +174,24 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
 
     el.append(line);
 }
+
+function add_raw_polyline(el, coords, style, closed) {
+    var line;
+
+    if (!closed)
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
+            points: coords,
+            style: style
+        });
+    }
+    else
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
+            points: coords,
+            style: style
+        });
+    }
+
+    el.append(line);
+}
