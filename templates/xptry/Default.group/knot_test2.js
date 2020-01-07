@@ -109,21 +109,43 @@ $(document).ready(function(){
         knot.Draw($(".test-line"));
     }
 
-    add_ring([0, 0], 112.5);
 
-    apply_template(knot_tile, [0, 0], 100, 125, 14);
+    var draw_tie = {
+        ForeDrawPolyline: function(insert_element, points, close) {
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(182,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
+                close);
+        },
+        BackDrawPolyline: function(insert_element, points, close) {
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(182,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
+                close);
+        }
+    };
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     // x is measured in line thicknesses
-    var tie_tile = [
-        [ [1.5, 1], [0, 1.8], [0, 5] ],
-        [ [0.5, 0], [0.5, 1] ],
-        [ [-0.5, 0], [-0.5, 1] ],
-        [ [-1.5, 0], [-1.5, 1], [0.5, 2] ],
-        [ [-0.7, 1.8], [1, 1.6] ]
-    ];
+    var tie_tile = {
+        Drawer: draw_tie,
+        FSeqs: [
+            [ [1.25, 0], [1.5, 1], [0, 1.8], [0, 5] ],
+            [ [0.25, 0], [0.5, 1] ],
+            [ [-0.75, 0], [-0.5, 1] ],
+            [ [0.9, 1.8], [-1.0, 1.55] ],
+            [ [-0.7, 1.8], [1, 1.6] ],
+        ],
+        BSeqs: [
+            [ [-1.5, 1], [0.9, 1.8] ],
+        ]
+    };
 
-    function add_tie(ang, thick, inner_rad, outer_rad, tile, style) {
+    function add_tie(tile, centre, ang, thick, inner_rad, outer_rad, front) {
         var rad_dir = [Math.sin(ang), -Math.cos(ang)];
         var tang_dir = [rad_dir[1], -rad_dir[0]];
         var rad_width = outer_rad - inner_rad;
@@ -132,25 +154,93 @@ $(document).ready(function(){
             var rad = inner_rad + rad_width * p[1];
             var tang = p[0] * thick;
 
-            return [rad * rad_dir[0] + tang * tang_dir[0],
-                rad * rad_dir[1] + tang * tang_dir[1]];
+            return [centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
+                centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
         }
 
-        tile.forEach(seq => {
-            var points = [];
+        if (front) {
+            tile.FSeqs.forEach(seq => {
+                var points = [];
 
-            seq.forEach(pnt => {
-                points.push(transform_point(pnt));
+                seq.forEach(pnt => {
+                    points.push(transform_point(pnt));
+                });
+
+                tile.Drawer.ForeDrawPolyline($(".test-line"), points, false);
             });
+        } else {
+            tile.BSeqs.forEach(seq => {
+                var points = [];
 
-            add_raw_polyline($(".test-line"), points, style, false);
-        });
+                seq.forEach(pnt => {
+                    points.push(transform_point(pnt));
+                });
+
+                tile.Drawer.BackDrawPolyline($(".test-line"), points, false);
+            });
+        }
     }
 
-    add_tie(Math.PI * 0.66, 8, 94, 131, tie_tile,
-        'stroke:rgb(64,64,128);stroke-width:8;fill:none;stroke-linecap:round;')
-    add_tie(Math.PI * 1.33, 8, 94, 131, tie_tile,
-        'stroke:rgb(64,128,64);stroke-width:8;fill:none;stroke-linecap:round;')
-    add_tie(Math.PI * -0.2, 8, 94, 131, tie_tile,
-        'stroke:rgb(128,64,128);stroke-width:8;fill:none;stroke-linecap:round;')
+    var tie1 = {
+        Tile: tie_tile,
+        Ang: 0.66 * Math.PI,
+        Rad: 111,
+        Width: 40,
+        Thick: 8,
+        Centre: [0, 0],
+        DrawFront: function () {
+            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
+                this.Rad - this.Width / 2, this.Rad + this.Width / 2, true);
+        },
+        DrawBack: function () {
+            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
+                this.Rad - this.Width / 2, this.Rad + this.Width / 2, false);
+        }
+    };
+
+    var tie2 = {
+        Tile: tie_tile,
+        Ang: 1.33 * Math.PI,
+        Rad: 111,
+        Width: 40,
+        Thick: 8,
+        Centre: [0, 0],
+        DrawFront: function () {
+            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
+                this.Rad - this.Width / 2, this.Rad + this.Width / 2, true);
+        },
+        DrawBack: function () {
+            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
+                this.Rad - this.Width / 2, this.Rad + this.Width / 2, false);
+        }
+    };
+
+    var tie3 = {
+        Tile: tie_tile,
+        Ang: -0.2 * Math.PI,
+        Rad: 111,
+        Width: 40,
+        Thick: 8,
+        Centre: [0, 0],
+        DrawFront: function () {
+            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
+                this.Rad - this.Width / 2, this.Rad + this.Width / 2, true);
+        },
+        DrawBack: function () {
+            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
+                this.Rad - this.Width / 2, this.Rad + this.Width / 2, false);
+        }
+    };
+
+    tie1.DrawBack();
+    tie2.DrawBack();
+    tie3.DrawBack();
+
+    add_ring([0, 0], 112.5);
+
+    apply_template(knot_tile, [0, 0], 100, 125, 14);
+
+    tie1.DrawFront();
+    tie2.DrawFront();
+    tie3.DrawFront();
 });
