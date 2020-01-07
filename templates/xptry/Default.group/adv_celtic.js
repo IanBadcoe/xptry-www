@@ -1,6 +1,9 @@
 (
     function() {
-        MakeCKnot = function(loops) {
+        MakeAdvCKnot = function(loops, base_plate, decorators) {
+            var _base_plate = base_plate;
+            var _decorators = decorators;
+
             if (!Array.isArray(loops))
             {
                 loops = [loops];
@@ -152,6 +155,14 @@
 
             return {
                 Draw: function(insert_element) {
+                    if (_decorators) {
+                        _decorators.forEach(dec => dec.BackDraw(insert_element));
+                    }
+
+                    if (_base_plate) {
+                        _base_plate.Draw(insert_element);
+                    }
+
                     _knots.forEach(knot => {
                         // we could, rather than drawing overlay for everything that is "over"
                         // do BackDrawHere and then only do overlays for those bits of "over"
@@ -178,6 +189,10 @@
                                 false, !knot.Open);
                          });
                     });
+
+                    if (_decorators) {
+                        _decorators.forEach(dec => dec.ForeDraw(insert_element));
+                    }
                 }
             };
         }

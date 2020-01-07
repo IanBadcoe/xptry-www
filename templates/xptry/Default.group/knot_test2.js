@@ -44,20 +44,12 @@ $(document).ready(function(){
     };
 
     // we may not reach outer_rad, but that's where a next layer would go...
-    function apply_template(tile, centre, inner_rad, outer_rad, repeats) {
+    function make_template_knot_radial(tile, centre, inner_rad, outer_rad, repeats, base_plate, decorators) {
         var points = [];
 
         const num_angles = tile.Width * repeats;
         const ang_step = 2 * Math.PI / num_angles;
         var rad_step = (outer_rad - inner_rad) / tile.Height;
-
-        // var sks = [];
-        // var cks = [];
-
-        // for(var k = 0; k < num_angles; k++) {
-        //     sks.push(Math.sin(k / num_angles * Math.PI * 2));
-        //     cks.push(-Math.cos(k / num_angles * Math.PI * 2));
-        // }
 
         function transform_point(pnt, base_ang_idx) {
             var ang_idx = base_ang_idx + pnt[0];
@@ -79,15 +71,14 @@ $(document).ready(function(){
             });
         }
 
-        knot = MakeCKnot([{
+        return MakeAdvCKnot([{
             Drawer: draw1,
             Step: 2,
             Points: points,
             Open: false,
             Order: 3
-        }])
-
-        knot.Draw($(".test-line"));
+        }],
+        base_plate, decorators)
     }
 
     function add_ring(centre, rad) {
@@ -98,17 +89,14 @@ $(document).ready(function(){
             points.push([ centre[0] + rad * Math.sin(ang), centre[1] + rad * Math.cos(ang)]);
         }
 
-        knot = MakeCKnot([{
+        return MakeCKnot([{
             Drawer: draw_ring,
             Step: 10,
             Points: points,
             Open: false,
             Order: 2
         }]);
-
-        knot.Draw($(".test-line"));
     }
-
 
     var draw_tie = {
         ForeDrawPolyline: function(insert_element, points, close) {
@@ -118,7 +106,10 @@ $(document).ready(function(){
             add_raw_polyline(insert_element, points,
                 'stroke:rgb(182,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
                 close);
-        },
+            add_raw_polyline_offset(insert_element, points,
+                'stroke:rgb(255,128,196);stroke-width:2;fill:none;stroke-linecap:round;',
+                close, [-1, -2]);
+            },
         BackDrawPolyline: function(insert_element, points, close) {
             add_raw_polyline(insert_element, points,
                 'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
@@ -129,10 +120,52 @@ $(document).ready(function(){
         }
     };
 
-    // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
+    var draw_tie2 = {
+        ForeDrawPolyline: function(insert_element, points, close) {
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(64,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline_offset(insert_element, points,
+                'stroke:rgb(128,128,196);stroke-width:2;fill:none;stroke-linecap:round;',
+                close, [-1, -2]);
+            },
+        BackDrawPolyline: function(insert_element, points, close) {
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(64,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
+                close);
+        }
+    };
+
+    var draw_tie3 = {
+        ForeDrawPolyline: function(insert_element, points, close) {
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(128,128,64);stroke-width:7;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline_offset(insert_element, points,
+                'stroke:rgb(196,196,128);stroke-width:2;fill:none;stroke-linecap:round;',
+                close, [-1, -2]);
+            },
+        BackDrawPolyline: function(insert_element, points, close) {
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
+                close);
+            add_raw_polyline(insert_element, points,
+                'stroke:rgb(128,128,64);stroke-width:7;fill:none;stroke-linecap:round;',
+                close);
+        }
+    };
+
     // x is measured in line thicknesses
     var tie_tile = {
-        Drawer: draw_tie,
         FSeqs: [
             [ [1.25, 0], [1.5, 1], [0, 1.8], [0, 5] ],
             [ [0.25, 0], [0.5, 1] ],
@@ -145,102 +178,19 @@ $(document).ready(function(){
         ]
     };
 
-    function add_tie(tile, centre, ang, thick, inner_rad, outer_rad, front) {
-        var rad_dir = [Math.sin(ang), -Math.cos(ang)];
-        var tang_dir = [rad_dir[1], -rad_dir[0]];
-        var rad_width = outer_rad - inner_rad;
+    var tie1 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 0.66, 8,
+        92, 40, draw_tie);
 
-        function transform_point(p) {
-            var rad = inner_rad + rad_width * p[1];
-            var tang = p[0] * thick;
+    var tie2 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 1.33, 8,
+        92, 40, draw_tie2);
 
-            return [centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
-                centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
-        }
+    var tie3 = MakeRadialTie(tie_tile, [0, 0], Math.PI * -0.2, 8,
+        92, 40, draw_tie3);
 
-        if (front) {
-            tile.FSeqs.forEach(seq => {
-                var points = [];
+    var base_plate = add_ring([0, 0], 112.5);
 
-                seq.forEach(pnt => {
-                    points.push(transform_point(pnt));
-                });
+    var knot = make_template_knot_radial(knot_tile, [0, 0], 100, 125, 14, base_plate,
+        [ tie1, tie2, tie3 ]);
 
-                tile.Drawer.ForeDrawPolyline($(".test-line"), points, false);
-            });
-        } else {
-            tile.BSeqs.forEach(seq => {
-                var points = [];
-
-                seq.forEach(pnt => {
-                    points.push(transform_point(pnt));
-                });
-
-                tile.Drawer.BackDrawPolyline($(".test-line"), points, false);
-            });
-        }
-    }
-
-    var tie1 = {
-        Tile: tie_tile,
-        Ang: 0.66 * Math.PI,
-        Rad: 111,
-        Width: 40,
-        Thick: 8,
-        Centre: [0, 0],
-        DrawFront: function () {
-            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
-                this.Rad - this.Width / 2, this.Rad + this.Width / 2, true);
-        },
-        DrawBack: function () {
-            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
-                this.Rad - this.Width / 2, this.Rad + this.Width / 2, false);
-        }
-    };
-
-    var tie2 = {
-        Tile: tie_tile,
-        Ang: 1.33 * Math.PI,
-        Rad: 111,
-        Width: 40,
-        Thick: 8,
-        Centre: [0, 0],
-        DrawFront: function () {
-            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
-                this.Rad - this.Width / 2, this.Rad + this.Width / 2, true);
-        },
-        DrawBack: function () {
-            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
-                this.Rad - this.Width / 2, this.Rad + this.Width / 2, false);
-        }
-    };
-
-    var tie3 = {
-        Tile: tie_tile,
-        Ang: -0.2 * Math.PI,
-        Rad: 111,
-        Width: 40,
-        Thick: 8,
-        Centre: [0, 0],
-        DrawFront: function () {
-            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
-                this.Rad - this.Width / 2, this.Rad + this.Width / 2, true);
-        },
-        DrawBack: function () {
-            add_tie(this.Tile, this.Centre, this.Ang, this.Thick,
-                this.Rad - this.Width / 2, this.Rad + this.Width / 2, false);
-        }
-    };
-
-    tie1.DrawBack();
-    tie2.DrawBack();
-    tie3.DrawBack();
-
-    add_ring([0, 0], 112.5);
-
-    apply_template(knot_tile, [0, 0], 100, 125, 14);
-
-    tie1.DrawFront();
-    tie2.DrawFront();
-    tie3.DrawFront();
+    knot.Draw($(".test-line"));
 });

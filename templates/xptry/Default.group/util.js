@@ -195,3 +195,28 @@ function add_raw_polyline(el, coords, style, closed) {
 
     el.append(line);
 }
+
+function add_raw_polyline_offset(el, coords, style, closed, offset) {
+    var line;
+
+    var here_points = coords.map(pnt => {
+        return [pnt[0] + offset[0], pnt[1] + offset[1]];
+    });
+
+    if (!closed)
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
+            points: here_points,
+            style: style
+        });
+    }
+    else
+    {
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
+            points: here_points,
+            style: style
+        });
+    }
+
+    el.append(line);
+}
