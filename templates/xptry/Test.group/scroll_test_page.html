@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<meta charset="UTF-8">
+    	<title>title</title>
+		<link rel="stylesheet" type="text/css" media="all" href="{path=default/style}" />
+		{exp:jquery:script_tag}
+		<script src="{path='Test/scroll_test'}"></script>
+	</head>
+	<body>
+        <div style="left: 0; right: 0; top: 0; bottom: 0; position: absolute;overflow:hidden; background-color: yellow;">
+            <div id="home" class="wants-scroll" style="width:400px; height:400px; background-color: red; position: absolute;"
+                 onclick="smart_nav('targetx')">
+
+            </div>
+            <div class="wants-scroll" style="width:400px; height:400px; background-color: blue; position: absolute; left: 700px;">
+
+            </div>
+            <div class="wants-scroll" style="width:400px; height:400px; background-color: blue; position: absolute; left: 1400px;">
+
+            </div>
+            <div id="targetx" class="wants-scroll" style="width:400px; height:400px; background-color: green; position: absolute; left: 2100px;"
+                 onclick="smart_nav()">
+
+            </div>
+        </div>
+    </body>
+</html>
