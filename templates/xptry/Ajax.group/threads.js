@@ -4,7 +4,7 @@
 			"colour" : "{colour}{colour:colour-hex}{/colour}",
 			"left" : {left},
 			"top" : {top},
-			"image" : {thread_image}
+			"image" : "{thread_image}"
 		},
 	{/exp:channel:entries}
 }
