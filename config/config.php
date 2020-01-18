@@ -1,5 +1,6 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+$config['forum_is_installed'] = 'y';
 $config['index_page'] = 'index.php';
 $config['is_system_on'] = 'y';
 $config['multiple_sites_enabled'] = 'y';

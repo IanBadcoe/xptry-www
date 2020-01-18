@@ -1,10 +1,7 @@
 {layout='default/_master_layout'}
 
-{layout:set name='thread'}{segment_2}{/layout:set}
-{layout:set name='path'}{segment_3}{/layout:set}
-
-{if segment_1 == 'thread'}
-{embed=default/_articles thread='{segment_2}''}
-{if:else}
-{embed=default/_threads}
-{/if}
+{exp:channel:entries entry_id='{segment_2}'}
+<div class="outer-absolute">
+    <div class={thread_class} left={left} top={top}></div>
+</div>
+{exp:channel:entries}

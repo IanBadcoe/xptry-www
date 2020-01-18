@@ -165,6 +165,7 @@ $(document).ready(function(){
     };
 
     // x is measured in line thicknesses
+    // y is 0 on the inside of the ring and 1 on the outside
     var tie_tile = {
         FSeqs: [
             [ [1.25, 0], [1.5, 1], [0, 1.8], [0, 5] ],
