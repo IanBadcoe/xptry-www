@@ -1,11 +1,15 @@
 $(document).ready(function () {
     var url = location.href;
-    var sp = url.lastIndexOf("/");
-    var stem = url.substr(0, sp + 1);
-    var init_loc = url.substr(sp + 1);
+    var sp = url.lastIndexOf("#");
+    if (sp == -1) {
+        url = url + "#home"
+        sp = url.lastIndexOf("#");
+    }
+    var stem = url.substr(0, sp);
+    var init_loc = url.substr(sp);
 
     function smart_scroll(where) {
-        var target = $("#" + where);
+        var target = $(where);
         var tpos = target.offset();
 
         $(".wants-scroll").animate({
@@ -15,7 +19,7 @@ $(document).ready(function () {
     }
 
     smart_nav = function (where) {
-        where = where || "home";
+        where = where || "#home";
 
         smart_scroll(where);
 
