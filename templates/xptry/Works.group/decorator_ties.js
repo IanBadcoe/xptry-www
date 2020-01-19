@@ -1,3 +1,5 @@
+"use strict";
+
 function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
     let _tile = tile;
     let _centre = centre;

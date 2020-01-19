@@ -1,3 +1,5 @@
+"use strict";
+
 function MakeParamScaler(interpable) {
     let _lengthish = 0;
     let _interpable = interpable;

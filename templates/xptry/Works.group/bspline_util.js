@@ -12,6 +12,8 @@
 //          \  /
 // p -----x--------> max_knot
 
+"use strict";
+
 function BSplineBasis(x, i, k, knots, max_knot, closed) {
     function f(x, i, k, knots, max_knot) {
             if (i + 1 >= knots.length)

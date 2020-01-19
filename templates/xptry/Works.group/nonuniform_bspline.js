@@ -1,4 +1,6 @@
-MakeNonUniformBSpline = function(points, order, closed) {
+"use strict";
+
+var MakeNonUniformBSpline = function(points, order, closed) {
     let _knots = null;
     let _max_knot;
     let _max_param;
@@ -77,43 +79,45 @@ MakeNonUniformBSpline = function(points, order, closed) {
                 break;
 
             default:
-                throw "unsupported order in point2param";
+                throw "unsupported order: " + _order + " in point2param";
         }
 
         let ret = 0;
 
+        // the first few and last few increments come from seq (where the empty intervals distort the basis
+        // curves) otherwise the spacing is 1
+        function get_increment(i, seq) {
+            if (i < seq.length) {
+                return seq[i];
+            }
+
+            let rev_idx = points.length - i - 1;
+
+            if (rev_idx < seq.length) {
+                return seq[rev_idx];
+            }
+
+            return 1;
+        }
+
+        let seq;
+
         if (points.length in patterns) {
-            let seq = patterns[points.length];
+            seq = patterns[points.length];
 
             for(let i = 0; i < idx; i++) {
                 ret += seq[i]
             }
         } else {
-            let seq = patterns['other'];
-
-            // the first few and last few increments come from seq (where the empty intervals distort the basis
-            // curves) otherwise the spacing is 1
-            function get_increment(i) {
-                if (i < seq.length) {
-                    return seq[i];
-                }
-
-                let rev_idx = points.length - i - 1;
-
-                if (rev_idx < seq.length) {
-                    return seq[rev_idx];
-                }
-
-                return 1;
-            }
+            seq = patterns['other'];
 
             for (let i = 0; i < iidx; i++) {
-                ret += get_increment(i);
+                ret += get_increment(i, seq);
             }
         }
 
         if (fidx > 0) {
-            ret += fidx * get_increment(iidx);
+            ret += fidx * get_increment(iidx, seq);
         }
 
         return ret;

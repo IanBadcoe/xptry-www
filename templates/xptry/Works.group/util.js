@@ -1,3 +1,5 @@
+"use strict";
+
 function vh(v) {
   let h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
   return (v * h) / 100;
