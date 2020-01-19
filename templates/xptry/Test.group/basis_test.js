@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var styles = [
+    let styles = [
         'stroke:rgb(0,0,0);stroke-width:1;fill:none;stroke-linecap:butt;',
         'stroke:rgb(128,0,0);stroke-width:1;fill:none;stroke-linecap:butt;',
         'stroke:rgb(128,128,0);stroke-width:1;fill:none;stroke-linecap:butt;',
@@ -13,7 +13,7 @@ $(document).ready(function(){
     ];
 
     function show_one(points, order, closed, where, yoffset) {
-        var knots;
+        let knots;
 
         if (closed) {
             knots = MakeCyclicKnotVector(points, order);
@@ -21,17 +21,17 @@ $(document).ready(function(){
             knots = MakeClampedKnotVector(points, order);
         }
 
-        var spline = MakeBasisView(knots, order, 400, 100, yoffset, closed);
+        let spline = MakeBasisView(knots, order, 400, 100, yoffset, closed);
 
-        var splwrapper = {
+        let splwrapper = {
             Interp: function(x) {
-                var ret = 0;
+                let ret = 0;
 
-                for(var i = 0; i < spline.NumBases; i++)
+                for(let i = 0; i < spline.NumBases; i++)
                 {
                     spline.SetIdx(i);
 
-                    var c = spline.Interp(x);
+                    let c = spline.Interp(x);
 
                     ret += c[1] - spline.YOffset;
                 }

@@ -1,6 +1,6 @@
 $(document).ready(function(){
     function show_one(order, closed, yoffset, where) {
-        var styles = [
+        let styles = [
             'stroke:rgb(0,0,0);stroke-width:1;fill:none;stroke-linecap:butt;',
             'stroke:rgb(128,0,0);stroke-width:2;fill:none;stroke-linecap:butt;',
             'stroke:rgb(128,128,0);stroke-width:1;fill:none;stroke-linecap:butt;',
@@ -13,7 +13,7 @@ $(document).ready(function(){
             'stroke:rgb(0,256,0);stroke-width:2;fill:none;stroke-linecap:butt;',
         ];
 
-        var points = [
+        let points = [
             [100,  25 + yoffset],
             [75,   25 + yoffset],
             [0,     0 + yoffset],
@@ -26,14 +26,14 @@ $(document).ready(function(){
             [100, -25 + yoffset],
         ];
 
-        var spline = MakeParamScaler(MakeNonUniformBSpline(
+        let spline = MakeParamScaler(MakeNonUniformBSpline(
             points,
             order,
             closed));
 
-        for(var i = 0; i < points.length; i++) {
-            var f = spline.Point2Param(i);
-            var t = spline.Point2Param(i + 1);
+        for(let i = 0; i < points.length; i++) {
+            let f = spline.Point2Param(i);
+            let t = spline.Point2Param(i + 1);
 
             add_polyline_scaled($(where), f, t, 10, spline, styles[i], false, 0, closed);
         }

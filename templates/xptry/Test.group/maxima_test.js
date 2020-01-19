@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var styles = [
+    let styles = [
         'stroke:rgb(0,0,0);stroke-width:1;fill:none;stroke-linecap:butt;',
         'stroke:rgb(128,0,0);stroke-width:1;fill:none;stroke-linecap:butt;',
         'stroke:rgb(128,128,0);stroke-width:1;fill:none;stroke-linecap:butt;',
@@ -25,21 +25,21 @@ $(document).ready(function() {
     }
 
     function rec_search(spline, lower_p, upper_p) {
-        var range = upper_p - lower_p;
+        let range = upper_p - lower_p;
 
         if (range < 1.0e-16) {
             return (lower_p + upper_p) / 2;
         }
 
-        var max_p = -1;
+        let max_p = -1;
         // we're actually on the page, at y down to -600
         // and upside down...
-        var max_a = 0;
+        let max_a = 0;
 
-        for(var i = 0; i <= 100; i++) {
-            var p = i / 100 * range + lower_p;
+        for(let i = 0; i <= 100; i++) {
+            let p = i / 100 * range + lower_p;
 
-            var a = spline_interp(spline, p)[1];
+            let a = spline_interp(spline, p)[1];
 
             if (a < max_a) {
                 max_a = a;
@@ -51,16 +51,16 @@ $(document).ready(function() {
     }
 
     function test_one(points, order, yoffset, where) {
-        var knots = MakeClampedKnotVector(points, order);
+        let knots = MakeClampedKnotVector(points, order);
 
-        var spline = MakeBasisView(knots, order, 600, 100, yoffset, false);
+        let spline = MakeBasisView(knots, order, 600, 100, yoffset, false);
 
-        var maxima = [];
+        let maxima = [];
 
-        for(var idx = 0; idx < points; idx++) {
+        for(let idx = 0; idx < points; idx++) {
             spline.SetIdx(idx);
 
-            var max_p = rec_search(spline, 0, spline.EndParam);
+            let max_p = rec_search(spline, 0, spline.EndParam);
 
             maxima.push(max_p);
 
@@ -81,23 +81,23 @@ $(document).ready(function() {
         return maxima;
     }
 
-    var results = [];
+    let results = [];
 
-    var yoffset = -500;
+    let yoffset = -500;
 
-    for(var i = 4; i < 10; i++) {
+    for(let i = 4; i < 10; i++) {
         results.push(test_one(i, 3, yoffset, ".test-line"));
 
         yoffset += 100;
     }
 
-    var diffs = [];
+    let diffs = [];
 
     results.forEach(result => {
-        var prev = -1;
+        let prev = -1;
 
         diffs.push(result.map(val => {
-            var pprev = prev;
+            let pprev = prev;
             prev = val;
 
             if (pprev == -1) {

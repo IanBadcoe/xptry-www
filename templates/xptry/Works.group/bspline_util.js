@@ -45,19 +45,19 @@ function BSplineBasis(x, i, k, knots, max_knot, closed) {
             return 0;
         }
 
-        var ret = 0;
+        let ret = 0;
 
-        var left_div = knots[i + k] - prev_k;
+        let left_div = knots[i + k] - prev_k;
         if (left_div) {
-            var left_recurse = f(x, i, k - 1, knots, max_knot);
+            let left_recurse = f(x, i, k - 1, knots, max_knot);
             if (left_recurse) {
                 ret += (x - prev_k) / left_div * left_recurse;
             }
         }
 
-        var right_div = knots[i + k + 1] - next_k;
+        let right_div = knots[i + k + 1] - next_k;
         if (right_div) {
-            var right_recurse = f(x, i + 1, k - 1, knots, max_knot);
+            let right_recurse = f(x, i + 1, k - 1, knots, max_knot);
             if (right_recurse) {
                 ret += (knots[i + k + 1] - x) / right_div * right_recurse;
             }
@@ -79,19 +79,19 @@ function BSplineBasis(x, i, k, knots, max_knot, closed) {
 }
 
 function MakeClampedKnotVector(num_points, order) {
-    var num_knots = num_points + 1 + order;
+    let num_knots = num_points + 1 + order;
 
-    var ret = [];
+    let ret = [];
 
-    for(var i = 0; i < order + 1; i++) {
+    for(let i = 0; i < order + 1; i++) {
         ret.push(0);
     }
 
-    for(var i = 1; i < num_points - order; i++) {
+    for(let i = 1; i < num_points - order; i++) {
         ret.push(i);
     }
 
-    for(var i = 0; i < order + 1; i++) {
+    for(let i = 0; i < order + 1; i++) {
         ret.push(num_points - order);
     }
 

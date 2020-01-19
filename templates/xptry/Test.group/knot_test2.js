@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var draw1 = {
+    let draw1 = {
         ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(255,0,0);stroke-width:6;fill:none;stroke-linecap:butt;',
@@ -18,7 +18,7 @@ $(document).ready(function(){
         }
     };
 
-    var draw_ring = {
+    let draw_ring = {
         ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(0,0,0);stroke-width:37;fill:none;stroke-linecap:butt;',
@@ -34,7 +34,7 @@ $(document).ready(function(){
         }
     };
 
-    var knot_tile = {
+    let knot_tile = {
         Width: 6,       // column 6 will overlap column 0 of next cell
         Height: 1,      // if we wanted a "next layer out" to come in at the same spacing, would use +1 here
                         // but currently for ease of sizing an isolated layer...
@@ -45,26 +45,26 @@ $(document).ready(function(){
 
     // we may not reach outer_rad, but that's where a next layer would go...
     function make_template_knot_radial(tile, centre, inner_rad, outer_rad, repeats, base_plate, decorators) {
-        var points = [];
+        let points = [];
 
         const num_angles = tile.Width * repeats;
         const ang_step = 2 * Math.PI / num_angles;
-        var rad_step = (outer_rad - inner_rad) / tile.Height;
+        let rad_step = (outer_rad - inner_rad) / tile.Height;
 
         function transform_point(pnt, base_ang_idx) {
-            var ang_idx = base_ang_idx + pnt[0];
+            let ang_idx = base_ang_idx + pnt[0];
 
             if (ang_idx > num_angles) {
                 ang_idx -= num_angles;
             }
 
-            var rad = inner_rad + pnt[1] * rad_step;
+            let rad = inner_rad + pnt[1] * rad_step;
 
             return [ centre[0] + rad * Math.sin(ang_idx * ang_step),
                      centre[1] + rad * -Math.cos(ang_idx * ang_step) ];
         }
 
-        for(var base_ang_idx = 0; base_ang_idx < num_angles; base_ang_idx += tile.Width )
+        for(let base_ang_idx = 0; base_ang_idx < num_angles; base_ang_idx += tile.Width )
         {
             tile.Pnts.forEach(pnt => {
                 points.push(transform_point(pnt, base_ang_idx));
@@ -82,10 +82,10 @@ $(document).ready(function(){
     }
 
     function add_ring(centre, rad) {
-        var points = [];
+        let points = [];
 
-        for(var i = 0; i < 36; i++) {
-            var ang = 2 * Math.PI / 36 * i;
+        for(let i = 0; i < 36; i++) {
+            let ang = 2 * Math.PI / 36 * i;
             points.push([ centre[0] + rad * Math.sin(ang), centre[1] + rad * Math.cos(ang)]);
         }
 
@@ -98,7 +98,7 @@ $(document).ready(function(){
         }]);
     }
 
-    var draw_tie = {
+    let draw_tie = {
         ForeDrawPolyline: function(insert_element, points, close) {
             add_raw_polyline(insert_element, points,
                 'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
@@ -120,7 +120,7 @@ $(document).ready(function(){
         }
     };
 
-    var draw_tie2 = {
+    let draw_tie2 = {
         ForeDrawPolyline: function(insert_element, points, close) {
             add_raw_polyline(insert_element, points,
                 'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
@@ -142,7 +142,7 @@ $(document).ready(function(){
         }
     };
 
-    var draw_tie3 = {
+    let draw_tie3 = {
         ForeDrawPolyline: function(insert_element, points, close) {
             add_raw_polyline(insert_element, points,
                 'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
@@ -166,7 +166,7 @@ $(document).ready(function(){
 
     // x is measured in line thicknesses
     // y is 0 on the inside of the ring and 1 on the outside
-    var tie_tile = {
+    let tie_tile = {
         FSeqs: [
             [ [1.25, 0], [1.5, 1], [0, 1.8], [0, 5] ],
             [ [0.25, 0], [0.5, 1] ],
@@ -179,18 +179,18 @@ $(document).ready(function(){
         ]
     };
 
-    var tie1 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 0.66, 8,
+    let tie1 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 0.66, 8,
         92, 40, draw_tie);
 
-    var tie2 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 1.33, 8,
+    let tie2 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 1.33, 8,
         92, 40, draw_tie2);
 
-    var tie3 = MakeRadialTie(tie_tile, [0, 0], Math.PI * -0.2, 8,
+    let tie3 = MakeRadialTie(tie_tile, [0, 0], Math.PI * -0.2, 8,
         92, 40, draw_tie3);
 
-    var base_plate = add_ring([0, 0], 112.5);
+    let base_plate = add_ring([0, 0], 112.5);
 
-    var knot = make_template_knot_radial(knot_tile, [0, 0], 100, 125, 14, base_plate,
+    let knot = make_template_knot_radial(knot_tile, [0, 0], 100, 125, 14, base_plate,
         [ tie1, tie2, tie3 ]);
 
     knot.Draw($(".test-line"));

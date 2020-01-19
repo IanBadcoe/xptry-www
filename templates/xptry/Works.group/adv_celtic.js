@@ -1,15 +1,15 @@
 (
     function() {
         MakeAdvCKnot = function(loops, base_plate, decorators) {
-            var _base_plate = base_plate;
-            var _decorators = decorators;
+            let _base_plate = base_plate;
+            let _decorators = decorators;
 
             if (!Array.isArray(loops))
             {
                 loops = [loops];
             }
 
-            var intersects = {};
+            let intersects = {};
 
             loops.forEach(loop => {
                 loop.Points.forEach(pnt => {
@@ -30,10 +30,10 @@
                 });
             });
 
-            var loop = loops[0];
+            let loop = loops[0];
             loops.splice(0, 1);
-            var next_over = false;
-            var _knots = [];
+            let next_over = false;
+            let _knots = [];
 
             while(loop)
             {
@@ -45,11 +45,11 @@
                     loop.Order = 3;
                 }
 
-                var anno_points = [];
-                var points = [];
+                let anno_points = [];
+                let points = [];
 
                 loop.Points.forEach(pnt => {
-                    var inter = intersects[pnt];
+                    let inter = intersects[pnt];
 
                     if (inter.count < 2)
                     {
@@ -69,14 +69,14 @@
                     points.push(pnt);
                 });
 
-                var spline = MakeParamScaler(MakeNonUniformBSpline(points, loop.Order, !loop.Open));
+                let spline = MakeParamScaler(MakeNonUniformBSpline(points, loop.Order, !loop.Open));
 
-                var overlay_ranges = [];
+                let overlay_ranges = [];
 
                 anno_points.forEach((el, idx) => {
                     if (el.over) {
-                        var f = spline.Point2Param(idx - 0.5);
-                        var t = spline.Point2Param(idx + 0.5);
+                        let f = spline.Point2Param(idx - 0.5);
+                        let t = spline.Point2Param(idx + 0.5);
                         overlay_ranges.push([f, t]);
                     }
                 });
@@ -90,7 +90,7 @@
                         return this.Spline.EndParam;
                     },
                     Interp: function(x) {
-                        var hx = x;
+                        let hx = x;
 
                         while(hx > this.EndParam)
                         {
@@ -111,7 +111,7 @@
                 if (loops.length == 0)
                     break;
 
-                var found_idx = -1;
+                let found_idx = -1;
 
                 try {
                     // find a sequence that shares an intersect with what we already have
@@ -119,10 +119,10 @@
                         // by toggling this at each intersection with unknown state,
                         // we can back-calculate to how we have to start in order to arrive with the
                         // correct next_over when we hit on with known state
-                        var invert = false;
+                        let invert = false;
 
                         loop.Points.forEach((pnt, pnt_idx) => {
-                            var inter = intersects[pnt];
+                            let inter = intersects[pnt];
 
                             if (inter.is_over != null) {
                                 found_idx = loop_idx;

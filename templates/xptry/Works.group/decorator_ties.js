@@ -1,20 +1,20 @@
 function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
-    var _tile = tile;
-    var _centre = centre;
-    var _ang = ang;
-    var _thick = thick;
-    var _rad = rad;
-    var _width = width;
-    var _drawer = drawer;
+    let _tile = tile;
+    let _centre = centre;
+    let _ang = ang;
+    let _thick = thick;
+    let _rad = rad;
+    let _width = width;
+    let _drawer = drawer;
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
-        var rad_dir = [Math.sin(_ang), -Math.cos(_ang)];
-        var tang_dir = [rad_dir[1], -rad_dir[0]];
+        let rad_dir = [Math.sin(_ang), -Math.cos(_ang)];
+        let tang_dir = [rad_dir[1], -rad_dir[0]];
 
         function transform_point(p) {
-            var rad = _rad + _width * p[1];
-            var tang = p[0] * thick;
+            let rad = _rad + _width * p[1];
+            let tang = p[0] * thick;
 
             return [_centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
                 _centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
@@ -22,7 +22,7 @@ function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
 
         if (front) {
             _tile.FSeqs.forEach(seq => {
-                var points = [];
+                let points = [];
 
                 seq.forEach(pnt => {
                     points.push(transform_point(pnt));
@@ -32,7 +32,7 @@ function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
             });
         } else {
             _tile.BSeqs.forEach(seq => {
-                var points = [];
+                let points = [];
 
                 seq.forEach(pnt => {
                     points.push(transform_point(pnt));

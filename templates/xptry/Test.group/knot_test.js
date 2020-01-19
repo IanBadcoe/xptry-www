@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var draw1 = {
+    let draw1 = {
         ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(255,0,0);stroke-width:6;fill:none;stroke-linecap:butt;',
@@ -18,7 +18,7 @@ $(document).ready(function(){
         }
     };
 
-    var draw2 = {
+    let draw2 = {
         ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(32,32,150);stroke-width:10;fill:none;stroke-linecap:butt;',
@@ -31,7 +31,7 @@ $(document).ready(function(){
         }
     };
 
-    var draw3 = {
+    let draw3 = {
         ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(0,128,0);stroke-width:8;fill:none;stroke-linecap:butt;',
@@ -47,7 +47,7 @@ $(document).ready(function(){
         }
     };
 
-    var draw4 = {
+    let draw4 = {
         ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(150,0,150);stroke-width:12;fill:none;stroke-linecap:butt;',
@@ -63,7 +63,7 @@ $(document).ready(function(){
         }
     };
 
-    var knot = MakeCKnot(
+    let knot = MakeCKnot(
         [
             {
                 Drawer: draw1,

@@ -1,20 +1,20 @@
 (
     function() {
         MakeBasisView = function(knots, order, width, height, yoffset, closed) {
-            var _closed = closed;
+            let _closed = closed;
 
-            var _knots = [].concat(
+            let _knots = [].concat(
                 knots
             );
 
-            var _order = order;
+            let _order = order;
 
-            var _width = width;
-            var _height = height;
-            var _yoffset = yoffset;
+            let _width = width;
+            let _height = height;
+            let _yoffset = yoffset;
 
-            var _max_param = _knots[_knots.length - 1];
-            var _max_knot = _knots[knots.length - 1];
+            let _max_param = _knots[_knots.length - 1];
+            let _max_knot = _knots[knots.length - 1];
 
             if (closed) {
                 _max_param = _knots[_knots.length - order - 1];
@@ -36,7 +36,7 @@
                     return _order;
                 },
                 Interp: function(p) {
-                    var x = p / this.EndParam * width;
+                    let x = p / this.EndParam * width;
                     return [x, _yoffset - spline_interp(p, _knots, _order, this.idx) * height];
                 },
                 SetIdx: function(idx) { this.idx = idx; },

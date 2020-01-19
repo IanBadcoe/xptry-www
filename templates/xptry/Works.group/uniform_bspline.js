@@ -1,7 +1,7 @@
 (
     function() {
         MakeUniformBSpline = function(points, order, closed) {
-            var _here_points;
+            let _here_points;
 
             if (!closed) {
                 _here_points = [].concat(
@@ -17,13 +17,13 @@
                 );
             }
 
-            var _orig_size = points.length;
+            let _orig_size = points.length;
 
-            var _orig_points = points;
+            let _orig_points = points;
 
-            var _order = order;
+            let _order = order;
 
-            var _closed = closed;
+            let _closed = closed;
 
             function B(x, i, k) {
                 if (k == 0) {
@@ -41,16 +41,16 @@
 
             function spline_interp(x, p, k)
             {
-                var ret = [];
+                let ret = [];
                 ret.length = p[0].length;
                 ret.fill(0);
 
-                var hx = x + k;
+                let hx = x + k;
 
                 _here_points.forEach(function(el, idx) {
-                    var f = B(hx, idx, k);
+                    let f = B(hx, idx, k);
 
-                    var t = el.map(function(q) { return f * q; });
+                    let t = el.map(function(q) { return f * q; });
 
                     ret = ret.map(function(q, i){
                         return q + t[i];

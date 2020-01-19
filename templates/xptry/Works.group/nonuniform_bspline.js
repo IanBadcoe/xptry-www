@@ -1,7 +1,7 @@
 MakeNonUniformBSpline = function(points, order, closed) {
-    var _knots = null;
-    var _max_knot;
-    var _max_param;
+    let _knots = null;
+    let _max_knot;
+    let _max_param;
 
     if (!closed) {
         _knots = MakeClampedKnotVector(points.length, order);
@@ -17,20 +17,20 @@ MakeNonUniformBSpline = function(points, order, closed) {
         _max_knot = _max_param - _knots[0];
     }
 
-    var _points = points;
-    var _closed = closed;
-    var _order = order;
+    let _points = points;
+    let _closed = closed;
+    let _order = order;
 
     function spline_interp(x, p, knots, k)
     {
-        var ret = [];
+        let ret = [];
         ret.length = p[0].length;
         ret.fill(0);
 
         _points.forEach(function(el, idx) {
-            var f = BSplineBasis(x, idx, k, knots, _max_knot, _closed);
+            let f = BSplineBasis(x, idx, k, knots, _max_knot, _closed);
 
-            var t = el.map(function(q) { return f * q; });
+            let t = el.map(function(q) { return f * q; });
 
             ret = ret.map(function(q, i){
                 return q + t[i];
@@ -42,7 +42,7 @@ MakeNonUniformBSpline = function(points, order, closed) {
 
     // numbers determined empirically using maxima test page
     function point2param_open(idx) {
-        var patterns;
+        let patterns;
 
         if (idx >= _points.length) {
             idx = _points.lenght -1;
@@ -50,8 +50,8 @@ MakeNonUniformBSpline = function(points, order, closed) {
             idx = 0;
         }
 
-        var iidx = Math.floor(idx);
-        var fidx = idx - iidx;
+        let iidx = Math.floor(idx);
+        let fidx = idx - iidx;
 
         switch(_order) {
             case 1:
@@ -80,16 +80,16 @@ MakeNonUniformBSpline = function(points, order, closed) {
                 throw "unsupported order in point2param";
         }
 
-        var ret = 0;
+        let ret = 0;
 
         if (points.length in patterns) {
-            var seq = patterns[points.length];
+            let seq = patterns[points.length];
 
-            for(var i = 0; i < idx; i++) {
+            for(let i = 0; i < idx; i++) {
                 ret += seq[i]
             }
         } else {
-            var seq = patterns['other'];
+            let seq = patterns['other'];
 
             // the first few and last few increments come from seq (where the empty intervals distort the basis
             // curves) otherwise the spacing is 1
@@ -98,7 +98,7 @@ MakeNonUniformBSpline = function(points, order, closed) {
                     return seq[i];
                 }
 
-                var rev_idx = points.length - i - 1;
+                let rev_idx = points.length - i - 1;
 
                 if (rev_idx < seq.length) {
                     return seq[rev_idx];
@@ -107,7 +107,7 @@ MakeNonUniformBSpline = function(points, order, closed) {
                 return 1;
             }
 
-            for (var i = 0; i < iidx; i++) {
+            for (let i = 0; i < iidx; i++) {
                 ret += get_increment(i);
             }
         }
