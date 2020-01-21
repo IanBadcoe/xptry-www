@@ -1,18 +1,18 @@
 $(document).ready(function () {
-    var url = location.href;
-    var sp = url.lastIndexOf("#");
+    let url = location.href;
+    let sp = url.lastIndexOf("#");
     if (sp == -1) {
         url = url + "#home"
         sp = url.lastIndexOf("#");
     }
-    var stem = url.substr(0, sp);
-    var init_loc = url.substr(sp);
+    let stem = url.substr(0, sp);
+    let init_loc = url.substr(sp);
 
     function smart_scroll(where) {
-        var target = $(where);
-        var tpos = target.offset();
+        let target = $(where);
+        let tpos = target.offset();
 
-        $(".wants-scroll").animate({
+        $(".scroll-container").animate({
             left: "-=" + tpos.left + "px",
             top: "-=" + tpos.top + "px"
         });

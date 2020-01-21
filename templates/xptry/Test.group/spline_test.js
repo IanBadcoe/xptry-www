@@ -1,6 +1,6 @@
 $(document).ready(function() {
     function show_one(order, closed, xoffset, yoffset, where) {
-        var spline = MakeNonUniformBSpline([
+        let spline = MakeNonUniformBSpline([
             [xoffset + 50, yoffset - 50],
             [xoffset - 50, yoffset - 50],
             [xoffset - 50, yoffset + 50],

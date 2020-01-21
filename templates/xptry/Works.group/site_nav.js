@@ -6,18 +6,17 @@ $(document).ready(function() {
     let _world_centre_x = 0;
     let _world_centre_y = 0;
 
-    SiteNav = {
-        UrlStem : stem,
+    window.SiteNav = {
         SmartScroll : function (where) {
             if (!(where in _threads))
                 return;
 
-            let dx = _threads[where].left - _world_centre_x;
-            let dy = _threads[where].left - _world_centre_x;
+            let dx = _threads[where].left - (innerWidth - _threads[where].width) / 2 - _world_centre_x;
+            let dy = _threads[where].top - (innerHeight - _threads[where].height) / 2 - _world_centre_y;
             let target = $(where);
             let tpos = target.offset();
 
-            $(".wants-scroll").animate({
+            $(".scroll-container").animate({
                 left: "-=" + tpos.left + "px",
                 top: "-=" + tpos.centre_y + "px"
             });
@@ -32,7 +31,7 @@ $(document).ready(function() {
         Init: async function(home_id) {
             this.DefaultLocation = home_id;
 
-            let promise = RefreshNavData();
+            let promise = this.RefreshNavData();
 
             let url = location.href;
             let sp = url.lastIndexOf("#");
