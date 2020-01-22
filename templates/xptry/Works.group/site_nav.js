@@ -11,20 +11,21 @@ $(document).ready(function() {
             if (!(where in _threads))
                 return;
 
-            let dx = _threads[where].left - (innerWidth - _threads[where].width) / 2 - _world_centre_x;
-            let dy = _threads[where].top - (innerHeight - _threads[where].height) / 2 - _world_centre_y;
-            let target = $(where);
-            let tpos = target.offset();
+            let data = _threads[where];
+
+            let dx = data.centre_x - (innerWidth - data.width) / 2 - _world_centre_x;
+            let dy = data.centre_y - (innerHeight - data.height) / 2 - _world_centre_y;
 
             $(".scroll-container").animate({
-                left: "-=" + tpos.left + "px",
-                top: "-=" + tpos.centre_y + "px"
+                left: "-=" + dx + "px",
+                top: "-=" + dy + "px"
             });
         },
         SmartNav : function (where) {
             where = where || this.DefaultLocation;
 
-            this.smart_scroll(where);
+            this.SmartLoad(where);
+            this.SmartScroll(where);
 
             history.pushState(where, "", this.UrlStem + "#" + where);
         },
@@ -51,7 +52,8 @@ $(document).ready(function() {
             await promise;
 
             // scroll to that location
-            smart_scroll(init_loc);
+            this.SmartLoad(init_loc);
+            this.SmartScroll(init_loc);
 
             // listen for history navigation
             addEventListener("popstate", event => {
@@ -86,6 +88,33 @@ $(document).ready(function() {
             );
 
             return Promise.all(promises);
+        },
+        SmartLoad : function(target) {
+            let sc = $(".scroll-container");
+            let already = sc.has("#" + target);
+
+            if (already.size() > 0)
+                return;
+
+            let data = _threads[target];
+
+            let ne = $("<div></div>").attr({
+                left : data.centre_x - data.width / 2,
+                top : data.centre_y - data.height / 2,
+                class : "absolute zero-spacing"
+            }).css({
+                "background-color" : "#" + data.colour,
+                width : data.width + "px",
+                height : data.height + "px"
+            });
+
+            let ctor = data.ctor;
+
+            if (ctor in window.Ctors) {
+                window.Ctors[ctor](ne)
+            }
+
+            sc.append(ne);
         }
     };
     function ajax_error(hdr, status, error) {

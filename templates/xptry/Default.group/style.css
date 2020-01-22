@@ -1,3 +1,7 @@
+body {
+    overflow: hidden;
+}
+
 div.scroll-container {
     position: relative;
     overflow: visible;
