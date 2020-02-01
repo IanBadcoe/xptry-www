@@ -3,8 +3,21 @@
 $(document).ready(function() {
     let _decors;
     let _threads;
-    let _world_centre_x = 0;
-    let _world_centre_y = 0;
+
+    let fix_ctor = function(obj) {
+        obj.ctor_fn = null;
+
+        let ctor_string = obj.ctor;
+
+        if (ctor_string)
+        {
+            try {
+                obj.ctor_fn = new Function("return window.Ctors." + ctor_string)();
+            } catch (error) {
+                alert("badly configured ctor for 'k':\n    - ctor was: " + ctor_string + "\n    - error was: " + error);
+            }
+        }
+    }
 
     window.SiteNav = {
         SmartScroll : function (where) {
@@ -13,12 +26,12 @@ $(document).ready(function() {
 
             let data = _threads[where];
 
-            let dx = data.centre_x - (innerWidth - data.width) / 2 - _world_centre_x;
-            let dy = data.centre_y - (innerHeight - data.height) / 2 - _world_centre_y;
+			let dx = -data.centre_x + innerWidth / 2;
+            let dy = -data.centre_y + innerHeight / 2;
 
             $(".scroll-container").animate({
-                left: "-=" + dx + "px",
-                top: "-=" + dy + "px"
+                left: dx + "px",
+                top: dy + "px"
             });
         },
         SmartNav : function (where) {
@@ -78,13 +91,16 @@ $(document).ready(function() {
                 $.ajax(
                     "{path='Ajax/threads}",
                     {
-                        success: function(data, status) {
-                            _threads = data;
-                        },
                         dataType: "json",
                         error: ajax_error
                     }
-                )
+                ).then((data, status) => {
+                    _threads = data;
+
+                    for(const k in _threads) {
+                        fix_ctor(_threads[k]);
+                    }
+                })
             );
 
             return Promise.all(promises);
@@ -99,19 +115,20 @@ $(document).ready(function() {
             let data = _threads[target];
 
             let ne = $("<div></div>").attr({
-                left : data.centre_x - data.width / 2,
-                top : data.centre_y - data.height / 2,
-                class : "absolute zero-spacing"
+                class: "absolute zero-spacing",
+                id: target
             }).css({
                 "background-color" : "#" + data.colour,
+                left: data.centre_x - data.width / 2,
+                top: data.centre_y - data.height / 2,
                 width : data.width + "px",
                 height : data.height + "px"
             });
 
-            let ctor = data.ctor;
+            let ctor = data.ctor_fn;
 
-            if (ctor in window.Ctors) {
-                window.Ctors[ctor](ne)
+            if (ctor) {
+                ctor(ne, data);
             }
 
             sc.append(ne);
