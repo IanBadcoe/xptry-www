@@ -1,4 +1,4 @@
-body {
+body, .outer {
     overflow: hidden;
 }
 
