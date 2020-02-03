@@ -40,7 +40,7 @@ $(document).ready(function() {
             this.SmartScroll(where);
             history.replaceState(where, "", url);
         },
-        SmartScroll : function (where, chain_from) {
+        SmartScroll : function (where, chain_from, first, last) {
             let data = _threads[where];
 
             if (!data) {
@@ -51,18 +51,34 @@ $(document).ready(function() {
                 return chain_from;
             }
 
-			let dx = -data.centre_x + innerWidth / 2;
-            let dy = -data.centre_y + innerHeight / 2;
+            let sc = $(".scroll-container");
+            let old_pos = sc.position();
+
+			let x = -data.centre_x + innerWidth / 2;
+            let y = -data.centre_y + innerHeight / 2;
+
+            let dx = old_pos.left - x;
+            let dy = old_pos.top - y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+
+            let easing = first ? "easeInQuint" : last ? "easeOutQuint" : "linear";
+
+            let speed = first || last ? 0.3 : 0.4;
+
 
             if (!chain_from) {
                 chain_from = Promise.resolve(0);
             }
 
             return chain_from.then(() => {
-                $(".scroll-container").animate({
-                    left: dx + "px",
-                    top: dy + "px"
-                });
+                sc.animate(
+                    {
+                        left: x + "px",
+                        top: y + "px"
+                    },
+                    dist * speed,
+                    easing
+                );
             });
         },
         SmartNav : function (where) {
@@ -86,16 +102,18 @@ $(document).ready(function() {
             }
 
             let promise = null;
+            let first = true;
 
             if (steps) {
                 steps.forEach(step => {
                     this.SmartLoad(step);
-                    promise = this.SmartScroll(step, promise);
+                    promise = this.SmartScroll(step, promise, first);
+                    first = false;
                 });
             }
 
             this.SmartLoad(where);
-            this.SmartScroll(where, promise);
+            this.SmartScroll(where, promise, false, true);
 
             this.PreviousLocation = where;
             history.pushState(where, "", this.UrlStem + "#" + where);
@@ -183,7 +201,7 @@ $(document).ready(function() {
             let sc = $(".scroll-container");
             let already = sc.has("#" + target);
 
-            if (already.size() > 0)
+            if (already.length > 0)
                 return;
 
             let data = _threads[target];
