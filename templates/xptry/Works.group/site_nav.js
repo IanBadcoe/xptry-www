@@ -3,6 +3,7 @@
 $(document).ready(function() {
     let _decors;
     let _threads;
+    let _paths;
 
     let fix_ctor = function(obj) {
         obj.ctor_fn = null;
@@ -20,30 +21,69 @@ $(document).ready(function() {
     }
 
     window.SiteNav = {
-        SmartScroll : function (where) {
-            if (!(where in _threads))
-                return;
-
+        SmartScroll : function (where, chain_from) {
             let data = _threads[where];
+
+            if (!data) {
+                data = _decors[where];
+            }
+
+            if (!data) {
+                return chain_from;
+            }
 
 			let dx = -data.centre_x + innerWidth / 2;
             let dy = -data.centre_y + innerHeight / 2;
 
-            $(".scroll-container").animate({
-                left: dx + "px",
-                top: dy + "px"
+            if (!chain_from) {
+                chain_from = Promise.resolve(0);
+            }
+
+            return chain_from.then(() => {
+                $(".scroll-container").animate({
+                    left: dx + "px",
+                    top: dy + "px"
+                });
             });
         },
         SmartNav : function (where) {
             where = where || this.DefaultLocation;
 
-            this.SmartLoad(where);
-            this.SmartScroll(where);
+            let steps = null;
 
+            if (this.PreviousLocation) {
+                let path = _paths.find(x => x.from == this.PreviousLocation && x.to == where );
+
+                if (path) {
+                    steps = path.waypoints;
+                } else {
+                    // look for reverse of route
+                    path = _paths.find(x => x.to == this.PreviousLocation && x.from == where );
+
+                    if (path) {
+                        steps = path.waypoints.slice().reverse();
+                    }
+                }
+            }
+
+            let promise = null;
+
+            if (steps) {
+                steps.forEach(step => {
+                    this.SmartLoad(step);
+                    promise = this.SmartScroll(step, promise);
+                });
+            }
+
+            this.SmartLoad(where);
+            this.SmartScroll(where, promise);
+
+            this.PreviousLocation = where;
             history.pushState(where, "", this.UrlStem + "#" + where);
         },
         Init: async function(home_id) {
             this.DefaultLocation = home_id;
+            this.PreviousLocation = false;
 
             let promise = this.RefreshNavData();
 
@@ -67,6 +107,7 @@ $(document).ready(function() {
             // scroll to that location
             this.SmartLoad(init_loc);
             this.SmartScroll(init_loc);
+            this.PreviousLocation = init_loc;
 
             // listen for history navigation
             addEventListener("popstate", event => {
@@ -79,13 +120,16 @@ $(document).ready(function() {
                 $.ajax(
                     "{path='Ajax/decors}",
                     {
-                        success: function(data, status) {
-                            _decors = data;
-                        },
                         dataType: "json",
                         error: ajax_error
                     }
-                )
+                ).then((data, status) => {
+                    _decors = data;
+
+                    for(const k in _decors) {
+                        fix_ctor(_decors[k]);
+                    }
+                })
             );
             promises.push(
                 $.ajax(
@@ -102,6 +146,17 @@ $(document).ready(function() {
                     }
                 })
             );
+            promises.push(
+                $.ajax(
+                    "{path='Ajax/paths}",
+                    {
+                        dataType: "json",
+                        error: ajax_error
+                    }
+                ).then((data, status) => {
+                    _paths = data;
+                })
+            );
 
             return Promise.all(promises);
         },
@@ -113,6 +168,14 @@ $(document).ready(function() {
                 return;
 
             let data = _threads[target];
+
+            if (!data) {
+                data = _decors[target];
+            }
+
+            if (!data) {
+                return;
+            }
 
             let ne = $("<div></div>").attr({
                 class: "absolute zero-spacing",

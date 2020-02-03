@@ -1,0 +1,1 @@
+[{exp:channel:entries channel='path' backspace='1'}{"title":"{title}","from":"{from}{from:url_title}{/from}","to":"{to}{to:url_title}{/to}","waypoints":[{waypoints backspace="1"}"{waypoints:url_title}",{/waypoints}]},{/exp:channel:entries}]
