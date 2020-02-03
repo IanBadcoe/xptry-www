@@ -21,6 +21,25 @@ $(document).ready(function() {
     }
 
     window.SiteNav = {
+        HandlePop : function(where) {
+            // when we retype the anchor part we seem to get a popstate with no state
+            let url = location.href;
+
+            if (!where) {
+                let sp = url.lastIndexOf("#");
+
+                if (sp !== -1) {
+                    where = url.substr(sp + 1);
+                }
+            }
+
+            if (!where)
+                return;
+
+            this.SmartLoad(where);
+            this.SmartScroll(where);
+            history.replaceState(where, "", url);
+        },
         SmartScroll : function (where, chain_from) {
             let data = _threads[where];
 
@@ -111,7 +130,7 @@ $(document).ready(function() {
 
             // listen for history navigation
             addEventListener("popstate", event => {
-                this.SmartScroll(event.state);
+                this.HandlePop(event.state);
             });
         },
         RefreshNavData: async function() {
@@ -181,12 +200,18 @@ $(document).ready(function() {
                 class: "absolute zero-spacing",
                 id: target
             }).css({
-                "background-color" : "#" + data.colour,
                 left: data.centre_x - data.width / 2,
                 top: data.centre_y - data.height / 2,
-                width : data.width + "px",
-                height : data.height + "px"
             });
+
+            if (data.colour) {
+                // no point applying width/height unless also visible
+                ne.css({
+                    "background-color" : "#" + data.colour,
+                    width : data.width + "px",
+                    height : data.height + "px"
+                });
+            }
 
             let ctor = data.ctor_fn;
 

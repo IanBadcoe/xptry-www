@@ -9,12 +9,9 @@ div.hud {
 div.scroll-container {
     position: relative;
     overflow: visible;
-    width: 100px;
-    height: 100px;
-    background: #4f4ff4;
 }
 
-div.absolute {
+.absolute {
     position: absolute;
 }
 

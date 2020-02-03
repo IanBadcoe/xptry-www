@@ -7,25 +7,42 @@ $(document).ready(function() {
         };
     }
 
-    let image_field = function(density, min_scale, max_scale, front_edge_perspective_distance) {
-        let do_one_image = (element, images, rnd) => {
-            let x = rnd.quick() * element.width();
-            let y = rnd.quick() * element.height();
+    let image_field = function(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
+        let do_one_image = (element, images, rnd, width, height) => {
+            let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * width;
+            let y = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * height;
             let scale = rnd.quick() * (max_scale - min_scale) + min_scale;
-            let persp = 1.0 / (front_edge_perspective_distance + element.height() - y);
-            let idx = rnd.quick() * images.length;
+            let persp = front_edge_perspective_distance / (front_edge_perspective_distance + height - y);
+            let idx = Math.floor(rnd.quick() * images.length);
 
             scale *= persp;
-            element.append("<img src='" + images[idx] + "' class='nav-image' style='transform:scale(" + scale + ")'>");
+
+            x = (x - width / 2) * persp + width / 2;
+            y = (y - height / 2) * persp + height / 2;
+
+            let ne = $("<img src='" + images[idx] + "'>").attr({
+                class: "absolute zero-spacing"
+            });
+
+            ne.on("load", (event) => {
+                let hx = x - ne.width() / 2;
+                let hy = y - ne.height() / 2;
+
+                ne.css({
+                    transform: "translate(" + hx + "px, " + hy + "px) scale(" + scale + ", " + scale * aspect + ")",
+                });
+            });
+
+            element.append(ne);
         };
 
         return (element, data) => {
-            let area = element.width() * element.height();
+            let area = data.width * data.height;
             let number = area * density;
             let rnd = MakeRand(element.attr("id"));
 
             for(let i = 0; i < number; i++) {
-                do_one_image(element, data.images, rnd);
+                do_one_image(element, data.images, rnd, data.width, data.height);
             }
         }
     }
