@@ -26,7 +26,7 @@ var MakeUniformBSpline = function(points, order, closed) {
     let _closed = closed;
 
     function B(x, i, k) {
-        if (k == 0) {
+        if (k === 0) {
             if (x >= i && x < i + 1)
             {
                 return 1;

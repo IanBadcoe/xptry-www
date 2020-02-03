@@ -1,7 +1,7 @@
 $(document).ready(function () {
     let url = location.href;
     let sp = url.lastIndexOf("#");
-    if (sp == -1) {
+    if (sp === -1) {
         url = url + "#home"
         sp = url.lastIndexOf("#");
     }

@@ -108,7 +108,7 @@ var MakeAdvCKnot = function(loops, base_plate, decorators) {
 
         loop = null;
 
-        if (loops.length == 0)
+        if (loops.length === 0)
             break;
 
         let found_idx = -1;
@@ -128,7 +128,7 @@ var MakeAdvCKnot = function(loops, base_plate, decorators) {
                         found_idx = loop_idx;
                         // this will be the first intersecting element we hit, so set next_over
                         // to send it the right way
-                        next_over = inter.is_over == invert;
+                        next_over = inter.is_over === invert;
 
                         throw "got one!"
                     } else if (inter.count > 1) {
@@ -142,7 +142,7 @@ var MakeAdvCKnot = function(loops, base_plate, decorators) {
                 throw e;
         }
 
-        if (found_idx == -1) {
+        if (found_idx === -1) {
             // didn't find a connected sequence, take an unconnected one...
             found_idx = 0;
             // arbitrary but for consistency

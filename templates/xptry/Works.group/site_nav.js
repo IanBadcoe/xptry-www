@@ -52,13 +52,13 @@ $(document).ready(function() {
             let steps = null;
 
             if (this.PreviousLocation) {
-                let path = _paths.find(x => x.from == this.PreviousLocation && x.to == where );
+                let path = _paths.find(x => x.from === this.PreviousLocation && x.to === where );
 
                 if (path) {
                     steps = path.waypoints;
                 } else {
                     // look for reverse of route
-                    path = _paths.find(x => x.to == this.PreviousLocation && x.from == where );
+                    path = _paths.find(x => x.to === this.PreviousLocation && x.from === where );
 
                     if (path) {
                         steps = path.waypoints.slice().reverse();
@@ -91,7 +91,7 @@ $(document).ready(function() {
             let sp = url.lastIndexOf("#");
 
             // if we don't have a location, set the home_id
-            if (sp == -1) {
+            if (sp === -1) {
                 url = url + "#" + home_id
                 sp = url.lastIndexOf("#");
             }

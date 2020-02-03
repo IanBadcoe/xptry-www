@@ -22,18 +22,18 @@ function BSplineBasis(x, i, k, knots, max_knot, closed) {
         const prev_k = knots[i];
         const next_k = knots[i + 1];
 
-        if (k == 0) {
+        if (k === 0) {
             // always test for <= at lower bound
             if (prev_k > x) {
                 return 0;
             }
 
-            if (prev_k != max_knot && next_k == max_knot) {
+            if (prev_k != max_knot && next_k === max_knot) {
                 // for open curves (max_knot should be -1 for closed curves...)
                 //
                 // if we are the last, non-empty interval allow the upper bound to
                 // lie in the interval (otherwise we can never quite reach the end of the curve
-                // because x == max_knot lies inside no knot interval)
+                // because x === max_knot lies inside no knot interval)
                 //
                 // (BUT DON'T do this anywhere else, because we'd get p > 1 at max_knot)
                 if (x <= next_k)

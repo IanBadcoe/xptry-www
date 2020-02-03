@@ -100,7 +100,7 @@ $(document).ready(function() {
             let pprev = prev;
             prev = val;
 
-            if (pprev == -1) {
+            if (pprev === -1) {
                 return 0;
             } else {
                 return val - pprev;
