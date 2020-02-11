@@ -123,7 +123,7 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
 }
 
 function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
-    closed, nudge = 0, wrap = false) {
+    closed, nudge = 0, wrap = false, klass) {
 
     if (closed)
         nudge = 0;
@@ -164,14 +164,14 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
         line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
             points: coords,
             style: style
-        });
+        }).addClass(klass);
     }
     else
     {
         line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
             points: coords,
             style: style
-        });
+        }).addClass(klass);
     }
 
     el.append(line);
