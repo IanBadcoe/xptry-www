@@ -103,7 +103,8 @@ var MakeAdvCKnot = function(loops, base_plate, decorators) {
 
                 return this.Spline.Interp(hx);
             },
-            Open: loop.Open
+            Open: loop.Open,
+            Klass: loop.Klass
         });
 
         loop = null;
@@ -176,17 +177,17 @@ var MakeAdvCKnot = function(loops, base_plate, decorators) {
                 // - SVG bits bigger as whole knot back-drawn instead of just some overlays
                 knot.Drawer.ForeDrawKnot(insert_element,
                     0, knot.EndParam, knot.Step, knot,
-                    !knot.Open, !knot.Open);
+                    !knot.Open, !knot.Open, knot.Klass);
             });
 
             _knots.forEach(knot => {
                 knot.OverlayRanges.forEach(el => {
                     knot.Drawer.BackDrawKnot(insert_element,
                         el[0], el[1], knot.Step, knot,
-                        false, !knot.Open);
+                        false, !knot.Open, knot.Klass);
                     knot.Drawer.ForeDrawKnot(insert_element,
                         el[0], el[1], knot.Step + 1, knot,
-                        false, !knot.Open);
+                        false, !knot.Open, knot.Klass);
                     });
             });
 
