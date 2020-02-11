@@ -1,20 +1,20 @@
 $(document).ready(function(){
     let draw1 = {
-        ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
+        ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, klass) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(255,0,0);stroke-width:6;fill:none;stroke-linecap:butt;',
-                close, 1, wrap);
+                close, 1, wrap, klass);
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(255,255,255);stroke-width:4;fill:none;stroke-linecap:butt;',
-                close, 2, wrap);
+                close, 2, wrap, klass);
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(0,0,0);stroke-width:2;fill:none;stroke-linecap:butt;',
-                close, 3, wrap);
+                close, 3, wrap, klass);
         },
-        BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
+        BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, klass) {
             add_polyline_scaled(insert_element, startparam, endparam, step, knot,
                 'stroke:rgb(255,255,255);stroke-width:8;fill:none;stroke-linecap:butt;',
-                close, 0, wrap);
+                close, 0, wrap, klass);
         }
     };
 
@@ -71,14 +71,17 @@ $(document).ready(function(){
             });
         }
 
-        return MakeAdvCKnot([{
-            Drawer: draw1,
-            Step: 2,
-            Points: points,
-            Open: false,
-            Order: 3
-        }],
-        base_plate, decorators)
+        return MakeAdvCKnot(
+            [{
+                Drawer: draw1,
+                Step: 2,
+                Points: points,
+                Open: false,
+                Order: 3,
+                Klass: "rotating"
+            }],
+            base_plate, decorators
+        );
     }
 
     function add_ring(centre, rad) {
