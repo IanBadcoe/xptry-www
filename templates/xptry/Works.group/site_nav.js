@@ -12,11 +12,11 @@ $(document).ready(function() {
 
         if (ctor_string)
         {
-            try {
+//            try {
                 obj.ctor_fn = new Function("return window.Ctors." + ctor_string)();
-            } catch (error) {
-                alert("badly configured ctor for 'k':\n    - ctor was: " + ctor_string + "\n    - error was: " + error);
-            }
+//            } catch (error) {
+//                alert("badly configured ctor for 'k':\n    - ctor was: " + ctor_string + "\n    - error was: " + error);
+//            }
         }
     }
 
