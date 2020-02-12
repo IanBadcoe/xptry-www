@@ -72,6 +72,7 @@ function add_line(el, p1, p2, style) {
     el.append(line);
 }
 
+// rather old version now...
 function add_polyline(el, start_p, end_p, divide, interpable, style,
     closed, nudge = 0, wrap = false) {
 
@@ -122,61 +123,6 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
     el.append(line);
 }
 
-function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
-    closed, nudge = 0, wrap = false, klass) {
-
-    if (closed)
-        nudge = 0;
-
-    let coords = "";
-
-    let range = end_p - start_p + nudge * 2;
-
-    // we'll do nudge * 1/2 step on either end...
-    let num_steps = Math.floor(range / p_step) + 1;
-
-    let act_step = range / num_steps;
-
-    for(let p = 0; p <= num_steps; p++) {
-        let hp = p * act_step + start_p - nudge;
-
-        if (wrap) {
-            if (hp < 0) {
-                hp += interpable.EndParam;
-            }
-
-            if (hp > interpable.EndParam) {
-                hp -= interpable.EndParam;
-            }
-        }
-
-        if (hp >= 0 && hp <= interpable.EndParam) {
-            let cp = interpable.Interp(hp);
-
-            coords += cp[0] + "," + cp[1] + " ";
-        }
-    }
-
-    let line;
-
-    if (!closed)
-    {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
-            points: coords,
-            style: style
-        }).addClass(klass);
-    }
-    else
-    {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
-            points: coords,
-            style: style
-        }).addClass(klass);
-    }
-
-    el.append(line);
-}
-
 function add_raw_polyline(el, coords, style, closed, klass, offset) {
     let line;
 
@@ -212,4 +158,42 @@ function add_raw_polyline(el, coords, style, closed, klass, offset) {
     }
 
     el.append(line);
+}
+
+function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
+    closed, nudge = 0, wrap = false, klass) {
+
+    if (closed)
+        nudge = 0;
+
+    let coords = "";
+
+    let range = end_p - start_p + nudge * 2;
+
+    // we'll do nudge * 1/2 step on either end...
+    let num_steps = Math.floor(range / p_step) + 1;
+
+    let act_step = range / num_steps;
+
+    for(let p = 0; p <= num_steps; p++) {
+        let hp = p * act_step + start_p - nudge;
+
+        if (wrap) {
+            if (hp < 0) {
+                hp += interpable.EndParam;
+            }
+
+            if (hp > interpable.EndParam) {
+                hp -= interpable.EndParam;
+            }
+        }
+
+        if (hp >= 0 && hp <= interpable.EndParam) {
+            let cp = interpable.Interp(hp);
+
+            coords += cp[0] + "," + cp[1] + " ";
+        }
+    }
+
+    add_raw_polyline(el, coords, style, closed, klass);
 }

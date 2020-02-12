@@ -1,39 +1,23 @@
 $(document).ready(function() {
     let home = function() {
-        let draw1 = {
-            ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, klass) {
-                add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                    'stroke:rgb(255,0,0);stroke-width:6;fill:none;stroke-linecap:butt;',
-                    close, 1, wrap, klass);
-                add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                    'stroke:rgb(255,255,255);stroke-width:4;fill:none;stroke-linecap:butt;',
-                    close, 2, wrap, klass);
-                add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                    'stroke:rgb(0,0,0);stroke-width:2;fill:none;stroke-linecap:butt;',
-                    close, 3, wrap, klass);
-            },
-            BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, klass) {
-                add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                    'stroke:rgb(255,255,255);stroke-width:8;fill:none;stroke-linecap:butt;',
-                    close, 0, wrap, klass);
-            }
-        };
+        let draw1 = MakeKnotDrawer(6, [255,0,0], 2, [255,255,255], 4, [255,255,255], 2, [0,0,0], "knot");
 
-        let draw_ring = {
-            ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
-                add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                    'stroke:rgb(0,0,0);stroke-width:37;fill:none;stroke-linecap:butt;',
-                    close, 1, wrap);
-                add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                    'stroke:rgb(255,255,255);stroke-width:35;fill:none;stroke-linecap:butt;',
-                    close, 2, wrap);
-            },
-            BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
-                // add_polyline_scaled(insert_element, startparam, endparam, step, knot,
-                //     'stroke:rgb(255,255,255);stroke-width:8;fill:none;stroke-linecap:butt;',
-                //     close, 0, wrap);
-            }
-        };
+        let draw_ring = MakeKnotDrawer(37, [0,0,0], 0, null, 35, [255,255,255], 0, null, "knot", true);
+        // = {
+        //     ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
+        //         add_polyline_scaled(insert_element, startparam, endparam, step, knot,
+        //             'stroke:rgb(0,0,0);stroke-width:37;fill:none;stroke-linecap:butt;',
+        //             close, 1, wrap);
+        //         add_polyline_scaled(insert_element, startparam, endparam, step, knot,
+        //             'stroke:rgb(255,255,255);stroke-width:35;fill:none;stroke-linecap:butt;',
+        //             close, 2, wrap);
+        //     },
+        //     BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap) {
+        //         // add_polyline_scaled(insert_element, startparam, endparam, step, knot,
+        //         //     'stroke:rgb(255,255,255);stroke-width:8;fill:none;stroke-linecap:butt;',
+        //         //     close, 0, wrap);
+        //     }
+        // };
 
         let knot_tile = {
             Width: 6,       // column 6 will overlap column 0 of next cell

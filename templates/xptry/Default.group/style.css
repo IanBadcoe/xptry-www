@@ -40,6 +40,12 @@ polyline.thread {
     stroke-linecap: round;
 }
 
+polyline.knot,
+polygon.knot {
+    fill: none;
+    stroke-linecap: butt;
+}
+
 /* animations */
 
 .rotating {
