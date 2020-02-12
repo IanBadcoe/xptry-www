@@ -45,7 +45,7 @@ MakePolylineDrawer = (width, colour, edgethick, edgecolour, hilightwidth, hiligh
 // we have two optional classes incoming, one here in the setup of the drawer,
 // and another optional one on the loops defined for the knot
 // my current assumption is that appplying both is correct
-MakeKnotDrawer = (width, colour, clearance, backcolour, width2, colour2, width3, colour3, klass, no_backdraw) => {
+MakeKnotDrawer = (width, colour, clearance, backcolour, width2, colour2, width3, colour3, klass) => {
     let style2 = null;
     let style3 = null;
     let bstyle = null;
@@ -99,7 +99,7 @@ MakeKnotDrawer = (width, colour, clearance, backcolour, width2, colour2, width3,
             }
         },
         BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, loop_klass) {
-            if (!no_backdraw && bstyle) {
+            if (bstyle) {
                 let here_klass = klass || loop_klass;
 
                 if (loop_klass && klass) {
