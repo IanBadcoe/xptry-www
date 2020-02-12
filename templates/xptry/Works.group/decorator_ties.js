@@ -7,7 +7,7 @@ function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
     let _thick = thick;
     let _rad = rad;
     let _width = width;
-    let _drawer = drawer;
+    let _drawer = window.Drawers[drawer];
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
@@ -16,7 +16,7 @@ function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
 
         function transform_point(p) {
             let rad = _rad + _width * p[1];
-            let tang = p[0] * thick;
+            let tang = p[0] * _thick;
 
             return [_centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
                 _centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];

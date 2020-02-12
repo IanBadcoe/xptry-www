@@ -13,7 +13,7 @@ $(document).ready(() => {
         };
 
         if (clearance) {
-            let bstyle = {
+            bstyle = {
                 stroke: "rgb(" + backcolour[0] + "," + backcolour[1] + "," + backcolour[2] + ")",
                 "stroke-width": width + clearance,
             };
@@ -128,6 +128,7 @@ $(document).ready(() => {
             35, [255,255,255],
             0, null,
             "knot"),
+
         thread1 : MakePolylineDrawer(
             7, [128,64,128],
             1, [0,0,0],
