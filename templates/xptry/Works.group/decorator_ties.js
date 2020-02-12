@@ -40,7 +40,7 @@ function MakeRadialTie(tile, centre, ang, thick, rad, width, drawer) {
                     points.push(transform_point(pnt));
                 });
 
-                _drawer.BackDrawPolyline($(".test-line"), points, false);
+                _drawer.BackDrawPolyline(insert_element, points, false);
             });
         }
     }

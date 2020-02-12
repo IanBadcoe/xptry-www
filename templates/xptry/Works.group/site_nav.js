@@ -231,13 +231,13 @@ $(document).ready(function() {
                 });
             }
 
+            sc.append(ne);
+
             let ctor = data.ctor_fn;
 
             if (ctor) {
                 ctor(ne, data);
             }
-
-            sc.append(ne);
         }
     };
     function ajax_error(hdr, status, error) {

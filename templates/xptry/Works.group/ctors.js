@@ -159,9 +159,9 @@ $(document).ready(function() {
         return (element, data) => {
             let svg = $("<svg class='fill' viewBox='-150 -150 300 300'></svg>");
 
-            knot.Draw(svg);
-
             element.append(svg);
+
+            knot.Draw(svg);
         };
     }
 
@@ -207,6 +207,7 @@ $(document).ready(function() {
 
     window.Ctors = {
         "home" : home,
-        "image_field" : image_field
+        "image_field" : image_field,
+        "dummy" : function(element, data) {}
     }
 });
