@@ -220,14 +220,14 @@ $(document).ready(function() {
             }).css({
                 left: data.centre_x - data.width / 2,
                 top: data.centre_y - data.height / 2,
+                width : data.width + "px",
+                height : data.height + "px"
             });
 
             if (data.colour) {
                 // no point applying width/height unless also visible
                 ne.css({
                     "background-color" : "#" + data.colour,
-                    width : data.width + "px",
-                    height : data.height + "px"
                 });
             }
 

@@ -61,71 +61,26 @@ $(document).ready(function() {
             }]);
         }
 
-        let draw_tie = {
-            ForeDrawPolyline: function(insert_element, points, close) {
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(182,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline_offset(insert_element, points,
-                    'stroke:rgb(255,128,196);stroke-width:2;fill:none;stroke-linecap:round;',
-                    close, [-1, -2]);
-                },
-            BackDrawPolyline: function(insert_element, points, close) {
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(182,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
-                    close);
-            }
-        };
+        let draw_tie = MakePolylineDrawer(
+            7, [128,64,128],
+            1, [0,0,0],
+            2, [255,128,196], [-1, -2],
+            "thread"
+        );
 
-        let draw_tie2 = {
-            ForeDrawPolyline: function(insert_element, points, close) {
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(64,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline_offset(insert_element, points,
-                    'stroke:rgb(128,128,196);stroke-width:2;fill:none;stroke-linecap:round;',
-                    close, [-1, -2]);
-                },
-            BackDrawPolyline: function(insert_element, points, close) {
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(64,64,128);stroke-width:7;fill:none;stroke-linecap:round;',
-                    close);
-            }
-        };
+        let draw_tie2 = MakePolylineDrawer(
+            7, [64,64,128],
+            1, [0,0,0],
+            2, [128,128,196], [-1, -2],
+            "thread"
+        );
 
-        let draw_tie3 = {
-            ForeDrawPolyline: function(insert_element, points, close) {
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(128,128,64);stroke-width:7;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline_offset(insert_element, points,
-                    'stroke:rgb(196,196,128);stroke-width:2;fill:none;stroke-linecap:round;',
-                    close, [-1, -2]);
-                },
-            BackDrawPolyline: function(insert_element, points, close) {
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(0,0,0);stroke-width:8;fill:none;stroke-linecap:round;',
-                    close);
-                add_raw_polyline(insert_element, points,
-                    'stroke:rgb(128,128,64);stroke-width:7;fill:none;stroke-linecap:round;',
-                    close);
-            }
-        };
+        let draw_tie3 = MakePolylineDrawer(
+            7, [128,128,64],
+            1, [0,0,0],
+            2, [196,196,128], [-1, -2],
+            "thread"
+        );
 
         // x is measured in line thicknesses
         // y is 0 on the inside of the ring and 1 on the outside

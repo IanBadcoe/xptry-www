@@ -177,47 +177,38 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
     el.append(line);
 }
 
-function add_raw_polyline(el, coords, style, closed) {
+function add_raw_polyline(el, coords, style, closed, klass, offset) {
     let line;
+
+    if (offset) {
+        coords = coords.map(pnt => {
+            return [pnt[0] + offset[0], pnt[1] + offset[1]];
+        });
+    }
 
     if (!closed)
     {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
-            points: coords,
-            style: style
-        });
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline'));
     }
     else
     {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
-            points: coords,
-            style: style
-        });
+        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon'));
     }
 
-    el.append(line);
-}
-
-function add_raw_polyline_offset(el, coords, style, closed, offset) {
-    let line;
-
-    let here_points = coords.map(pnt => {
-        return [pnt[0] + offset[0], pnt[1] + offset[1]];
+    line.attr({
+        points: coords,
     });
 
-    if (!closed)
-    {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
-            points: here_points,
+    if (typeof style === "string") {
+        line.attr({
             style: style
         });
+    } else {
+        line.css(style);
     }
-    else
-    {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
-            points: here_points,
-            style: style
-        });
+
+    if (klass) {
+        line.addClass(klass);
     }
 
     el.append(line);

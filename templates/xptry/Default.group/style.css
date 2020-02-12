@@ -35,6 +35,11 @@ div.scroll-container {
     padding: 0;
 }
 
+polyline.thread {
+    fill: none;
+    stroke-linecap: round;
+}
+
 /* animations */
 
 .rotating {
