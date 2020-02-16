@@ -20,6 +20,36 @@ $(document).ready(function() {
         }
     }
 
+    let reverse_path = function(path) {
+        let copy = { ...path };
+
+        copy.from = path.to;
+        copy.to = path.from;
+        copy.waypoints = path.waypoints.slice().reverse();
+
+        return copy;
+    }
+
+    let setup_thread_connection = function(path) {
+        // we're going to trash this
+        path = { ...path };
+        
+        // assuming DB consistency won't allow non-existent end-points
+        // so just check for not having them
+        if (!path.from || !path.to)
+            return;
+
+        let f_thread = _threads[path.from];
+        let t_thread = _threads[path.to];
+
+        path.from = f_thread;
+        path.to = t_thread;
+
+        path.waypoints = path.waypoints.map(w => _decors[w]);
+
+        f_thread.connections.push(path);
+    }
+
     window.SiteNav = {
         HandlePop : function(where) {
             // when we retype the anchor part we seem to get a popstate with no state
@@ -180,6 +210,8 @@ $(document).ready(function() {
 
                     for(const k in _threads) {
                         fix_ctor(_threads[k]);
+
+                        _threads[k].connections = [];
                     }
                 })
             );
@@ -195,7 +227,14 @@ $(document).ready(function() {
                 })
             );
 
-            return Promise.all(promises);
+            let ready = Promise.all(promises);
+
+            return ready.then(() => {
+                _paths.forEach(path => {
+                    setup_thread_connection(path);
+                    setup_thread_connection(reverse_path(path));
+                });
+            });
         },
         SmartLoad : function(target) {
             let sc = $(".scroll-container");

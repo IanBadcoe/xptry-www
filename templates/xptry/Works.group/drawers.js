@@ -67,7 +67,8 @@ $(document).ready(() => {
                         bstyle,
                         close, 0, wrap, here_klass);
                 }
-            }
+            },
+            Width: width
         };
     }
 
@@ -111,7 +112,8 @@ $(document).ready(() => {
                     add_raw_polyline(insert_element, points, edgestyle, close, klass);
                 }
                 add_raw_polyline(insert_element, points, style, close, klass);
-            }
+            },
+            Width: width + edgethick
         };
     }
 
@@ -136,15 +138,15 @@ $(document).ready(() => {
             "thread"
         ),
         thread2 : MakePolylineDrawer(
-            7, [64,64,128],
+            5, [64,64,128],
             1, [0,0,0],
-            2, [128,128,196], [-1, -2],
+            1, [128,128,196], [-1, -2],
             "thread"
         ),
         thread3 : MakePolylineDrawer(
-            7, [128,128,64],
+            10, [128,128,64],
             1, [0,0,0],
-            2, [196,196,128], [-1, -2],
+            3, [196,196,128], [-2, -3],
             "thread"
         ),
     };

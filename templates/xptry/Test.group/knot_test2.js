@@ -40,13 +40,13 @@ $(document).ready(function(){
         ]
     };
 
-    let tie1 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 0.66, 8,
+    let tie1 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 0.66,
         92, 40, "thread1");
 
-    let tie2 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 1.33, 8,
+    let tie2 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 1.33,
         92, 40, "thread2");
 
-    let tie3 = MakeRadialTie(tie_tile, [0, 0], Math.PI * -0.2, 8,
+    let tie3 = MakeRadialTie(tie_tile, [0, 0], Math.PI * -0.2,
         92, 40, "thread3");
 
     let base_plate = add_ring([0, 0], 112.5);
