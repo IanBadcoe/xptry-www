@@ -252,8 +252,10 @@ $(document).ready(function() {
                 return;
 
             let data = _threads[target];
+            let is_decor = false;
 
             if (!data) {
+                is_decor = true;
                 data = _decors[target];
             }
 
@@ -265,7 +267,7 @@ $(document).ready(function() {
             // to a repeat of the same anchor (doesn't call "popstate") and that totally weirds
             // (thank you Calvin) what's on or off screen
             let ne = $("<div></div>").attr({
-                class: "absolute zero-spacing",
+                class: "absolute zero-spacing" + (is_decor ? " decor" : ""),
                 id: "xx" + target
             }).css({
                 left: data.centre_x - data.width / 2,

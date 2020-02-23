@@ -2,7 +2,7 @@ body, .outer {
     overflow: hidden;
 }
 
-div.hud {
+div.hud, div.decor {
 	pointer-events: none;
 }
 
