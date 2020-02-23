@@ -1,6 +1,6 @@
 "use strict";
 
-var MakeAdvCKnot = function(loops, base_plate, decorators) {
+function MakeAdvCKnot(loops, base_plate, decorators) {
     let _base_plate = base_plate;
     let _decorators = decorators;
 

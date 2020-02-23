@@ -5,6 +5,10 @@ $(document).ready(function() {
     let _threads;
     let _paths;
 
+    let fix_title = function(title) {
+        $("title").html(title);
+    }
+
     let fix_ctor = function(obj) {
         obj.ctor_fn = null;
 
@@ -33,7 +37,7 @@ $(document).ready(function() {
     let setup_thread_connection = function(path) {
         // we're going to trash this
         path = { ...path };
-        
+
         // assuming DB consistency won't allow non-existent end-points
         // so just check for not having them
         if (!path.from || !path.to)
@@ -66,9 +70,7 @@ $(document).ready(function() {
             if (!where)
                 return;
 
-            this.SmartLoad(where);
-            this.SmartScroll(where);
-            history.replaceState(where, "", url);
+            this.SmartNav(where);
         },
         SmartScroll : function (where, chain_from, first, last) {
             let data = _threads[where];
@@ -81,34 +83,43 @@ $(document).ready(function() {
                 return chain_from;
             }
 
-            let sc = $(".scroll-container");
-            let old_pos = sc.position();
-
-			let x = -data.centre_x + innerWidth / 2;
-            let y = -data.centre_y + innerHeight / 2;
-
-            let dx = old_pos.left - x;
-            let dy = old_pos.top - y;
-            let dist = Math.sqrt(dx*dx + dy*dy);
-
-            let easing = first ? "easeInQuint" : last ? "easeOutQuint" : "linear";
-
-            let speed = first || last ? 0.3 : 0.4;
-
-
             if (!chain_from) {
                 chain_from = Promise.resolve(0);
             }
 
             return chain_from.then(() => {
-                sc.animate(
+                let sc = $(".scroll-container");
+                let old_pos = sc.position();
+
+                let x = -data.centre_x + innerWidth / 2;
+                let y = -data.centre_y + innerHeight / 2;
+
+                let dx = old_pos.left - x;
+                let dy = old_pos.top - y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+
+                let easing = "linear";
+
+                const ease = "Sine"
+
+                if (first && last) {
+                    easing = "easeInOut" + ease;
+                } else if (first) {
+                    easing = "easeIn" + ease;
+                } else if (last) {
+                    easing = "easeOut" + ease;
+                }
+
+                let speed = first || last ? 0.6 : 0.8;
+
+                return sc.animate(
                     {
                         left: x + "px",
                         top: y + "px"
                     },
                     dist * speed,
                     easing
-                );
+                ).promise();
             });
         },
         SmartNav : function (where) {
@@ -142,11 +153,11 @@ $(document).ready(function() {
                 });
             }
 
-            this.SmartLoad(where);
-            this.SmartScroll(where, promise, false, true);
+            this.SmartLoad(where, true);
+            this.SmartScroll(where, promise, first, true);
 
             this.PreviousLocation = where;
-            history.pushState(where, "", this.UrlStem + "#" + where);
+            history.replaceState(where, "", this.UrlStem + "#" + where);
         },
         Init: async function(home_id) {
             this.DefaultLocation = home_id;
@@ -166,15 +177,9 @@ $(document).ready(function() {
             this.UrlStem = url.substr(0, sp);
             let init_loc = url.substr(sp + 1);
 
-            // fix-up current history with the current state and possibly home_id
-            history.replaceState(init_loc, "", url);
-
             await promise;
 
-            // scroll to that location
-            this.SmartLoad(init_loc);
-            this.SmartScroll(init_loc);
-            this.PreviousLocation = init_loc;
+            this.SmartNav(init_loc);
 
             // listen for history navigation
             addEventListener("popstate", event => {
@@ -195,6 +200,8 @@ $(document).ready(function() {
 
                     for(const k in _decors) {
                         fix_ctor(_decors[k]);
+
+                        _decors[k].url_title = k;
                     }
                 })
             );
@@ -212,6 +219,7 @@ $(document).ready(function() {
                         fix_ctor(_threads[k]);
 
                         _threads[k].connections = [];
+                        _threads[k].url_title = k;
                     }
                 })
             );
@@ -236,9 +244,9 @@ $(document).ready(function() {
                 });
             });
         },
-        SmartLoad : function(target) {
+        SmartLoad : function(target, set_title) {
             let sc = $(".scroll-container");
-            let already = sc.has("#" + target);
+            let already = sc.has("#xx" + target);
 
             if (already.length > 0)
                 return;
@@ -253,9 +261,12 @@ $(document).ready(function() {
                 return;
             }
 
+            // add "xx" to the id, otherwise we get default scroll-to behaviour on anchor navigation
+            // to a repeat of the same anchor (doesn't call "popstate") and that totally weirds
+            // (thank you Calvin) what's on or off screen
             let ne = $("<div></div>").attr({
                 class: "absolute zero-spacing",
-                id: target
+                id: "xx" + target
             }).css({
                 left: data.centre_x - data.width / 2,
                 top: data.centre_y - data.height / 2,
@@ -276,6 +287,10 @@ $(document).ready(function() {
 
             if (ctor) {
                 ctor(ne, data);
+            }
+
+            if (set_title) {
+                fix_title(data.title);
             }
         }
     };

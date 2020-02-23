@@ -55,7 +55,7 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
     };
 }
 
-function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer) {
+function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, dest) {
     let _tile = tile;
     let _centre = centre;
     let _rad = rad;
@@ -78,6 +78,9 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer) 
                 _centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
         }
 
+        if (dest) {
+            insert_element = add_svg_link(insert_element, dest);
+        }
         if (front) {
             _tile.FSeqs.forEach(seq => {
                 let points = [];
@@ -107,6 +110,7 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer) 
         },
         BackDraw: function (insert_element) {
             draw_tie(insert_element, false);
-        }
+        },
+        Dest: dest
     };
 }

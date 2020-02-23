@@ -1,7 +1,7 @@
 "use strict";
 
 // we may not reach outer_rad, but that's where a next layer would go...
-function make_template_knot_radial(tile,
+function MakeTemplateKnotRadial(tile,
     centre, inner_rad, outer_rad, repeats,
     base_plate, decorators,
     drawer) {

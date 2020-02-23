@@ -53,17 +53,16 @@ $(document).ready(function() {
                 ties.push(MakeRadialTieFromTargetPoint(tie_tile,
                     [0, 0],
                     [target.centre_x - data.centre_x, target.centre_y - data.centre_y],
-                    92, 40, connect.drawer));
+                    92, 40, connect.drawer,
+                    "#" + connect.to.url_title));
             });
 
             let base_plate = add_ring([0, 0], 112.5);
 
-            let knot = make_template_knot_radial(knot_tile, [0, 0], 100, 125, 14, base_plate,
+            let knot = MakeTemplateKnotRadial(knot_tile, [0, 0], 100, 125, 14, base_plate,
                 ties, window.Drawers.home_knot);
 
-            let svg = $("<svg class='fill' viewBox='-150 -150 300 300'></svg>");
-
-            element.append(svg);
+            let svg = add_svg(element, -150, -150, 300, 300);
 
             knot.Draw(svg);
         };

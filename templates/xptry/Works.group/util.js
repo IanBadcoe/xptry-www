@@ -197,3 +197,27 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
 
     add_raw_polyline(el, coords, style, closed, klass);
 }
+
+function add_svg_link(el, href) {
+    let a = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+
+    a.setAttributeNS("http://www.w3.org/1999/xlink", "href", href);
+
+    let ne = $(a);
+
+    el.append(ne);
+
+    return ne;
+}
+
+function add_svg(el, cx, cy, wx, wy) {
+    let ne = $("<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></svg>");
+
+    ne.addClass("fill");
+
+    ne.attr("viewBox", cx + "," + cy + "," + wx + "," + wy );
+
+    el.append(ne);
+
+    return ne;
+}
