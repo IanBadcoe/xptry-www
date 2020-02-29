@@ -221,3 +221,30 @@ function add_svg(el, cx, cy, wx, wy) {
 
     return ne;
 }
+
+function add_circle(el, coords, style, klass, width) {
+    let circle  = $(document.createElementNS('http://www.w3.org/2000/svg', 'circle'));
+
+    circle.attr({
+        cx: coords[0],
+        cy: coords[1],
+        r: width
+    });
+
+    if (style) {
+        if (typeof style === "string") {
+            circle.attr({
+                style: style
+            });
+        } else {
+            circle.css(style);
+        }
+    }
+
+    if (klass) {
+        circle.addClass(klass);
+    }
+
+    el.append(circle);
+}
+

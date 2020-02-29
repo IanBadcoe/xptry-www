@@ -1,3 +1,5 @@
+"use strict";
+
 // for open curves, max_knot lets us detect the final non-empty interval and include the final
 // point in it
 
@@ -11,8 +13,6 @@
 //   _______    _______
 //          \  /
 // p -----x--------> max_knot
-
-"use strict";
 
 function BSplineBasis(x, i, k, knots, max_knot, closed) {
     function f(x, i, k, knots, max_knot) {

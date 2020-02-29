@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(() => {
     // we have two optional classes incoming, one here in the setup of the drawer,
     // and another optional one on the loops defined for the knot

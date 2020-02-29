@@ -2,8 +2,13 @@ body, .outer {
     overflow: hidden;
 }
 
-div.hud, div.decor {
-	pointer-events: none;
+div.hud {
+    pointer-events: none;
+}
+
+div.decor {
+    pointer-events: none;
+    overflow: visible;
 }
 
 div.scroll-container {
@@ -23,6 +28,10 @@ div.scroll-container {
     padding: 0;
     top: 0;
     left: 0;
+}
+
+svg.fill {
+    display: block;
 }
 
 .background {
@@ -46,6 +55,18 @@ polygon.knot {
     stroke-linecap: butt;
 }
 
+.debug-white {
+    stroke: rgb(255,255,255);
+    stroke-width: 1px;
+    fill: rgb(196,196,196);
+}
+
+.debug-blue {
+    stroke: rgb(64,64,255);
+    stroke-width: 1px;
+    fill: rgb(32,32,196);
+}
+
 /* animations */
 
 .rotating {
@@ -55,7 +76,7 @@ polygon.knot {
 @keyframes spin { 100% { transform:rotate(360deg); } }
 
 /* new above here */
-
+/*
 .thread-home {
     width: 500px;
     height: 500px;
@@ -127,4 +148,4 @@ polygon.knot {
     margin: auto;
     width: min-content;
     height: min-content;
-}
+}*/

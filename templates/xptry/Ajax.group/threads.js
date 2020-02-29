@@ -1,5 +1,5 @@
 {
-	{exp:channel:entries channel='thread' backspace='3'}
+	{exp:channel:entries channel='thread' backspace='3' status='{segment_3}'}
 		"{url_title}" : {
             "title" : "{title}",
 			"colour" : "{colour}{colour:colour-hex}{/colour}",
@@ -8,7 +8,8 @@
 			"width" : {width},
 			"height" : {height},
             "image" : "{thread_image}",
-            "ctor" : "{ctor}"
+            "ctor" : "{ctor}",
+            "status" : "{status}"
 		},
 	{/exp:channel:entries}
 }

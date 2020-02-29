@@ -35,6 +35,10 @@ $(document).ready(function() {
     }
 
     let setup_thread_connection = function(path) {
+        // ignore any paths where we haven't published both end-points
+        if (!(path.from in _threads) || !(path.to in _threads))
+            return;
+
         // we're going to trash this
         path = { ...path };
 
@@ -52,6 +56,69 @@ $(document).ready(function() {
         path.waypoints = path.waypoints.map(w => _decors[w]);
 
         f_thread.connections.push(path);
+    }
+
+    let load_nav_data = function(obj, statuses) {
+        let promises = [];
+        promises.push(
+            $.ajax(
+                "{path='Ajax/decors}",
+                {
+                    dataType: "json",
+                    error: ajax_error
+                }
+            ).then((data, status) => {
+                _decors = data;
+
+                for(const k in _decors) {
+                    let ent = _decors[k];
+
+                    fix_ctor(ent);
+
+                    ent.url_title = k;
+                }
+            })
+        );
+        promises.push(
+            $.ajax(
+                "{path='Ajax/threads/published}",
+                {
+                    dataType: "json",
+                    error: ajax_error
+                }
+            ).then((data, status) => {
+                _threads = data;
+
+                for(const k in _threads) {
+                    let ent = _threads[k];
+
+                    fix_ctor(ent);
+
+                    ent.connections = [];
+                    ent.url_title = k;
+                }
+            })
+        );
+        promises.push(
+            $.ajax(
+                "{path='Ajax/paths}",
+                {
+                    dataType: "json",
+                    error: ajax_error
+                }
+            ).then((data, status) => {
+                _paths = data;
+            })
+        );
+
+        let ready = Promise.all(promises);
+
+        return ready.then(() => {
+            _paths.forEach(path => {
+                setup_thread_connection(path);
+                setup_thread_connection(reverse_path(path));
+            });
+        });
     }
 
     window.SiteNav = {
@@ -187,70 +254,9 @@ $(document).ready(function() {
             });
         },
         RefreshNavData: async function() {
-            let promises = [];
-            promises.push(
-                $.ajax(
-                    "{path='Ajax/decors}",
-                    {
-                        dataType: "json",
-                        error: ajax_error
-                    }
-                ).then((data, status) => {
-                    _decors = data;
-
-                    for(const k in _decors) {
-                        fix_ctor(_decors[k]);
-
-                        _decors[k].url_title = k;
-                    }
-                })
-            );
-            promises.push(
-                $.ajax(
-                    "{path='Ajax/threads}",
-                    {
-                        dataType: "json",
-                        error: ajax_error
-                    }
-                ).then((data, status) => {
-                    _threads = data;
-
-                    for(const k in _threads) {
-                        fix_ctor(_threads[k]);
-
-                        _threads[k].connections = [];
-                        _threads[k].url_title = k;
-                    }
-                })
-            );
-            promises.push(
-                $.ajax(
-                    "{path='Ajax/paths}",
-                    {
-                        dataType: "json",
-                        error: ajax_error
-                    }
-                ).then((data, status) => {
-                    _paths = data;
-                })
-            );
-
-            let ready = Promise.all(promises);
-
-            return ready.then(() => {
-                _paths.forEach(path => {
-                    setup_thread_connection(path);
-                    setup_thread_connection(reverse_path(path));
-                });
-            });
+            return load_nav_data(this, ["published"]);
         },
-        SmartLoad : function(target, set_title) {
-            let sc = $(".scroll-container");
-            let already = sc.has("#xx" + target);
-
-            if (already.length > 0)
-                return;
-
+        SmartLoad : function(target, set_title, suppress_connections) {
             let data = _threads[target];
             let is_decor = false;
 
@@ -263,36 +269,82 @@ $(document).ready(function() {
                 return;
             }
 
-            // add "xx" to the id, otherwise we get default scroll-to behaviour on anchor navigation
-            // to a repeat of the same anchor (doesn't call "popstate") and that totally weirds
-            // (thank you Calvin) what's on or off screen
-            let ne = $("<div></div>").attr({
-                class: "absolute zero-spacing" + (is_decor ? " decor" : ""),
-                id: "xx" + target
-            }).css({
-                left: data.centre_x - data.width / 2,
-                top: data.centre_y - data.height / 2,
-                width : data.width + "px",
-                height : data.height + "px"
-            });
+            let sc = $(".scroll-container");
+            let already = sc.children("#xx" + target);
 
-            if (data.colour) {
-                // no point applying width/height unless also visible
-                ne.css({
-                    "background-color" : "#" + data.colour,
+            if (already.length == 0) {
+                // add "xx" to the id, otherwise we get default scroll-to behaviour on anchor navigation
+                // to a repeat of the same anchor (doesn't call "popstate") and that totally weirds
+                // (thank you Calvin) what's on or off screen
+                let ne = $("<div></div>").attr({
+                    class: "absolute zero-spacing" + (is_decor ? " decor" : ""),
+                    id: "xx" + target
+                }).css({
+                    left: data.centre_x - data.width / 2,
+                    top: data.centre_y - data.height / 2,
+                    width : data.width + "px",
+                    height : data.height + "px"
                 });
+
+                if (data.colour) {
+                    // no point applying width/height unless also visible
+                    ne.css({
+                        "background-color" : "#" + data.colour,
+                    });
+                }
+
+                sc.append(ne);
+
+                let ctor = data.ctor_fn;
+
+                if (ctor) {
+                    ctor(ne, data);
+                }
+                else
+                {
+                    data.connections.forEach(x => {
+                        x.TPoint = [data.centre_x, data.centre_y];
+                    });
+                }
+
+                if (set_title) {
+                    fix_title(data.title);
+                }
+
+                already = ne;
             }
 
-            sc.append(ne);
+            if (!suppress_connections && !is_decor) {
+                data.connections.forEach(connect => {
+                    let id = "xx" + connect.url_title;
+                    let already = sc.has("#" + id);
 
-            let ctor = data.ctor_fn;
+                    if (already.length == 0) {
+                        let dest = connect.to.connections.find(x => x.to === data);
 
-            if (ctor) {
-                ctor(ne, data);
-            }
+                        this.SmartLoad(connect.to.url_title, false, true);
 
-            if (set_title) {
-                fix_title(data.title);
+                        let here = connect.TPoint;
+
+                        let drawer = window.Drawers[connect.drawer];
+
+                        connect.waypoints.forEach(wp => {
+                            DrawThreadBetweenPoints(sc,
+                                here[0], here[1],
+                                wp.centre_x, wp.centre_y,
+                                drawer,
+                                id);
+
+                            here = [wp.centre_x, wp.centre_y];
+                        });
+
+                        DrawThreadBetweenPoints(sc,
+                            here[0], here[1],
+                            dest.TPoint[0], dest.TPoint[1],
+                            window.Drawers[connect.drawer],
+                            id);
+                    }
+                });
             }
         }
     };
