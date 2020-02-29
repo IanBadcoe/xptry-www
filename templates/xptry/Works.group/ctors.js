@@ -47,10 +47,7 @@ $(document).ready(function() {
 
             let ties = [];
 
-            // assuming no change in aspect ratio
-            let svg_scale = 400 / data.width;
-
-//            let debug = [];
+            let debug = [];
 
             data.connections.forEach(connect => {
                 let target = connect.to;
@@ -67,13 +64,13 @@ $(document).ready(function() {
 
                 ties.push(tie);
 
-                connect.TPoint = [tie.TPoint[0] / svg_scale + data.centre_x,
-                    tie.TPoint[1] + data.centre_y / svg_scale];
+                connect.TPoint = [tie.TPoint[0] + data.centre_x,
+                    tie.TPoint[1] + data.centre_y];
 
-                // debug.push({
-                //     TPoint: tie.TPoint,
-                //     drawer: connect.drawer
-                // });
+                debug.push({
+                    TPoint: tie.TPoint,
+                    drawer: connect.drawer
+                });
             });
 
             let base_plate = add_ring([0, 0], 112.5);
@@ -81,18 +78,15 @@ $(document).ready(function() {
             let knot = MakeTemplateKnotRadial(knot_tile, [0, 0], 100, 125, 14, base_plate,
                 ties, window.Drawers.home_knot);
 
-            let svg_width = data.width * svg_scale;
-            let svg_height = data.height * svg_scale;
-
-            let svg = add_svg(element, -svg_width / 2, -svg_height / 2, svg_width, svg_height);
+            let svg = add_svg(element, -data.width / 2, -data.height / 2, data.width, data.height);
 
             knot.Draw(svg);
 
-            // debug.forEach(pnt => {
-            //     let drawer = window.Drawers[pnt.drawer];
+            debug.forEach(pnt => {
+                let drawer = window.Drawers[pnt.drawer];
 
-            //     add_circle(svg, pnt.TPoint, null, "debug-white", drawer.Width / 4);
-            // });
+                add_circle(svg, pnt.TPoint, null, "debug-white", drawer.Width / 4);
+            });
         };
     }
 
