@@ -156,10 +156,10 @@ function DrawThreadBetweenPoints(el, x1, y1, x2, y2, drawer, id) {
 
     let svg = add_svg(ne, -width_offset, -width_offset, length, drawer.Width + 2);
 
-//    drawer.ForeDrawPolyline(svg, [[0, 0], [dist, 0]], false);
+    drawer.ForeDrawPolyline(svg, [[0, 0], [dist, 0]], false);
 
-    add_circle(svg, [0, 0], null, "debug-blue", drawer.Width / 4);
-    add_circle(svg, [dist, 0], null, "debug-blue", drawer.Width / 4);
+    // add_circle(svg, [0, 0], null, "debug-blue", drawer.Width / 4);
+    // add_circle(svg, [dist, 0], null, "debug-blue", drawer.Width / 4);
 
     outer.append(ne);
 }

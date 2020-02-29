@@ -47,7 +47,7 @@ $(document).ready(function() {
 
             let ties = [];
 
-            let debug = [];
+            // let debug = [];
 
             data.connections.forEach(connect => {
                 let target = connect.to;
@@ -67,10 +67,10 @@ $(document).ready(function() {
                 connect.TPoint = [tie.TPoint[0] + data.centre_x,
                     tie.TPoint[1] + data.centre_y];
 
-                debug.push({
-                    TPoint: tie.TPoint,
-                    drawer: connect.drawer
-                });
+                // debug.push({
+                //     TPoint: tie.TPoint,
+                //     drawer: connect.drawer
+                // });
             });
 
             let base_plate = add_ring([0, 0], 112.5);
@@ -82,11 +82,11 @@ $(document).ready(function() {
 
             knot.Draw(svg);
 
-            debug.forEach(pnt => {
-                let drawer = window.Drawers[pnt.drawer];
+            // debug.forEach(pnt => {
+            //     let drawer = window.Drawers[pnt.drawer];
 
-                add_circle(svg, pnt.TPoint, null, "debug-white", drawer.Width / 4);
-            });
+            //     add_circle(svg, pnt.TPoint, null, "debug-white", drawer.Width / 4);
+            // });
         };
     }
 
