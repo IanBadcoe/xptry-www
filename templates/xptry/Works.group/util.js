@@ -278,7 +278,8 @@ function add_img_fill_defs(el, img_url, id) {
     let ptn = add_pattern(defs, {
         id: id,
         width: "100%",
-        height: "100%"
+        height: "100%",
+        patternUnits: "userSpaceOnUse"
     });
 
     let img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
@@ -322,10 +323,13 @@ function add_holed_circle(el, outer, inner, style, klass, img_url, id) {
         }
     }
 
+    path = path + "z ";
+    ipath =ipath + "z ";
+
     let path_el = $(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
 
     path_el.attr({
-        d: path + "z " + ipath + "z",
+        d: path + ipath,
         fill: "url(#" + id + ")",
         style: style,
         "fill-rule": "evenodd"
