@@ -52,7 +52,7 @@ $(document).ready(function(){
     let base_plate = add_ring([0, 0], 112.5);
 
     let knot = MakeTemplateKnotRadial(knot_tile, [0, 0], 100, 125, 14, base_plate,
-        [ tie1, tie2, tie3 ], window.Drawers.home_knot);
+        [ /* tie1, tie2, tie3 */ ], window.Drawers.home_knot);
 
     knot.Draw($(".test-line"));
 });

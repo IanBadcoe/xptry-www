@@ -248,3 +248,94 @@ function add_circle(el, coords, style, klass, width) {
     el.append(circle);
 }
 
+function add_defs(el) {
+    let already = el.children("defs");
+
+    if (already.length == 0) {
+        already = $(document.createElementNS('http://www.w3.org/2000/svg', 'defs'))
+
+        el.prepend(already);
+    }
+
+    return already;
+}
+
+function add_pattern(el, attribs) {
+    let ne = $(document.createElementNS('http://www.w3.org/2000/svg', 'pattern'));
+
+    if (attribs) {
+        ne.attr(attribs);
+    }
+
+    el.append(ne);
+
+    return ne;
+}
+
+function add_img_fill_defs(el, img_url, id) {
+    let defs = add_defs(el);
+
+    let ptn = add_pattern(defs, {
+        id: id,
+        width: "100%",
+        height: "100%"
+    });
+
+    let img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+
+    img.setAttributeNS("http://www.w3.org/1999/xlink", "href", img_url);
+
+    img = $(img);
+
+    img.attr({
+        width: "100%",
+        height: "100%"
+    });
+
+    ptn.append(img);
+
+    return defs;
+}
+
+function add_holed_circle(el, outer, inner, style, klass, img_url, id) {
+    add_img_fill_defs(el, img_url, id);
+
+    let path = "";
+    let ipath = "";
+
+    let char = "M ";
+
+    let first = true;
+
+    for(let i = 0.0; i < 120; i++) {
+        let ang = i / 120.0 * Math.PI * 2;
+
+        path = path + char + Math.sin(ang) * outer + "," + Math.cos(ang) * outer + " ";
+
+        ipath = ipath + char + Math.sin(ang) * inner + "," + Math.cos(ang) * inner + " ";
+
+        if (first) {
+            char = "L ";
+            first = false;
+        } else {
+            char = "";
+        }
+    }
+
+    let path_el = $(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+
+    path_el.attr({
+        d: path + "z " + ipath + "z",
+        fill: "url(#" + id + ")",
+        style: style,
+        "fill-rule": "evenodd"
+    });
+
+    if (klass) {
+        path_el.addClass(klass);
+    }
+
+    el.append(path_el);
+
+    return path_el;
+}
