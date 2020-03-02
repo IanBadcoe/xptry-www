@@ -213,7 +213,7 @@ function add_svg_link(el, href) {
 function add_svg(el, cx, cy, wx, wy) {
     let ne = $("<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></svg>");
 
-    ne.addClass("fill");
+    ne.addClass("fill absolute");
 
     ne.attr("viewBox", cx + "," + cy + "," + wx + "," + wy );
 
@@ -272,13 +272,15 @@ function add_pattern(el, attribs) {
     return ne;
 }
 
-function add_img_fill_defs(el, img_url, id) {
+function add_img_fill_defs(el, img_url, id, radius) {
     let defs = add_defs(el);
 
     let ptn = add_pattern(defs, {
         id: id,
-        width: "100%",
-        height: "100%",
+        width: radius * 2 + "px",
+        height: radius * 2 + "px",
+        x: "50%",
+        y: "50%",
         patternUnits: "userSpaceOnUse"
     });
 
@@ -299,7 +301,7 @@ function add_img_fill_defs(el, img_url, id) {
 }
 
 function add_holed_circle(el, outer, inner, style, klass, img_url, id) {
-    add_img_fill_defs(el, img_url, id);
+    add_img_fill_defs(el, img_url, id, outer);
 
     let path = "";
     let ipath = "";

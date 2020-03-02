@@ -3,32 +3,6 @@
 $(document).ready(function() {
     let home = function() {
         return (element, data) => {
-            let knot_tile = {
-                Width: 6,       // column 6 will overlap column 0 of next cell
-                Height: 1,      // if we wanted a "next layer out" to come in at the same spacing, would use +1 here
-                                // but currently for ease of sizing an isolated layer...
-                Pnts: [
-                    [1, 1], [2, 0], [4, 0], [4.5, 1], [3, 1], [2, 0], [0.3, 0], [1, 1], [3, 1], [4, 0], [5.5, 0], [5.5, 1],
-                ]
-            };
-
-            function add_ring(centre, rad) {
-                let points = [];
-
-                for(let i = 0; i < 36; i++) {
-                    let ang = 2 * Math.PI / 36 * i;
-                    points.push([ centre[0] + rad * Math.sin(ang), centre[1] + rad * Math.cos(ang)]);
-                }
-
-                return MakeCKnot([{
-                    Drawer: window.Drawers.home_ring,
-                    Step: 10,
-                    Points: points,
-                    Open: false,
-                    Order: 2
-                }]);
-            }
-
             // x is measured in line thicknesses
             // y is 0 on the inside of the ring and 1 on the outside
             let tie_tile = {
@@ -49,6 +23,8 @@ $(document).ready(function() {
 
             // let debug = [];
 
+			let torus_width = data.width * 0.39;
+
             data.connections.forEach(connect => {
                 let target = connect.to;
 
@@ -59,7 +35,7 @@ $(document).ready(function() {
                 let tie = MakeRadialTieFromTargetPoint(tie_tile,
                     [0, 0],
                     [target.centre_x - data.centre_x, target.centre_y - data.centre_y],
-                    92, 40, connect.drawer,
+                    torus_width * 0.695, torus_width * 0.3, connect.drawer,
                     "#" + connect.to.url_title);
 
                 ties.push(tie);
@@ -73,20 +49,24 @@ $(document).ready(function() {
                 // });
             });
 
-            let base_plate = add_ring([0, 0], 112.5);
-
-            let knot = MakeTemplateKnotRadial(knot_tile, [0, 0], 100, 125, 14, base_plate,
-                ties, window.Drawers.home_knot);
-
             let svg = add_svg(element, -data.width / 2, -data.height / 2, data.width, data.height);
 
-            knot.Draw(svg);
+            ties.forEach(tie => tie.BackDraw(svg));
 
-            // debug.forEach(pnt => {
-            //     let drawer = window.Drawers[pnt.drawer];
+            let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png' style='left:"
+            	+ (data.width / 2 - torus_width) + "px; top:"
+                + (data.height / 2 - torus_width) + "px; width:"
+                + (torus_width * 2) + "px; height:"
+                + (torus_width * 2) + "px' class='absolute zero-spacing rotating'>");
 
-            //     add_circle(svg, pnt.TPoint, null, "debug-white", drawer.Width / 4);
-            // });
+            element.append(torus_image);
+
+//            add_holed_circle(svg, torus_width, torus_width * 0.712,
+//        		"stroke-width:0;", "rotating", "/upload/resources/infrastructure/Home_Knot.png", "hometorus");
+
+            svg = add_svg(element, -data.width / 2, -data.height / 2, data.width, data.height);
+
+            ties.forEach(tie => tie.ForeDraw(svg));
         };
     }
 
