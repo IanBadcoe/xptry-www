@@ -72,6 +72,14 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         let rad = _rad + _width * p[1];
         let tang = p[0] * _thick;
 
+        return [rad * rad_dir[0] + tang * tang_dir[0],
+            rad * rad_dir[1] + tang * tang_dir[1]];
+    }
+
+    function transform_point_abs(p) {
+        let rad = _rad + _width * p[1];
+        let tang = p[0] * _thick;
+
         return [_centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
             _centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
     }
@@ -105,7 +113,8 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         }
     }
 
-    let t_point = transform_point(tile.TPoint);
+    let t_point = transform_point_abs(tile.TPoint);
+    
     return {
         ForeDraw: function (insert_element) {
             draw_tie(insert_element, true);
@@ -154,7 +163,7 @@ function DrawThreadBetweenPoints(el, x1, y1, x2, y2, drawer, id) {
             + "translate(" + -width_offset + "px," + -width_offset + "px)"
     });
 
-    let svg = add_svg(ne, -width_offset, -width_offset, length, drawer.Width + 2);
+    let svg = add_svg(ne, [length / 2, width_offset], -width_offset, -width_offset, length, drawer.Width + 2);
 
     drawer.ForeDrawPolyline(svg, [[0, 0], [dist, 0]], false);
 

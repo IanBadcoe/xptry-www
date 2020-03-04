@@ -270,38 +270,17 @@ $(document).ready(function() {
             }
 
             let sc = $(".scroll-container");
-            let already = sc.children("#xx" + target);
+            let already = sc.children(".xx" + target);
 
             if (already.length == 0) {
-                // add "xx" to the id, otherwise we get default scroll-to behaviour on anchor navigation
-                // to a repeat of the same anchor (doesn't call "popstate") and that totally weirds
-                // (thank you Calvin) what's on or off screen
-                let ne = $("<div></div>").attr({
-                    class: "absolute zero-spacing" + (is_decor ? " decor" : ""),
-                    id: "xx" + target
-                }).css({
-                    left: data.centre_x - data.width / 2,
-                    top: data.centre_y - data.height / 2,
-                    width : data.width + "px",
-                    height : data.height + "px"
-                });
-
-                if (data.colour) {
-                    // no point applying width/height unless also visible
-                    ne.css({
-                        "background-color" : "#" + data.colour,
-                    });
-                }
-
-                sc.append(ne);
-
                 let ctor = data.ctor_fn;
 
                 if (ctor) {
-                    ctor(ne, data);
+                    ctor(sc, data);
                 }
                 else
                 {
+                    // fake connection-points for case of missing ctor
                     data.connections.forEach(x => {
                         x.TPoint = [data.centre_x, data.centre_y];
                     });
@@ -310,8 +289,6 @@ $(document).ready(function() {
                 if (set_title) {
                     fix_title(data.title);
                 }
-
-                already = ne;
             }
 
             if (!suppress_connections && !is_decor) {

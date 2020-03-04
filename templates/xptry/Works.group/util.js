@@ -210,12 +210,26 @@ function add_svg_link(el, href) {
     return ne;
 }
 
-function add_svg(el, cx, cy, wx, wy) {
+function add_svg(el, centre, cx, cy, wx, wy, klass, z) {
     let ne = $("<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></svg>");
 
-    ne.addClass("fill absolute");
+    ne.addClass("absolute");
 
-    ne.attr("viewBox", cx + "," + cy + "," + wx + "," + wy );
+    ne.attr({
+        viewBox: cx + "," + cy + "," + wx + "," + wy
+    });
+
+    ne.css({
+        left: (centre[0] - wx / 2) + "px",
+        top: (centre[1] - wy / 2) + "px",
+        width: wx + "px",
+        height: wy + "px",
+        "z-index": z
+    });
+
+    if (klass) {
+        ne.addClass(klass);
+    }
 
     el.append(ne);
 
