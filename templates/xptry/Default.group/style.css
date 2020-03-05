@@ -44,7 +44,7 @@ svg.fill {
     padding: 0;
 }
 
-polyline.thread {
+polyline.strand {
     fill: none;
     stroke-linecap: round;
 }

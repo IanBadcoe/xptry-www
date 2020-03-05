@@ -133,23 +133,23 @@ $(document).ready(() => {
             0, null,
             "knot"),
 
-        thread1 : MakePolylineDrawer(
+        strand1 : MakePolylineDrawer(
             7, [128,64,128],
             1, [0,0,0],
             2, [255,128,196], [-1, -2],
-            "thread"
+            "strand"
         ),
-        thread2 : MakePolylineDrawer(
+        strand2 : MakePolylineDrawer(
             5, [64,64,128],
             1, [0,0,0],
             1, [128,128,196], [-1, -2],
-            "thread"
+            "strand"
         ),
-        thread3 : MakePolylineDrawer(
+        strand3 : MakePolylineDrawer(
             10, [128,128,64],
             1, [0,0,0],
             3, [196,196,128], [-2, -3],
-            "thread"
+            "strand"
         ),
     };
 });
