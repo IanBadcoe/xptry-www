@@ -74,7 +74,7 @@ $(document).ready(() => {
         };
     }
 
-    // used for threads and ties
+    // used for strands and ties
     let MakePolylineDrawer = (width, colour, edgethick, edgecolour, hilightwidth, hilightcolour, hilightoffset, klass) => {
         let edgestyle = null;
         let hilightstyle = null;
