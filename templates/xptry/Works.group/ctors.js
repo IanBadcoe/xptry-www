@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
     let home = function() {
-        return (element, data) => {
+        let draw = (element, data) => {
             // x is measured in line thicknesses
             // y is 0 on the inside of the ring and 1 on the outside
             let tie_tile = {
@@ -76,6 +76,10 @@ $(document).ready(function() {
 
             ties.forEach(tie => tie.ForeDraw(svg));
         };
+
+        return {
+            Draw: draw
+        };
     }
 
     let image_field = function(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
@@ -108,7 +112,7 @@ $(document).ready(function() {
             element.append(ne);
         };
 
-        return (element, data) => {
+        let draw = (element, data) => {
             let area = data.width * data.height;
             let number = area * density;
             let rnd = MakeRand(element.attr("id"));
@@ -119,6 +123,10 @@ $(document).ready(function() {
                     data.width, data.height);
             }
         }
+
+        return {
+            Draw: draw
+        };
     }
 
 	let pully = function(radius, lefthand) {

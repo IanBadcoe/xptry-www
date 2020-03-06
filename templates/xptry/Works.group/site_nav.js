@@ -17,7 +17,7 @@ $(document).ready(function() {
         if (ctor_string)
         {
 //            try {
-                obj.ctor_fn = new Function("return window.Ctors." + ctor_string)();
+                obj.ctor_obj = new Function("return window.Ctors." + ctor_string)();
 //            } catch (error) {
 //                alert("badly configured ctor for 'k':\n    - ctor was: " + ctor_string + "\n    - error was: " + error);
 //            }
@@ -273,10 +273,10 @@ $(document).ready(function() {
             let already = sc.children(".xx" + target);
 
             if (already.length == 0) {
-                let ctor = data.ctor_fn;
+                let obj = data.ctor_obj;
 
-                if (ctor) {
-                    ctor(sc, data);
+                if (obj && obj.Draw) {
+                    obj.Draw(sc, data);
                 }
                 else
                 {
