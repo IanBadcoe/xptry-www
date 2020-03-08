@@ -16,8 +16,15 @@ $(document).ready(function() {
             obj.ctor = new Function("return window.Ctors." + ctor_string)();
         }
 
+        // without any explict ctor, connections all go to the centre
         if (!obj.ctor) {
-            obj.ctor = function() {}
+            obj.ctor = function() {
+                this.connections.forEach(connect => {
+                    connect.CalcStrandPoint = function() {
+                        return [obj.centre_x, obj.centre_y];
+                    }
+                });
+            }
         }
     }
 
@@ -27,6 +34,8 @@ $(document).ready(function() {
         copy.from = path.to;
         copy.to = path.from;
         copy.waypoints = path.waypoints.slice().reverse();
+
+        copy.is_reversed = !path.is_reversed;
 
         return copy;
     }
@@ -51,6 +60,8 @@ $(document).ready(function() {
         path.to = t_thread;
 
         path.waypoints = path.waypoints.map(w => _decors[w]);
+
+        path.url_title += "--" + f_thread.url_title;
 
         f_thread.connections.push(path);
     }
@@ -112,6 +123,7 @@ $(document).ready(function() {
 
         return ready.then(() => {
             _paths.forEach(path => {
+                path.is_reversed = false;
                 setup_thread_connection(path);
                 setup_thread_connection(reverse_path(path));
             });
@@ -278,15 +290,35 @@ $(document).ready(function() {
             let already = sc.children(".xx" + target);
 
             if (already.length == 0) {
+                if (!is_decor) {
+                    if (!data.ctor)
+                    {
+                        // fake connection-points for case of missing ctor
+                        data.connections.forEach(x => {
+                            x.SPoint = [data.centre_x, data.centre_y];
+                        });
+                    }
+
+                    data.connections.forEach(connect => {
+                        let target = connect.to.connections.find(x => x.to === data);
+
+                        if (connect.waypoints.length > 0) {
+                            target = connect.waypoints[0];
+                        }
+
+                        let for_back = connect.is_reversed;
+                        target.SPoint = [connect.to.centre_x, connect.to.centre_y];
+
+                        // iterate a couple of times in case both are responding to the other
+                        connect.SPoint = connect.CalcStrandPoint(target.SPoint, !for_back);
+                        target.SPoint = target.CalcStrandPoint(connect.SPoint, for_back);
+                        connect.SPoint = connect.CalcStrandPoint(target.SPoint, !for_back);
+                        target.SPoint = target.CalcStrandPoint(connect.SPoint, for_back);
+                    });
+                }
+
                 if (data.Draw) {
                     data.Draw(sc);
-                }
-                else
-                {
-                    // fake connection-points for case of missing ctor
-                    data.connections.forEach(x => {
-                        x.TPoint = [data.centre_x, data.centre_y];
-                    });
                 }
 
                 if (set_title) {
@@ -304,7 +336,7 @@ $(document).ready(function() {
 
                         this.SmartLoad(connect.to.url_title, false, true);
 
-                        let here = connect.TPoint;
+                        let here = connect.SPoint;
 
                         let drawer = window.Drawers[connect.drawer];
 
@@ -320,7 +352,7 @@ $(document).ready(function() {
 
                         DrawThreadBetweenPoints(sc,
                             here[0], here[1],
-                            dest.TPoint[0], dest.TPoint[1],
+                            dest.SPoint[0], dest.SPoint[1],
                             window.Drawers[connect.drawer],
                             id);
                     }

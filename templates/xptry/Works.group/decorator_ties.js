@@ -113,8 +113,8 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         }
     }
 
-    let t_point = transform_point_abs(tile.TPoint);
-    
+    let s_point = transform_point_abs(tile.SPoint);
+
     return {
         ForeDraw: function (insert_element) {
             draw_tie(insert_element, true);
@@ -123,7 +123,7 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
             draw_tie(insert_element, false);
         },
         Dest: dest,
-        TPoint: t_point
+        SPoint: s_point
     };
 }
 

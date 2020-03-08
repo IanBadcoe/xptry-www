@@ -16,29 +16,24 @@ $(document).ready(function() {
                 BSeqs: [
                     [ [-1.5, 1], [0.9, 1.8] ],
                 ],
-                TPoint: [0, 1.8]
+                SPoint: [0, 1.8]
             };
-
-            this.ties = [];
 
             let torus_width = this.width * 0.39;
 
             this.connections.forEach(connect => {
-                let target = connect.to;
+                let node = this;
 
-                if (connect.waypoints.length > 0) {
-                    target = connect.waypoints[0];
+                connect.CalcStrandPoint = function(other_point) {
+                    this.tie = MakeRadialTieFromTargetPoint(tie_tile,
+                        [node.centre_x, node.centre_y],
+                        [other_point[0] - node.centre_x, other_point[1] - node.centre_y],
+                        torus_width * 0.695, torus_width * 0.3, connect.drawer,
+                        "#" + connect.to.url_title);
+
+                    // recalculated by the above...
+                    return connect.tie.SPoint;
                 }
-
-                let tie = MakeRadialTieFromTargetPoint(tie_tile,
-                    [this.centre_x, this.centre_y],
-                    [target.centre_x - this.centre_x, target.centre_y - this.centre_y],
-                    torus_width * 0.695, torus_width * 0.3, connect.drawer,
-                    "#" + connect.to.url_title);
-
-                this.ties.push(tie);
-
-                connect.TPoint = tie.TPoint;
             });
 
             let draw = (element) => {
@@ -49,7 +44,7 @@ $(document).ready(function() {
                     "xx" + this.url_title,
                     window.Zs.BehindNodeContent);
 
-                this.ties.forEach(tie => tie.BackDraw(svg));
+                this.connections.forEach(connect => connect.tie.BackDraw(svg));
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
                     left: (this.centre_x - torus_width) + "px",
@@ -68,7 +63,7 @@ $(document).ready(function() {
                     "xx" + this.url_title,
                     window.Zs.InFrontOfNodeContent);
 
-                    this.ties.forEach(tie => tie.ForeDraw(svg));
+                this.connections.forEach(connect => connect.tie.ForeDraw(svg));
             };
 
             this.Draw = draw;
