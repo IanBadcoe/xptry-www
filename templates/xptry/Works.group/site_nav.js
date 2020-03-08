@@ -10,17 +10,14 @@ $(document).ready(function() {
     }
 
     let fix_ctor = function(obj) {
-        obj.ctor_fn = null;
-
         let ctor_string = obj.ctor;
 
-        if (ctor_string)
-        {
-//            try {
-                obj.ctor_obj = new Function("return window.Ctors." + ctor_string)();
-//            } catch (error) {
-//                alert("badly configured ctor for 'k':\n    - ctor was: " + ctor_string + "\n    - error was: " + error);
-//            }
+        if (ctor_string) {
+            obj.ctor = new Function("return window.Ctors." + ctor_string)();
+        }
+
+        if (!obj.ctor) {
+            obj.ctor = function() {}
         }
     }
 
@@ -118,6 +115,14 @@ $(document).ready(function() {
                 setup_thread_connection(path);
                 setup_thread_connection(reverse_path(path));
             });
+
+            for(const k in _decors) {
+                _decors[k].ctor();
+            }
+
+            for(const k in _threads) {
+                _threads[k].ctor();
+            }
         });
     }
 
@@ -273,10 +278,8 @@ $(document).ready(function() {
             let already = sc.children(".xx" + target);
 
             if (already.length == 0) {
-                let obj = data.ctor_obj;
-
-                if (obj && obj.Draw) {
-                    obj.Draw(sc, data);
+                if (data.Draw) {
+                    data.Draw(sc);
                 }
                 else
                 {
