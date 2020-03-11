@@ -84,6 +84,7 @@ $(document).ready(function() {
                     fix_ctor(ent);
 
                     ent.url_title = k;
+                    ent.centre = new Coord(ent.centre_x, ent.centre_y);
                 }
             })
         );
@@ -104,6 +105,7 @@ $(document).ready(function() {
 
                     ent.connections = [];
                     ent.url_title = k;
+                    ent.centre = new Coord(ent.centre_x, ent.centre_y);
                 }
             })
         );
@@ -295,7 +297,7 @@ $(document).ready(function() {
                     {
                         // fake connection-points for case of missing ctor
                         data.connections.forEach(x => {
-                            x.SPoint = [data.centre_x, data.centre_y];
+                            x.CPoint = [data.centre_x, data.centre_y];
                         });
                     }
 
@@ -307,13 +309,14 @@ $(document).ready(function() {
                         }
 
                         let for_back = connect.is_reversed;
-                        target.SPoint = [connect.to.centre_x, connect.to.centre_y];
+                        target.SPoint = target.SPoint || {};
+                        target.SPoint[for_back] = [connect.to.centre_x, connect.to.centre_y];
 
                         // iterate a couple of times in case both are responding to the other
-                        connect.SPoint = connect.CalcStrandPoint(target.SPoint, !for_back);
-                        target.SPoint = target.CalcStrandPoint(connect.SPoint, for_back);
-                        connect.SPoint = connect.CalcStrandPoint(target.SPoint, !for_back);
-                        target.SPoint = target.CalcStrandPoint(connect.SPoint, for_back);
+                        connect.CPoint = connect.CalcStrandPoint(target.SPoint[for_back], !for_back);
+                        target.SPoint[for_back] = target.CalcStrandPoint(connect.CPoint, for_back);
+                        connect.CPoint = connect.CalcStrandPoint(target.SPoint[for_back], !for_back);
+                        target.SPoint[for_back] = target.CalcStrandPoint(connect.CPoint, for_back);
                     });
                 }
 
@@ -336,23 +339,23 @@ $(document).ready(function() {
 
                         this.SmartLoad(connect.to.url_title, false, true);
 
-                        let here = connect.SPoint;
+                        let here = connect.CPoint;
 
                         let drawer = window.Drawers[connect.drawer];
 
                         connect.waypoints.forEach(wp => {
                             DrawThreadBetweenPoints(sc,
                                 here[0], here[1],
-                                wp.centre_x, wp.centre_y,
+                                wp.SPoint[connect.is_reversed][0], wp.SPoint[connect.is_reversed][1],
                                 drawer,
                                 id);
 
-                            here = [wp.centre_x, wp.centre_y];
+                            here = [wp.SPoint[!connect.is_reversed][0], wp.SPoint[!connect.is_reversed][1]];
                         });
 
                         DrawThreadBetweenPoints(sc,
                             here[0], here[1],
-                            dest.SPoint[0], dest.SPoint[1],
+                            dest.CPoint[0], dest.CPoint[1],
                             window.Drawers[connect.drawer],
                             id);
                     }

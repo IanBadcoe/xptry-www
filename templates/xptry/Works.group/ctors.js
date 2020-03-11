@@ -16,7 +16,7 @@ $(document).ready(function() {
                 BSeqs: [
                     [ [-1.5, 1], [0.9, 1.8] ],
                 ],
-                SPoint: [0, 1.8]
+                CPoint: [0, 1.8]
             };
 
             let torus_width = this.width * 0.39;
@@ -32,7 +32,7 @@ $(document).ready(function() {
                         "#" + connect.to.url_title);
 
                     // recalculated by the above...
-                    return connect.tie.SPoint;
+                    return connect.tie.CPoint;
                 }
             });
 
@@ -125,7 +125,78 @@ $(document).ready(function() {
     };
 
 	let pully = function(radius, lefthand) {
+        return function() {
+            //
+            //                                   ____tp
+            //                         _____-----    | \
+            //               _____-----            c |  \ B, a
+            //     _____-----                        |   \
+            // op <----------------------------------Q---->C
+            //    <--------------------A------------------>
+            //                                        <-b->
+            // op = other_point
+            // C = centre of circle
+            // tp = the point we need the tangent to hit on the circle
+            // Q = the normal projection from op<->C to tp
+            //
+            // distances:
+            // op-C = A
+            // tp-C = B = a (= radius of circle)
+            // Q-C = b
+            // tp-Q = c
+            //
+            // op-tp-C and op-Q-tp are similar triangles
+            // so: A/B = a/b = B/b
+            //     A/B^2 = 1/b
+            //     b = B^2/A
+            //
+            // which gives us c by pythagorus:
+            // c = sqrt(a^2 - b^2)
+            //
+            // define dA as the direction from op->C
+            // and dC as a direction at 90 degrees to that:
+            // so tp = C - b * bA + c * dC
+            //
+            // and we get two alternative tangent points, according to which way we rotate from dA to dC
+            //
+            this.CalcStrandPoint = function (other_point, out) {
+                // XOR
+                let h_out = (!out) != (!lefthand);
 
+                // won't need this when we've converted more to coords...
+                let vA = this.centre.Sub(other_point);
+                let A = vA.Dist();
+                let r2 = radius * radius;
+                let b = r2 / A;
+                let c = Math.sqrt(r2 - b * b);
+                let dA = vA.Div(A);
+                let dC = h_out ? dA.Rot90() : dA.Rot270();
+
+                let tp = this.centre.Sub(dA.Mult(b)).Add(dC.Mult(c));
+
+                // will need a note of the tangent direction to calculate the arc
+                this.vecs = this.vecs || {};
+                this.vecs[out] = tp.Sub(other_point).ToUnit();
+
+                return tp;
+            };
+
+            this.Draw = function(element) {
+                let svg = add_svg(element,
+                    [this.centre_x, this.centre_y],
+                    -this.width / 2, -this.height / 2,
+                    this.width, this.height,
+                    "xx" + this.url_title,
+                    window.Zs.BehindNodeContent);
+
+                // add_circular_arc(svg,
+                //     [0, 0],
+                //     radius,
+                //     this.SPoint[true],
+                //     this.SPoint[false]
+                // );
+            };
+        };
     }
 
     window.Ctors = {
