@@ -61,7 +61,7 @@ $(document).ready(function() {
 
         path.waypoints = path.waypoints.map(w => _decors[w]);
 
-        path.url_title += "--" + f_thread.url_title;
+        path.debug_title = path.url_title + "--" + f_thread.url_title;
 
         f_thread.connections.push(path);
     }
@@ -339,18 +339,37 @@ $(document).ready(function() {
 
                         this.SmartLoad(connect.to.url_title, false, true);
 
-                        let here = connect.CPoint;
+                        let prev_wp = null;
+                        let for_back = connect.is_reversed;
 
+                        for(let i = 0; i < connect.waypoints.length; i++) {
+                            let wp = connect.waypoints[i];
+                            wp.SPoint = wp.SPoint || {};
+
+                            if (prev_wp) {
+                                wp.SPoint[for_back] = wp.centre;
+
+                                // iterate a couple of times in case both are responding to the other
+                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back);
+                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back);
+                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back);
+                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back);
+                            }
+
+                            prev_wp = wp;
+                        }
+
+                        let here = connect.CPoint;
                         let drawer = window.Drawers[connect.drawer];
 
                         connect.waypoints.forEach(wp => {
                             DrawThreadBetweenPoints(sc,
                                 here[0], here[1],
-                                wp.SPoint[connect.is_reversed][0], wp.SPoint[connect.is_reversed][1],
+                                wp.SPoint[for_back][0], wp.SPoint[for_back][1],
                                 drawer,
                                 id);
 
-                            here = [wp.SPoint[!connect.is_reversed][0], wp.SPoint[!connect.is_reversed][1]];
+                            here = [wp.SPoint[!for_back][0], wp.SPoint[!for_back][1]];
                         });
 
                         DrawThreadBetweenPoints(sc,

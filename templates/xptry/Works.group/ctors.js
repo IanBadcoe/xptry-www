@@ -124,7 +124,7 @@ $(document).ready(function() {
         };
     };
 
-	let pully = function(radius, lefthand) {
+	let pulley = function(radius, lefthand) {
         return function() {
             //
             //                                   ____tp
@@ -189,12 +189,11 @@ $(document).ready(function() {
                     "xx" + this.url_title,
                     window.Zs.BehindNodeContent);
 
-                // add_circular_arc(svg,
-                //     [0, 0],
-                //     radius,
-                //     this.SPoint[true],
-                //     this.SPoint[false]
-                // );
+                add_circle(svg,
+                    [0, 0],
+                    "fill: rgb(128,96,96);",
+                    "fake",
+                    radius);
             };
         };
     }
@@ -203,5 +202,5 @@ $(document).ready(function() {
         "home" : home,
         "image_field" : image_field,
         "dummy" : function() {},
-        "pully": pully}
+        "pulley": pulley}
 });
