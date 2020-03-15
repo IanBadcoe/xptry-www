@@ -210,22 +210,22 @@ function add_svg_link(el, href) {
     return ne;
 }
 
-function add_svg(el, centre, co, dims, klass, z) {
+function add_svg(el, centre, coord_orig, coord_dims, klass, z) {
     let ne = $("<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></svg>");
 
     ne.addClass("absolute");
 
     ne.attr({
-        viewBox: co.X + "," + co.Y + "," + dims.X + "," + dims.Y
+        viewBox: coord_orig.X + "," + coord_orig.Y + "," + coord_dims.X + "," + coord_dims.Y
     });
 
-    let tl = centre.Sub(dims.Div(2));
+    let tl = centre.Sub(coord_dims.Div(2));
 
     ne.css({
         left: tl.X + "px",
         top: tl.Y + "px",
-        width: dims.X + "px",
-        height: dims.Y + "px",
+        width: coord_dims.X + "px",
+        height: coord_dims.Y + "px",
         "z-index": z
     });
 
@@ -352,6 +352,25 @@ function add_holed_circle(el, outer, inner, style, klass, img_url, id) {
         style: style,
         "fill-rule": "evenodd"
     });
+
+    if (klass) {
+        path_el.addClass(klass);
+    }
+
+    el.append(path_el);
+
+    return path_el;
+}
+
+function add_arc(el, p1, p2, radius, clockwise, largepart, style, klass) {
+    let path_el = $(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+
+    let path = "M " + p1.X + " " + p1.Y +
+               "A " + radius + " " + radius + " 0 " + (largepart ? "1 " : "0 ") + (clockwise ? "1 " : "0 ") + p2.X + " " + p2.Y
+
+    path_el.attr({
+        d: path
+    }).css(style);
 
     if (klass) {
         path_el.addClass(klass);

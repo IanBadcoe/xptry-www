@@ -124,8 +124,9 @@ $(document).ready(function() {
         };
     };
 
-	let pulley = function(radius, lefthand) {
+	let pulley = function(radius, clockwise) {
         return function() {
+            this.clockwise = clockwise;
             //
             //                                   ____tp
             //                         _____-----    | \
@@ -160,8 +161,8 @@ $(document).ready(function() {
             // and we get two alternative tangent points, according to which way we rotate from dA to dC
             //
             this.CalcStrandPoint = function (other_point, out, drawer) {
-                // XOR
-                let h_out = (!out) != (!lefthand);
+                // XOR the direction we're tracing in with whether this is a left or righthand pulley
+                let h_out = (!out) != (!clockwise);
 
                 // won't need this when we've converted more to coords...
                 let vA = this.centre.Sub(other_point);
@@ -169,15 +170,24 @@ $(document).ready(function() {
                 let h_radius = radius + drawer.Width / 2;
                 let r2 = h_radius * h_radius;
                 let b = r2 / A;
+
+                if (r2 - b * b <= 0) {
+                    throw "pulley too close exception :-)";
+                }
+
                 let c = Math.sqrt(r2 - b * b);
                 let dA = vA.Div(A);
                 let dC = h_out ? dA.Rot90() : dA.Rot270();
 
                 let tp = this.centre.Sub(dA.Mult(b)).Add(dC.Mult(c));
 
-                // will need a note of the tangent direction to calculate the arc
-                this.vecs = this.vecs || {};
-                this.vecs[out] = tp.Sub(other_point).ToUnit();
+                this.spokes = this.spokes || {}
+                this.spokes[out] = tp.Sub(this.centre);
+
+                if (this.spokes[true] && this.spokes[false]) {
+                    this.signed_angle = this.spokes[false].SignedAngle(this.spokes[true]);
+                    this.drawer = drawer;   // we don't actually know this, it comes from the path...
+                }
 
                 return tp;
             };
@@ -187,7 +197,7 @@ $(document).ready(function() {
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
-                    "xx" + this.url_title,
+                    "xx" + this.url_title + " strand",
                     window.Zs.BehindNodeContent);
 
                 add_circle(svg,
@@ -195,6 +205,11 @@ $(document).ready(function() {
                     "fill: rgb(128,96,96);",
                     "fake",
                     radius);
+
+                this.drawer.ForeDrawPolylineArc(svg,
+                    this.SPoint[false].Sub(this.centre), this.SPoint[true].Sub(this.centre), radius,
+                    this.clockwise,
+                    this.clockwise == (this.signed_angle < 0));
             };
         };
     }

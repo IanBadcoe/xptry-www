@@ -368,7 +368,7 @@ $(document).ready(function() {
                             wp.SPoint = wp.SPoint || {};
 
                             if (prev_wp) {
-                                wp.SPoint[for_back] = prev_wp.centre;
+                                wp.SPoint[for_back] = wp.centre;
 
                                 // iterate a couple of times in case both are responding to the other
                                 prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back, connect.drawer);

@@ -59,10 +59,22 @@ class Coord extends Array {
         return new Coord(this[0] * v, this[1] * v);
     };
 
-    Dot(v) {
+    Project(v) {
         return new Coord(this[0] * v[0], this[1] * v[1]);
     };
 
+    Dot(v) {
+        return this[0] * v[0] + this[1] * v[1];
+    };
+
+    // a cross b gives positive if trating as vectors, a to b is a positive angle
+    // allowing for y being down on screen (thus [0,1].Cross([1,0]) is -1 [1,0].Cross[0,1] is 1:
+    //
+    //   .--[1,0]-->
+    //   |
+    // [0,1]
+    //   |
+    //   v
     Cross(v) {
         return this[0] * v[1] - this[1] * v[0];
     };
@@ -75,9 +87,30 @@ class Coord extends Array {
         return new Coord(-this[1], this[0]);
     };
 
-    // this.ToArray = function() {
-    //     return [this[0], this[1]];
-    // }
+    // see comment on Cross, above
+    SignedAngle(v) {
+        let tu = this.ToUnit();
+        let vu = v.ToUnit();
+
+        let cos = tu.Dot(vu);
+        let ang = Math.acos(cos);
+
+        let cross = tu.Cross(vu);
+
+        if (cross < 0) {
+            return -ang;
+        }
+
+        return ang;
+    }
+
+    Angle(v) {
+        let tu = this.ToUnit();
+        let vu = v.ToUnit();
+
+        let cos = tu.Dot(vu);
+        return Math.acos(cos);
+    }
 };
 
 // just a way of easily making an array off Coords at the moment,

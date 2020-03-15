@@ -115,6 +115,23 @@ $(document).ready(() => {
                 }
                 add_raw_polyline(insert_element, points, style, close, klass);
             },
+            ForeDrawPolylineArc: function(insert_element, p1, p2, radius, clockwise, largepart) {
+                let h_radius = radius + this.Width / 2;
+                if (edgestyle) {
+                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass);
+                }
+                add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass);
+                if (hilightstyle) {
+                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, hilightstyle, klass, hilightoffset);
+                }
+            },
+            BackDrawPolylineArc: function(insert_element, p1, p2, radius, clockwise, largepart) {
+                let h_radius = radius + this.Width / 2;
+                if (edgestyle) {
+                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass);
+                }
+                add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass);
+            },
             Width: width + edgethick
         };
     }
