@@ -48,12 +48,7 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
 }
 
 function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, dest) {
-    let _tile = tile;
-    let _centre = centre;
-    let _rad = rad;
-    let _width = width;
-    let _drawer = window.Drawers[drawer];
-    let _thick = _drawer.Width;
+    let thick = drawer.Width;
 
     let dist = offset.Dist();
 
@@ -61,19 +56,19 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
     let tang_dir = rad_dir.Rot90();
 
     function transform_point(p) {
-        let rad = _rad + _width * p.Y;
-        let tang = p.X * _thick;
+        let h_rad = rad + width * p.Y;
+        let tang = p.X * thick;
 
-        return new Coord(rad * rad_dir.X + tang * tang_dir.X,
-            rad * rad_dir.Y + tang * tang_dir.Y);
+        return new Coord(h_rad * rad_dir.X + tang * tang_dir.X,
+            h_rad * rad_dir.Y + tang * tang_dir.Y);
     }
 
     function transform_point_abs(p) {
-        let rad = _rad + _width * p.Y;
-        let tang = p.X * _thick;
+        let h_rad = rad + width * p.Y;
+        let tang = p.X * thick;
 
-        return new Coord(_centre.X + rad * rad_dir.X + tang * tang_dir.X,
-            _centre.Y + rad * rad_dir.Y + tang * tang_dir.Y);
+        return new Coord(centre.X + h_rad * rad_dir.X + tang * tang_dir.X,
+            centre.Y + h_rad * rad_dir.Y + tang * tang_dir.Y);
     }
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
@@ -83,16 +78,16 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
             insert_element = add_svg_link(insert_element, dest);
         }
         if (front) {
-            _tile.FSeqs.forEach(seq => {
+            tile.FSeqs.forEach(seq => {
                 let points = seq.map(pnt => transform_point(pnt));
 
-                _drawer.ForeDrawPolyline(insert_element, points, false);
+                drawer.ForeDrawPolyline(insert_element, points, false);
             });
         } else {
-            _tile.BSeqs.forEach(seq => {
+            tile.BSeqs.forEach(seq => {
                 let points = seq.map(pnt => transform_point(pnt));
 
-                _drawer.BackDrawPolyline(insert_element, points, false);
+                drawer.BackDrawPolyline(insert_element, points, false);
             });
         }
     }

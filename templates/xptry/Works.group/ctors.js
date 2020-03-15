@@ -159,14 +159,15 @@ $(document).ready(function() {
             //
             // and we get two alternative tangent points, according to which way we rotate from dA to dC
             //
-            this.CalcStrandPoint = function (other_point, out) {
+            this.CalcStrandPoint = function (other_point, out, drawer) {
                 // XOR
                 let h_out = (!out) != (!lefthand);
 
                 // won't need this when we've converted more to coords...
                 let vA = this.centre.Sub(other_point);
                 let A = vA.Dist();
-                let r2 = radius * radius;
+                let h_radius = radius + drawer.Width / 2;
+                let r2 = h_radius * h_radius;
                 let b = r2 / A;
                 let c = Math.sqrt(r2 - b * b);
                 let dA = vA.Div(A);

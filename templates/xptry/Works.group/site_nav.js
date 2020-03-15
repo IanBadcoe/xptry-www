@@ -120,6 +120,12 @@ $(document).ready(function() {
                 }
             ).then((data, status) => {
                 _paths = data;
+
+                for(const k in _paths) {
+                    let ent = _paths[k];
+
+                    ent.drawer = window.Drawers[ent.drawer];
+                }
             })
         );
 
@@ -155,10 +161,10 @@ $(document).ready(function() {
             let for_back = connect.is_reversed;
             target.SPoint[for_back] = data.centre;
             // iterate a couple of times in case both are responding to the other
-            connect.SPoint[!for_back] = connect.CalcStrandPoint(target.SPoint[for_back], !for_back);
-            target.SPoint[for_back] = target.CalcStrandPoint(connect.SPoint[!for_back], for_back);
-            connect.SPoint[!for_back] = connect.CalcStrandPoint(target.SPoint[for_back], !for_back);
-            target.SPoint[for_back] = target.CalcStrandPoint(connect.SPoint[!for_back], for_back);
+            connect.SPoint[!for_back] = connect.CalcStrandPoint(target.SPoint[for_back], !for_back, connect.drawer);
+            target.SPoint[for_back] = target.CalcStrandPoint(connect.SPoint[!for_back], for_back, connect.drawer);
+            connect.SPoint[!for_back] = connect.CalcStrandPoint(target.SPoint[for_back], !for_back, connect.drawer);
+            target.SPoint[for_back] = target.CalcStrandPoint(connect.SPoint[!for_back], for_back, connect.drawer);
             connect.calculated = true;
         }
     }
@@ -365,23 +371,22 @@ $(document).ready(function() {
                                 wp.SPoint[for_back] = prev_wp.centre;
 
                                 // iterate a couple of times in case both are responding to the other
-                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back);
-                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back);
-                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back);
-                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back);
+                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back, connect.drawer);
+                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back, connect.drawer);
+                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back, connect.drawer);
+                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back, connect.drawer);
                             }
 
                             prev_wp = wp;
                         }
 
                         let here = connect.SPoint[!for_back];
-                        let drawer = window.Drawers[connect.drawer];
 
                         connect.waypoints.forEach(wp => {
                             DrawStrandBetweenPoints(sc,
                                 here,
                                 wp.SPoint[for_back],
-                                drawer,
+                                connect.drawer,
                                 id);
 
                             here = wp.SPoint[!for_back];
@@ -390,7 +395,7 @@ $(document).ready(function() {
                         DrawStrandBetweenPoints(sc,
                             here,
                             dest_connect.SPoint[for_back],
-                            window.Drawers[connect.drawer],
+                            connect.drawer,
                             id);
                     }
                 });
