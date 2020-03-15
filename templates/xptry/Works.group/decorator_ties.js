@@ -11,34 +11,26 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
-        let rad_dir = [Math.sin(_ang), -Math.cos(_ang)];
-        let tang_dir = [rad_dir[1], -rad_dir[0]];
+        let rad_dir = new Coord(Math.sin(_ang), -Math.cos(_ang));
+        let tang_dir = rad_dir.Rot90();
 
         function transform_point(p) {
-            let rad = _rad + _width * p[1];
-            let tang = p[0] * _thick;
+            let rad = _rad + _width * p.Y;
+            let tang = p.X * _thick;
 
-            return [_centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
-                _centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
+            return new Coord(_centre.X + rad * rad_dir.X + tang * tang_dir.X,
+                _centre.Y + rad * rad_dir.Y + tang * tang_dir.Y);
         }
 
         if (front) {
             _tile.FSeqs.forEach(seq => {
-                let points = [];
-
-                seq.forEach(pnt => {
-                    points.push(transform_point(pnt));
-                });
+                let points = seq.map(pnt => transform_point(pnt));
 
                 _drawer.ForeDrawPolyline(insert_element, points, false);
             });
         } else {
             _tile.BSeqs.forEach(seq => {
-                let points = [];
-
-                seq.forEach(pnt => {
-                    points.push(transform_point(pnt));
-                });
+                let points = seq.map(pnt => transform_point(pnt));
 
                 _drawer.BackDrawPolyline(insert_element, points, false);
             });
@@ -63,25 +55,25 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
     let _drawer = window.Drawers[drawer];
     let _thick = _drawer.Width;
 
-    let dist = Math.sqrt(offset[0] * offset[0] + offset[1] * offset[1]);
+    let dist = offset.Dist();
 
-    let rad_dir = [offset[0] / dist, offset[1] / dist];
-    let tang_dir = [rad_dir[1], -rad_dir[0]];
+    let rad_dir = offset.Div(dist);
+    let tang_dir = rad_dir.Rot90();
 
     function transform_point(p) {
-        let rad = _rad + _width * p[1];
-        let tang = p[0] * _thick;
+        let rad = _rad + _width * p.Y;
+        let tang = p.X * _thick;
 
-        return [rad * rad_dir[0] + tang * tang_dir[0],
-            rad * rad_dir[1] + tang * tang_dir[1]];
+        return new Coord(rad * rad_dir.X + tang * tang_dir.X,
+            rad * rad_dir.Y + tang * tang_dir.Y);
     }
 
     function transform_point_abs(p) {
-        let rad = _rad + _width * p[1];
-        let tang = p[0] * _thick;
+        let rad = _rad + _width * p.Y;
+        let tang = p.X * _thick;
 
-        return [_centre[0] + rad * rad_dir[0] + tang * tang_dir[0],
-            _centre[1] + rad * rad_dir[1] + tang * tang_dir[1]];
+        return new Coord(_centre.X + rad * rad_dir.X + tang * tang_dir.X,
+            _centre.Y + rad * rad_dir.Y + tang * tang_dir.Y);
     }
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
@@ -92,28 +84,18 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         }
         if (front) {
             _tile.FSeqs.forEach(seq => {
-                let points = [];
-
-                seq.forEach(pnt => {
-                    points.push(transform_point(pnt));
-                });
+                let points = seq.map(pnt => transform_point(pnt));
 
                 _drawer.ForeDrawPolyline(insert_element, points, false);
             });
         } else {
             _tile.BSeqs.forEach(seq => {
-                let points = [];
-
-                seq.forEach(pnt => {
-                    points.push(transform_point(pnt));
-                });
+                let points = seq.map(pnt => transform_point(pnt));
 
                 _drawer.BackDrawPolyline(insert_element, points, false);
             });
         }
     }
-
-    let c_point = transform_point_abs(tile.CPoint);
 
     return {
         ForeDraw: function (insert_element) {
@@ -123,11 +105,11 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
             draw_tie(insert_element, false);
         },
         Dest: dest,
-        CPoint: c_point
+        CPoint: transform_point_abs(tile.CPoint)
     };
 }
 
-function DrawThreadBetweenPoints(el, x1, y1, x2, y2, drawer, id) {
+function DrawStrandBetweenPoints(el, p1, p2, drawer, id) {
     let outer = el.children("#" + id);
 
     if (outer.length == 0) {
@@ -140,13 +122,12 @@ function DrawThreadBetweenPoints(el, x1, y1, x2, y2, drawer, id) {
         el.append(outer);
     }
 
-    let dx = x2 - x1;
-    let dy = y2 - y1;
-    let dist = Math.sqrt(dx *dx + dy * dy);
+    let dp = p2.Sub(p1);
+    let dist = dp.Dist();
 
     let length = dist + drawer.Width + 2;
 
-    let angle = Math.atan2(dy, dx);
+    let angle = Math.atan2(dp.Y, dp.X);
 
     let width_offset = drawer.Width / 2 + 1;
 
@@ -158,17 +139,18 @@ function DrawThreadBetweenPoints(el, x1, y1, x2, y2, drawer, id) {
         width : length + "px",
         height : drawer.Width + 2 + "px",
         "transform-origin": "0 0",
-        transform: "translate(" + (x1) + "px," + (y1) + "px) "
+        transform: "translate(" + p1.X + "px," + p1.Y + "px) "
             + "rotate(" + angle + "rad) "
             + "translate(" + -width_offset + "px," + -width_offset + "px)"
     });
 
-    let svg = add_svg(ne, [length / 2, width_offset], -width_offset, -width_offset, length, drawer.Width + 2);
+    let svg = add_svg(
+        ne,
+        new Coord(length / 2, width_offset),
+        new Coord(-width_offset, -width_offset),
+        new Coord(length, drawer.Width + 2));
 
-    drawer.ForeDrawPolyline(svg, [[0, 0], [dist, 0]], false);
-
-    // add_circle(svg, [0, 0], null, "debug-blue", drawer.Width / 4);
-    // add_circle(svg, [dist, 0], null, "debug-blue", drawer.Width / 4);
+    drawer.ForeDrawPolyline(svg, new CoordArray([[0, 0], [dist, 0]]), false);
 
     outer.append(ne);
 }

@@ -1,70 +1,107 @@
-function Coord(x, y) {
-    this[0] = 0;
-    this[1] = 0;
+class Coord extends Array {
+    constructor(x, y) {
+        super(2);
 
-    if (Array.isArray(x)) {
-        this[0] = x[0];
-        this[1] = x[1];
-    } else if (x != undefined && y != undefined) {
-        this[0] = x;
-        this[1] = y;
+        if (Array.isArray(x)) {
+            this[0] = x[0];
+            this[1] = x[1];
+        } else {
+            this[0] = x || 0;
+            this[1] = y || 0;
+        }
     }
 
-    this.Dist = function() {
+    Dist() {
         return Math.sqrt(this.Dist2());
     }
 
-    this.Dist2 = function() {
+    Dist2() {
         return this[0] * this[0] + this[1] * this[1];
     }
 
-    Object.defineProperty(this, 'X', {
-        get: function() { return this[0]; },
-        set: function(v) { this[0] = v; }
-    });
+    get X() {
+        return this[0];
+    }
 
-    Object.defineProperty(this, 'Y', {
-        get: function() { return this[1]; },
-        set: function(v) { this[1] = v; }
-    });
+    set X(v) {
+        this[0] = v;
+    }
 
-    this.Add = function(v) {
+    get Y() {
+        return this[1];
+    }
+
+    set Y(v) {
+        this[1] = v;
+    }
+
+    Add(v) {
         return new Coord(this[0] + v[0], this[1] + v[1]);
     };
 
-    this.Inverse = function() {
+    Inverse() {
         return new Coord(-this[0], -this[1]);
     };
 
-    this.Sub = function(v) {
+    Sub(v) {
         return new Coord(this[0] - v[0], this[1] - v[1]);
     };
 
-    this.ToUnit = function() {
+    ToUnit() {
         return this.Div(this.Dist());
     };
 
-    this.Div = function(v) {
+    Div(v) {
         return new Coord(this[0] / v, this[1] / v);
     };
 
-    this.Mult = function(v) {
+    Mult(v) {
         return new Coord(this[0] * v, this[1] * v);
     };
 
-    this.Dot = function(v) {
+    Dot(v) {
         return new Coord(this[0] * v[0], this[1] * v[1]);
     };
 
-    this.Cross = function(v) {
+    Cross(v) {
         return this[0] * v[1] - this[1] * v[0];
     };
 
-    this.Rot90 = function() {
+    Rot90() {
         return new Coord(this[1], -this[0]);
     };
 
-    this.Rot270 = function() {
+    Rot270() {
         return new Coord(-this[1], this[0]);
     };
+
+    // this.ToArray = function() {
+    //     return [this[0], this[1]];
+    // }
 };
+
+// just a way of easily making an array off Coords at the moment,
+// but can add member functions if a need arises
+class CoordArray extends Array {
+    constructor(ary) {
+        if (!isNaN(ary)) {
+            super(ary);
+        } else {
+            super();
+
+            if (ary && Array.isArray(ary)) {
+                ary.forEach(x => this.push(new Coord(x)));
+            }
+        }
+    }
+
+    // ToArray() {
+    //     return [...this.map(x => x.ToArray())];
+    // }
+
+    // map(lambda) {
+    //     let ary = super.map(lambda);
+
+    //     return new CoordArray(ary);
+    // }
+}

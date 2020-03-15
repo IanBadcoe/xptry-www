@@ -5,7 +5,7 @@ function MakeTemplateKnotRadial(tile,
     centre, inner_rad, outer_rad, repeats,
     base_plate, decorators,
     drawer) {
-    let points = [];
+    let points = new CoordArray();
 
     const num_angles = tile.Width * repeats;
     const ang_step = 2 * Math.PI / num_angles;

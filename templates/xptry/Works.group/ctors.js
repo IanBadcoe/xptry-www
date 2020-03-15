@@ -7,16 +7,16 @@ $(document).ready(function() {
             // y is 0 on the inside of the ring and 1 on the outside
             let tie_tile = {
                 FSeqs: [
-                    [ [1.25, 0], [1.5, 1], [0, 1.8]/*, [0, 5]*/ ],
-                    [ [0.25, 0], [0.5, 1] ],
-                    [ [-0.75, 0], [-0.5, 1] ],
-                    [ [0.9, 1.8], [-1.0, 1.55] ],
-                    [ [-0.7, 1.8], [1, 1.6] ],
+                    new CoordArray([ [1.25, 0], [1.5, 1], [0, 1.8] ]),
+                    new CoordArray([ [0.25, 0], [0.5, 1] ]),
+                    new CoordArray([ [-0.75, 0], [-0.5, 1] ]),
+                    new CoordArray([ [0.9, 1.8], [-1.0, 1.55] ]),
+                    new CoordArray([ [-0.7, 1.8], [1, 1.6] ]),
                 ],
                 BSeqs: [
-                    [ [-1.5, 1], [0.9, 1.8] ],
+                    new CoordArray([ [-1.5, 1], [0.9, 1.8] ]),
                 ],
-                CPoint: [0, 1.8]
+                CPoint: new Coord(0, 1.8)
             };
 
             let torus_width = this.width * 0.39;
@@ -26,8 +26,8 @@ $(document).ready(function() {
 
                 connect.CalcStrandPoint = function(other_point) {
                     this.tie = MakeRadialTieFromTargetPoint(tie_tile,
-                        [node.centre_x, node.centre_y],
-                        [other_point[0] - node.centre_x, other_point[1] - node.centre_y],
+                        node.centre,
+                        other_point.Sub(node.centre),
                         torus_width * 0.695, torus_width * 0.3, connect.drawer,
                         "#" + connect.to.url_title);
 
@@ -38,17 +38,17 @@ $(document).ready(function() {
 
             let draw = (element) => {
                 let svg = add_svg(element,
-                    [this.centre_x, this.centre_y],
-                    -this.width / 2, -this.height / 2,
-                    this.width, this.height,
+                    this.centre,
+                    this.dims.Div(2).Inverse(),
+                    this.dims,
                     "xx" + this.url_title,
                     window.Zs.BehindNodeContent);
 
                 this.connections.forEach(connect => connect.tie.BackDraw(svg));
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
-                    left: (this.centre_x - torus_width) + "px",
-                    top: (this.centre_y - torus_width) + "px",
+                    left: (this.centre.X - torus_width) + "px",
+                    top: (this.centre.Y - torus_width) + "px",
                     width: (torus_width * 2) + "px",
                     height: (torus_width * 2) + "px",
                     "z-index": window.Zs.NodeContent
@@ -57,9 +57,9 @@ $(document).ready(function() {
                 element.append(torus_image);
 
                 svg = add_svg(element,
-                    [this.centre_x, this.centre_y],
-                    -this.width / 2, -this.height / 2,
-                    this.width, this.height,
+                    this.centre,
+                    this.dims.Div(2).Inverse(),
+                    this.dims,
                     "xx" + this.url_title,
                     window.Zs.InFrontOfNodeContent);
 
@@ -72,25 +72,25 @@ $(document).ready(function() {
 
     let image_field = function(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
         return function() {
-            let do_one_image = (element, images, rnd, centre_x, centre_y, width, height) => {
-                let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * width;
-                let y = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * height;
+            let do_one_image = (element, images, rnd, centre, dims) => {
+                let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.X;
+                let y = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.Y;
                 let scale = rnd.quick() * (max_scale - min_scale) + min_scale;
-                let persp = front_edge_perspective_distance / (front_edge_perspective_distance + height - y);
+                let persp = front_edge_perspective_distance / (front_edge_perspective_distance + dims.Y - y);
                 let idx = Math.floor(rnd.quick() * images.length);
 
                 scale *= persp;
 
-                x = (x - width / 2) * persp;
-                y = (y - height / 2) * persp;
+                x = (x - dims.X / 2) * persp;
+                y = (y - dims.Y / 2) * persp;
 
                 let ne = $("<img src='" + images[idx] + "'>").attr({
                     class: "absolute zero-spacing"
                 });
 
                 ne.on("load", (event) => {
-                    let hx = x - ne.width() / 2 + centre_x;
-                    let hy = y - ne.height() / 2 + centre_y;
+                    let hx = x - ne.width() / 2 + centre.X;
+                    let hy = y - ne.height() / 2 + centre.Y;
 
                     ne.css({
                         transform: "translate(" + hx + "px, " + hy + "px) scale(" + scale + ", " + scale * aspect + ")",
@@ -108,15 +108,15 @@ $(document).ready(function() {
 
                 for(let i = 0; i < number; i++) {
                     do_one_image(element, this.images, rnd,
-                        this.centre_x, this.centre_y,
-                        this.width, this.height);
+                        this.centre,
+                        this.dims);
                 }
             };
 
             // the only strand-point we have is the centre,
             // but we probably won't route strands through here in time...
             let calc_strand_point = function(other_point, out) {
-                return [this.centre_x, this.centre_y];
+                return this.centre;
             };
 
             this.Draw = draw;
@@ -183,9 +183,9 @@ $(document).ready(function() {
 
             this.Draw = function(element) {
                 let svg = add_svg(element,
-                    [this.centre_x, this.centre_y],
-                    -this.width / 2, -this.height / 2,
-                    this.width, this.height,
+                    this.centre,
+                    this.dims.Div(2).Inverse(),
+                    this.dims,
                     "xx" + this.url_title,
                     window.Zs.BehindNodeContent);
 

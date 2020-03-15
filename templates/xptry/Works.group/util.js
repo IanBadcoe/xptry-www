@@ -128,7 +128,7 @@ function add_raw_polyline(el, coords, style, closed, klass, offset) {
 
     if (offset) {
         coords = coords.map(pnt => {
-            return [pnt[0] + offset[0], pnt[1] + offset[1]];
+            return pnt.Add(offset);
         });
     }
 
@@ -210,20 +210,22 @@ function add_svg_link(el, href) {
     return ne;
 }
 
-function add_svg(el, centre, cx, cy, wx, wy, klass, z) {
+function add_svg(el, centre, co, dims, klass, z) {
     let ne = $("<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></svg>");
 
     ne.addClass("absolute");
 
     ne.attr({
-        viewBox: cx + "," + cy + "," + wx + "," + wy
+        viewBox: co.X + "," + co.Y + "," + dims.X + "," + dims.Y
     });
 
+    let tl = centre.Sub(dims.Div(2));
+
     ne.css({
-        left: (centre[0] - wx / 2) + "px",
-        top: (centre[1] - wy / 2) + "px",
-        width: wx + "px",
-        height: wy + "px",
+        left: tl.X + "px",
+        top: tl.Y + "px",
+        width: dims.X + "px",
+        height: dims.Y + "px",
         "z-index": z
     });
 
