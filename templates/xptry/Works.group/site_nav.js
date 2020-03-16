@@ -86,6 +86,10 @@ $(document).ready(function() {
                     ent.url_title = k;
                     ent.centre = new Coord(ent.centre_x, ent.centre_y);
                     ent.dims = new Coord(ent.width, ent.height);
+
+                    if (ent.images) {
+                        ent.images.forEach(image_path => ImageCache.Preload(image_path));
+                    }
                 }
             })
         );
@@ -108,6 +112,10 @@ $(document).ready(function() {
                     ent.url_title = k;
                     ent.centre = new Coord(ent.centre_x, ent.centre_y);
                     ent.dims = new Coord(ent.width, ent.height);
+
+                    if (ent.images) {
+                        ent.images.forEach(image_path => ImageCache.Preload(image_path));
+                    }
                 }
             })
         );

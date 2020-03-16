@@ -72,7 +72,7 @@ $(document).ready(function() {
 
     let image_field = function(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
         return function() {
-            let do_one_image = (element, images, rnd, centre, dims) => {
+            let do_one_image = (element, images, rnd, centre, dims, klass) => {
                 let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.X;
                 let y = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.Y;
                 let scale = rnd.quick() * (max_scale - min_scale) + min_scale;
@@ -84,18 +84,16 @@ $(document).ready(function() {
                 x = (x - dims.X / 2) * persp;
                 y = (y - dims.Y / 2) * persp;
 
-                let ne = $("<img src='" + images[idx] + "'>").attr({
-                    class: "absolute zero-spacing"
-                });
+                let ne = ImageCache.Element(images[idx]);
 
-                ne.on("load", (event) => {
-                    let hx = x - ne.width() / 2 + centre.X;
-                    let hy = y - ne.height() / 2 + centre.Y;
+                ne.addClass("absolute zero-spaceing xx" + this.url_title);
 
-                    ne.css({
-                        transform: "translate(" + hx + "px, " + hy + "px) scale(" + scale + ", " + scale * aspect + ")",
-                        "z-index": window.Zs.Decor
-                    });
+                let hx = x - ne.width() / 2 + centre.X;
+                let hy = y - ne.height() / 2 + centre.Y;
+
+                ne.css({
+                    transform: "translate(" + hx + "px, " + hy + "px) scale(" + scale + ", " + scale * aspect + ")",
+                    "z-index": window.Zs.Decor
                 });
 
                 element.append(ne);
@@ -109,7 +107,8 @@ $(document).ready(function() {
                 for(let i = 0; i < number; i++) {
                     do_one_image(element, this.images, rnd,
                         this.centre,
-                        this.dims);
+                        this.dims,
+                        "xx" + this.url_title);
                 }
             };
 
