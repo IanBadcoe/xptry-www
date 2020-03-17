@@ -2,8 +2,12 @@ body, .outer {
     overflow: hidden;
 }
 
-div.hud {
+div.hud-noclick {
     pointer-events: none;
+}
+
+div.hud-click {
+    pointer-events: auto;
 }
 
 div.decor {
@@ -42,6 +46,19 @@ svg.fill {
     border: 0;
     margin: 0;
     padding: 0;
+}
+
+.five-percent-border {
+    border: 0;
+    margin: 5%;
+    padding: 0;
+    width: 90%;
+    height: 90%;
+}
+
+.wh-auto {
+    width: auto;
+    height: auto;
 }
 
 path.strand,
