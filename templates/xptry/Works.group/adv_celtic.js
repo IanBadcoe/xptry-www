@@ -89,7 +89,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
             get EndParam() {
                 return this.Spline.EndParam;
             },
-            Interp: function(x) {
+            Interp(x) {
                 let hx = x;
 
                 while(hx > this.EndParam)
@@ -155,7 +155,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
     }
 
     return {
-        Draw: function(insert_element) {
+        Draw(insert_element) {
             if (_decorators) {
                 _decorators.forEach(dec => dec.BackDraw(insert_element));
             }

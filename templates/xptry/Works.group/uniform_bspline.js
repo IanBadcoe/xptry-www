@@ -70,7 +70,7 @@ var MakeUniformBSpline = function(points, order, closed) {
         get Points() {
             return _orig_points;
         },
-        Interp: function(p) {
+        Interp(p) {
             return spline_interp(p, _here_points, _order);
         }
     };

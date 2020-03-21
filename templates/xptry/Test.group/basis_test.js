@@ -24,7 +24,7 @@ $(document).ready(function(){
         let spline = MakeBasisView(knots, order, 400, 100, yoffset, closed);
 
         let splwrapper = {
-            Interp: function(x) {
+            Interp(x) {
                 let ret = 0;
 
                 for(let i = 0; i < spline.NumBases; i++)

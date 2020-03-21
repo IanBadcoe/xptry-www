@@ -32,12 +32,12 @@ function MakeParamScaler(interpable) {
         get NumKnots() {
             return _interpable.NumKnots;
         },
-        Interp: function(p) {
+        Interp(p) {
             let hp = p / _lengthish * _interpable.EndParam;
 
             return _interpable.Interp(hp);
         },
-        Point2Param: function(idx) {
+        Point2Param(idx) {
             let ip = _interpable.Point2Param(idx);
 
             return ip / _interpable.EndParam * _lengthish;

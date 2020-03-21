@@ -178,7 +178,7 @@ $(document).ready(function() {
     }
 
     window.SiteNav = {
-        HandlePop : function(where) {
+        HandlePop(where) {
             // when we retype the anchor part we seem to get a popstate with no state
             let url = location.href;
 
@@ -195,7 +195,7 @@ $(document).ready(function() {
 
             this.SmartNav(where);
         },
-        SmartScroll : function (where, chain_from, first, last) {
+        SmartScroll(where, chain_from, first, last) {
             let data = _threads[where];
 
             if (!data) {
@@ -246,7 +246,7 @@ $(document).ready(function() {
                 ).promise();
             });
         },
-        SmartNav : function (where) {
+        SmartNav(where) {
             where = where || this.DefaultLocation;
 
             let steps = null;
@@ -313,7 +313,7 @@ $(document).ready(function() {
         RefreshNavData: async function() {
             return load_nav_data(this, ["published"]);
         },
-        SmartLoad : function(target, set_title, suppress_connections) {
+        SmartLoad(target, set_title, suppress_connections) {
             let data = _threads[target];
             let is_decor = false;
 

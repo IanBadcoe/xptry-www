@@ -35,11 +35,11 @@
                 get Order() {
                     return _order;
                 },
-                Interp: function(p) {
+                Interp(p) {
                     let x = p / this.EndParam * width;
                     return [x, _yoffset - spline_interp(p, _knots, _order, this.idx) * height];
                 },
-                SetIdx: function(idx) { this.idx = idx; },
+                SetIdx(idx) { this.idx = idx; },
                 get NumBases() {
                     return _knots.length - 1 - _order;
                 },

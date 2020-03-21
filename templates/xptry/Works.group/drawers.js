@@ -36,7 +36,7 @@ $(document).ready(() => {
         }
 
         return {
-            ForeDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, loop_klass) {
+            ForeDrawKnot(insert_element, startparam, endparam, step, knot, close, wrap, loop_klass) {
                 let here_klass = klass || loop_klass;
 
                 if (loop_klass && klass) {
@@ -57,7 +57,7 @@ $(document).ready(() => {
                         close, 3, wrap, here_klass);
                 }
             },
-            BackDrawKnot: function(insert_element, startparam, endparam, step, knot, close, wrap, loop_klass) {
+            BackDrawKnot(insert_element, startparam, endparam, step, knot, close, wrap, loop_klass) {
                 if (bstyle) {
                     let here_klass = klass || loop_klass;
 
@@ -100,7 +100,7 @@ $(document).ready(() => {
         };
 
         return {
-            ForeDrawPolyline: function(insert_element, points, close) {
+            ForeDrawPolyline(insert_element, points, close) {
                 if (edgestyle) {
                     add_raw_polyline(insert_element, points, edgestyle, close, klass);
                 }
@@ -109,13 +109,13 @@ $(document).ready(() => {
                     add_raw_polyline(insert_element, points, hilightstyle, close, klass, hilightoffset);
                 }
             },
-            BackDrawPolyline: function(insert_element, points, close) {
+            BackDrawPolyline(insert_element, points, close) {
                 if (edgestyle) {
                     add_raw_polyline(insert_element, points, edgestyle, close, klass);
                 }
                 add_raw_polyline(insert_element, points, style, close, klass);
             },
-            ForeDrawPolylineArc: function(insert_element, p1, p2, radius, clockwise, largepart) {
+            ForeDrawPolylineArc(insert_element, p1, p2, radius, clockwise, largepart) {
                 let h_radius = radius + this.Width / 2;
                 if (edgestyle) {
                     add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass);
@@ -125,7 +125,7 @@ $(document).ready(() => {
                     add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, hilightstyle, klass, hilightoffset);
                 }
             },
-            BackDrawPolylineArc: function(insert_element, p1, p2, radius, clockwise, largepart) {
+            BackDrawPolylineArc(insert_element, p1, p2, radius, clockwise, largepart) {
                 let h_radius = radius + this.Width / 2;
                 if (edgestyle) {
                     add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass);

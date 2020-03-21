@@ -136,10 +136,10 @@ var MakeNonUniformBSpline = function(points, order, closed) {
         get NumKnots() {
             return _knots.length;
         },
-        Interp: function(p) {
+        Interp(p) {
             return spline_interp(p, _points, _knots, _order);
         },
-        Point2Param: function(idx) {
+        Point2Param(idx) {
             if (_closed) {
                 return idx + 0.5 + _order / 2;
             }

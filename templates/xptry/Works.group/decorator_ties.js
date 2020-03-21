@@ -38,10 +38,10 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
     }
 
     return {
-        ForeDraw: function (insert_element) {
+        ForeDraw(insert_element) {
             draw_tie(insert_element, true);
         },
-        BackDraw: function (insert_element) {
+        BackDraw(insert_element) {
             draw_tie(insert_element, false);
         }
     };
@@ -93,10 +93,10 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
     }
 
     return {
-        ForeDraw: function (insert_element) {
+        ForeDraw(insert_element) {
             draw_tie(insert_element, true);
         },
-        BackDraw: function (insert_element) {
+        BackDraw(insert_element) {
             draw_tie(insert_element, false);
         },
         Dest: dest,

@@ -5,7 +5,7 @@ $(document).ready(() => {
 
     window.ImageCache = {
         // returns a promise, so we can queue-up storing the reference
-        Preload : function (path) {
+        Preload(path) {
             let record = {}
 
             record.element = $("<img/>").attr("src", path);
@@ -16,11 +16,11 @@ $(document).ready(() => {
             return record.promise;
         },
         // allows us to wait later, or find out whether we're ready
-        Promise : function (path) {
+        Promise(path) {
             return cache[path].promise;
         },
         // returns a clone of the cached elephant
-        Element : function(path) {
+        Element(path) {
             return cache[path].element.clone();
         }
     };

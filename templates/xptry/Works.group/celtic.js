@@ -86,7 +86,7 @@ var MakeCKnot = function(loops) {
             get EndParam() {
                 return this.Spline.EndParam;
             },
-            Interp: function(x) {
+            Interp(x) {
                 let hx = x;
 
                 while(hx > this.EndParam)
@@ -151,7 +151,7 @@ var MakeCKnot = function(loops) {
     }
 
     return {
-        Draw: function(insert_element) {
+        Draw(insert_element) {
             _knots.forEach(knot => {
                 // we could, rather than drawing overlay for everything that is "over"
                 // do BackDrawHere and then only do overlays for those bits of "over"

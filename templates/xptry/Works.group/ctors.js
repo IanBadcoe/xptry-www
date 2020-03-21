@@ -216,6 +216,6 @@ $(document).ready(function() {
     window.Ctors = {
         "home" : home,
         "image_field" : image_field,
-        "dummy" : function() {},
+        dummy() {},
         "pulley": pulley}
 });
