@@ -111,6 +111,30 @@ class Coord extends Array {
         let cos = tu.Dot(vu);
         return Math.acos(cos);
     }
+
+    GTAnd(c) {
+        return this.X > c.X
+            && this.Y > c.Y;
+    }
+
+    GTOr(c) {
+        return this.X > c.X
+            || this.Y > c.Y;
+    }
+
+    LTAnd(c) {
+        return this.X < c.X
+            && this.Y < c.Y;
+    }
+
+    LTOr(c) {
+        return this.X < c.X
+            || this.Y < c.Y;
+    }
+    Equal(c) {
+        return this[0] == c[0]
+            && this[1] == c[1];
+    }
 };
 
 // just a way of easily making an array off Coords at the moment,
