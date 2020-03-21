@@ -29,7 +29,7 @@ $(document).ready(() => {
         }
     }
 
-    Draggable.Set($(".scroll-container"))
+    Draggable.Set($(".scroll-container"), [$(".background")]);
 
     function active_rect() {
         let sc = $(".scroll-container");

@@ -8,26 +8,48 @@ $(document).ready(() => {
     let ely = null;
 
     window.Draggable = {
-        Set(el) {
-            el.on("mousedown", e => {
-                md = true;
-                clickx = e.pageX;
-                clicky = e.pageY;
-                let pos = el.position();
-                elx = pos.left;
-                ely = pos.top;
-            });
-            el.on("mouseup", e => {
-                md = false;
-            });
-            el.on("mousemove", e => {
+        Set(draggee, other_targets) {
+            if (!other_targets) {
+                other_targets = [];
+            }
+
+            let all = [draggee, ...other_targets];
+
+            function mousedown(e) {
+                if (!md) {
+                    md = true;
+                    clickx = e.pageX;
+                    clicky = e.pageY;
+                    let pos = draggee.position();
+                    elx = pos.left;
+                    ely = pos.top;
+                }
+
+                return false;
+            }
+
+            function mousemove(e) {
                 if (md) {
-                    el.css({
+                    draggee.css({
                         left: elx + e.pageX - clickx,
                         top: ely + e.pageY - clicky
                     });
+
+                    return false;
                 }
-            })
+            }
+
+            function mouseup(e) {
+                md = false;
+
+                return false;
+            }
+
+            all.forEach(el => {
+                el.on("mousedown", mousedown);
+                el.on("mouseup", mouseup);
+                el.on("mousemove", mousemove);
+            });
         }
     };
 });
