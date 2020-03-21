@@ -1,3 +1,5 @@
 $(document).ready(() => {
-    window.SiteNav.Init("home-knot")
+    Draggable.Set($(".scroll-container"), [$(".background")]);
+
+    window.SiteNav.Init("home-knot");
 });
