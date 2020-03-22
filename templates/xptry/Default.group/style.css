@@ -48,6 +48,12 @@ svg.fill {
     padding: 0;
 }
 
+.one-border {
+    border: 1px solid maroon;
+    margin: 0;
+    padding: 0;
+}
+
 .five-percent-border {
     border: 0;
     margin: 5%;
