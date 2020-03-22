@@ -13,7 +13,7 @@ $(document).ready(function() {
         let ctor_string = obj.ctor;
 
         if (ctor_string) {
-            obj.ctor = new Function("return window.Ctors." + ctor_string)();
+            obj.ctor = new Function("return Ctors." + ctor_string)();
         }
 
         // without any explict ctor, connections all go to the centre
@@ -132,7 +132,7 @@ $(document).ready(function() {
                 for(const k in _paths) {
                     let ent = _paths[k];
 
-                    ent.drawer = window.Drawers[ent.drawer];
+                    ent.drawer = Drawers[ent.drawer];
                 }
             })
         );

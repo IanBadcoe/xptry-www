@@ -15,7 +15,7 @@ $(document).ready(() => {
     let _cycle = 100;
 
     function update_wrapper() {
-        window.DemandLoader.Update(_rect_fun());
+        DemandLoader.Update(_rect_fun());
     }
 
     window.DemandLoader = {

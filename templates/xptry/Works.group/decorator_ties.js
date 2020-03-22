@@ -6,7 +6,7 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
     let _ang = ang;
     let _rad = rad;
     let _width = width;
-    let _drawer = window.Drawers[drawer];
+    let _drawer = Drawers[drawer];
     let _thick = _drawer.Width;
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside

@@ -42,7 +42,7 @@ $(document).ready(function() {
                     this.dims.Div(2).Inverse(),
                     this.dims,
                     "xx" + this.url_title,
-                    window.Zs.BehindNodeContent);
+                    Zs.BehindNodeContent);
 
                 this.connections.forEach(connect => connect.tie.BackDraw(svg));
 
@@ -51,7 +51,7 @@ $(document).ready(function() {
                     top: (this.centre.Y - torus_width) + "px",
                     width: (torus_width * 2) + "px",
                     height: (torus_width * 2) + "px",
-                    "z-index": window.Zs.NodeContent
+                    "z-index": Zs.NodeContent
                 }).addClass("absolute zero-spacing rotating xx" + this.url_title);
 
                 element.append(torus_image);
@@ -61,7 +61,7 @@ $(document).ready(function() {
                     this.dims.Div(2).Inverse(),
                     this.dims,
                     "xx" + this.url_title,
-                    window.Zs.InFrontOfNodeContent);
+                    Zs.InFrontOfNodeContent);
 
                 this.connections.forEach(connect => connect.tie.ForeDraw(svg));
             };
@@ -93,7 +93,7 @@ $(document).ready(function() {
 
                 ne.css({
                     transform: "translate(" + hx + "px, " + hy + "px) scale(" + scale + ", " + scale * aspect + ")",
-                    "z-index": window.Zs.Decor
+                    "z-index": Zs.Decor
                 });
 
                 element.append(ne);
@@ -197,7 +197,7 @@ $(document).ready(function() {
                     this.dims.Div(2).Inverse(),
                     this.dims,
                     "xx" + this.url_title + " strand",
-                    window.Zs.BehindNodeContent);
+                    Zs.BehindNodeContent);
 
                 add_circle(svg,
                     [0, 0],
