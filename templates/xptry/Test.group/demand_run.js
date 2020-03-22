@@ -61,9 +61,5 @@ $(document).ready(() => {
 
     hud.append(div);
 
-    let timer = setInterval(() => {
-        let rect = active_rect();
-
-        DemandLoader.Update(rect);
-    }, 100);
+    DemandLoader.Init(100, 500, 1000, active_rect);
 });
