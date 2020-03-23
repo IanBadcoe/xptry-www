@@ -195,7 +195,7 @@ $(document).ready(function() {
 
             let This = this;
 
-            function draw() {
+            function load() {
 
                 let element = $(".scroll-container");
 
@@ -216,11 +216,13 @@ $(document).ready(function() {
                     This.SPoint[false].Sub(This.centre), This.SPoint[true].Sub(This.centre), radius,
                     This.clockwise,
                     This.clockwise == (This.signed_angle < 0));
+
+                return svg;
             };
 
             let rect = new Rect(this.centre.Sub(this.dims.Div(2)), this.centre.Add(this.dims.Div(2)));
 
-            DemandLoader.Register(this.url_title, rect, draw);
+            DemandLoader.Register(this.url_title, rect, load);
         };
     }
 
