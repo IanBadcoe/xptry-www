@@ -26,10 +26,15 @@ $(document).ready(() => {
             _cycle = cycle;
             _timer = setInterval(update_wrapper, _cycle);
         },
-        Register : function(id, rect, func) {
+        Register : function(id, rect, func, force = false) {
             // we assume, if we register a new function, that invalidates any existing element
+            // but we don't generally intend to do that...
             if (_existing[id]) {
-                this.Remove(id);
+                if (force) {
+                    this.Remove(id);
+                } else {
+                    return;
+                }
             }
 
             _data[id] = {

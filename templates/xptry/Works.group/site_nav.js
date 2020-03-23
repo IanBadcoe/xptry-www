@@ -66,6 +66,10 @@ $(document).ready(function() {
         f_thread.connections.push(path);
     }
 
+    function build_path(path) {
+
+    }
+
     let load_nav_data = function(obj, statuses) {
         let promises = [];
         promises.push(
@@ -146,12 +150,16 @@ $(document).ready(function() {
                 setup_thread_connection(reverse_path(path));
             });
 
-            for(const k in _decors) {
-                _decors[k].ctor();
-            }
-
             for(const k in _threads) {
                 _threads[k].ctor();
+            }
+
+            _paths.forEach(path => {
+                build_path(path);
+            });
+
+            for(const k in _decors) {
+                _decors[k].ctor();
             }
         });
     }

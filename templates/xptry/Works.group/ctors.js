@@ -191,12 +191,19 @@ $(document).ready(function() {
                 return tp;
             };
 
-            this.Draw = function(element) {
+            this.Draw = function() {};
+
+            let This = this;
+
+            function draw() {
+
+                let element = $(".scroll-container");
+
                 let svg = add_svg(element,
-                    this.centre,
-                    this.dims.Div(2).Inverse(),
-                    this.dims,
-                    "xx" + this.url_title + " strand",
+                    This.centre,
+                    This.dims.Div(2).Inverse(),
+                    This.dims,
+                    "xx" + This.url_title + " strand",
                     Zs.BehindNodeContent);
 
                 add_circle(svg,
@@ -205,11 +212,15 @@ $(document).ready(function() {
                     "fake",
                     radius);
 
-                this.drawer.ForeDrawPolylineArc(svg,
-                    this.SPoint[false].Sub(this.centre), this.SPoint[true].Sub(this.centre), radius,
-                    this.clockwise,
-                    this.clockwise == (this.signed_angle < 0));
+                This.drawer.ForeDrawPolylineArc(svg,
+                    This.SPoint[false].Sub(This.centre), This.SPoint[true].Sub(This.centre), radius,
+                    This.clockwise,
+                    This.clockwise == (This.signed_angle < 0));
             };
+
+            let rect = new Rect(this.centre.Sub(this.dims.Div(2)), this.centre.Add(this.dims.Div(2)));
+
+            DemandLoader.Register(this.url_title, rect, draw);
         };
     }
 
