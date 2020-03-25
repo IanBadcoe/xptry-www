@@ -131,9 +131,18 @@ class Coord extends Array {
         return this.X < c.X
             || this.Y < c.Y;
     }
+
     Equal(c) {
         return this[0] == c[0]
             && this[1] == c[1];
+    }
+
+    Max(c) {
+        return new Coord(Math.max(this.X, c.X), Math.max(this.Y, c.Y));
+    }
+
+    Min(c) {
+        return new Coord(Math.min(this.X, c.X), Math.min(this.Y, c.Y));
     }
 };
 

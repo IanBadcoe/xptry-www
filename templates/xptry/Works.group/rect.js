@@ -1,17 +1,20 @@
 class Rect {
     constructor(a, b, c, d) {
         if (arguments.length == 2) {
-            this.tl = new Coord(a);
-            this.br = new Coord(b);
+            a = new Coord(a);
+            b = new Coord(b);
         } else if (arguments.length == 4) {
-            this.tl = new Coord(a, b);
-            this.br = new Coord(c, d);
+            a = new Coord(a, b);
+            b = new Coord(c, d);
         } else if (arguments.length == 0) {
-            this.tl = new Coord();
-            this.br = new Coord();
+            a = new Coord();
+            b = new Coord();
         } else {
             throw "wrong number of arguments";
         }
+
+        this.tl = a.Min(b);
+        this.br = a.Max(b);
     }
 
     // extends by amt in each direction, if amt is a Coord use X and Y separately
