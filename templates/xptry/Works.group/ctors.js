@@ -24,12 +24,14 @@ $(document).ready(function() {
             this.connections.forEach(connect => {
                 let node = this;
 
+                let dest = connect.forwards ? connect.path.to : connect.path.from;
+
                 connect.CalcStrandPoint = function(other_point) {
                     this.tie = MakeRadialTieFromTargetPoint(tie_tile,
                         node.centre,
                         other_point.Sub(node.centre),
-                        torus_width * 0.695, torus_width * 0.3, connect.drawer,
-                        "#" + connect.to.url_title);
+                        torus_width * 0.695, torus_width * 0.3, connect.path.drawer,
+                        "#" + dest.url_title);
 
                     // recalculated by the above...
                     return connect.tie.CPoint;

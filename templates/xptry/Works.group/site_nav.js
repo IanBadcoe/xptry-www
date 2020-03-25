@@ -28,46 +28,124 @@ $(document).ready(function() {
         }
     }
 
-    let reverse_path = function(path) {
-        let copy = { ...path };
-
-        copy.from = path.to;
-        copy.to = path.from;
-        copy.waypoints = path.waypoints.slice().reverse();
-
-        copy.is_reversed = !path.is_reversed;
-
-        return copy;
-    }
-
-    let setup_thread_connection = function(path) {
+    function setup_thread_connection(path) {
         // ignore any paths where we haven't published both end-points
         if (!(path.from in _threads) || !(path.to in _threads))
             return;
-
-        // we're going to trash this
-        path = { ...path };
 
         // assuming DB consistency won't allow non-existent end-points
         // so just check for not having them
         if (!path.from || !path.to)
             return;
 
-        let f_thread = _threads[path.from];
-        let t_thread = _threads[path.to];
-
-        path.from = f_thread;
-        path.to = t_thread;
+        path.from = _threads[path.from];
+        path.to = _threads[path.to];
 
         path.waypoints = path.waypoints.map(w => _decors[w]);
 
-        path.debug_title = path.url_title + "--" + f_thread.url_title;
+        path.from.connections.push({
+            path: path,
+            debug_title: path.url_title + "--" + path.from.url_title,
+            forwards: true
+        });
 
-        f_thread.connections.push(path);
+        path.to.connections.push({
+            path: path,
+            debug_title: path.url_title + "--" + path.to.url_title,
+            forwards: false
+        });
+    }
+
+    function calc_node_cpoint(connect, node) {
+        if (!connect.calculated) {
+            let target = null;
+            let wps = connect.path.waypoints;
+
+            if (wps.length > 0) {
+                if (connect.forwards) {
+                    target = wps[0];
+                } else {
+                    target = wps[wps.length - 1];
+                }
+            }
+            else
+            {
+                if (connect.forwards) {
+                    target = connect.path.to.connections.find(x => x.path.from === node);
+                } else {
+                    target = connect.path.from.connections.find(x => x.path.to === node);
+                }
+            }
+
+            target.SPoint = target.SPoint || {};
+            connect.SPoint = connect.SPoint || {};
+
+            let f = connect.forwards;
+
+            target.SPoint[!f] = node.centre;
+
+            // iterate a couple of times in case both are responding to the other
+            connect.SPoint[f] = connect.CalcStrandPoint(target.SPoint[!f], f, connect.path.drawer);
+            target.SPoint[!f] = target.CalcStrandPoint(connect.SPoint[f], !f, connect.path.drawer);
+            connect.SPoint[f] = connect.CalcStrandPoint(target.SPoint[!f], f, connect.path.drawer);
+            target.SPoint[!f] = target.CalcStrandPoint(connect.SPoint[f], !f, connect.path.drawer);
+
+            connect.calculated = true;
+        }
     }
 
     function build_path(path) {
+        let from = path.from;
+        let to = path.to;
 
+        let to_connect = to.connections.find(x => x.path.from === from);
+        let from_connect = from.connections.find(x => x.path.to === to);
+        // calculate connection point for ends, if required
+        calc_node_cpoint(to_connect, to);
+        calc_node_cpoint(from_connect, from);
+
+//        this.SmartLoad(connect.to.url_title, false, true);
+
+        let prev_wp = null;
+
+        path.waypoints.forEach(wp => {
+            wp.SPoint = wp.SPoint || {};
+
+            if (prev_wp) {
+                wp.SPoint[false] = wp.centre;
+
+                // iterate a couple of times in case both are responding to the other
+                prev_wp.SPoint[true] = prev_wp.CalcStrandPoint(wp.SPoint[false], true, path.drawer);
+                wp.SPoint[false] = wp.CalcStrandPoint(prev_wp.SPoint[true], false, path.drawer);
+                prev_wp.SPoint[true] = prev_wp.CalcStrandPoint(wp.SPoint[false], true, path.drawer);
+                wp.SPoint[false] = wp.CalcStrandPoint(prev_wp.SPoint[true], false, path.drawer);
+            }
+
+            prev_wp = wp;
+        });
+
+        let prev = from_connect.SPoint[true];
+        let prev_name = from.url_title;
+
+        let xtend = [...path.waypoints, to_connect];
+
+        let sc =$(".scroll-container");
+
+        xtend.forEach(wp => {
+            let wp_name = wp.url_title || wp.debug_title;
+            let p1 = prev;
+            let p2 = wp.SPoint[false];
+
+            DemandLoader.Register(prev_name + "|" + wp_name,
+                new Rect(prev, wp.SPoint[false]),
+                () => {
+                    return DrawStrandBetweenPoints(sc, p1, p2, path.drawer);
+                }
+            );
+
+            prev = wp.SPoint[true];
+            prev_name = wp_name;
+        });
     }
 
     let load_nav_data = function(obj, statuses) {
@@ -147,42 +225,20 @@ $(document).ready(function() {
             _paths.forEach(path => {
                 path.is_reversed = false;
                 setup_thread_connection(path);
-                setup_thread_connection(reverse_path(path));
             });
 
             for(const k in _threads) {
                 _threads[k].ctor();
             }
 
-            _paths.forEach(path => {
-                build_path(path);
-            });
-
             for(const k in _decors) {
                 _decors[k].ctor();
             }
+
+            _paths.forEach(path => {
+                build_path(path);
+            });
         });
-    }
-
-    function calc_node_cpoint(connect, data) {
-        if (!connect.calculated) {
-            let target = connect.to.connections.find(x => x.to === data);
-            if (connect.waypoints.length > 0) {
-                target = connect.waypoints[0];
-            }
-
-            target.SPoint = target.SPoint || {};
-            connect.SPoint = connect.SPoint || {};
-
-            let for_back = connect.is_reversed;
-            target.SPoint[for_back] = data.centre;
-            // iterate a couple of times in case both are responding to the other
-            connect.SPoint[!for_back] = connect.CalcStrandPoint(target.SPoint[for_back], !for_back, connect.drawer);
-            target.SPoint[for_back] = target.CalcStrandPoint(connect.SPoint[!for_back], for_back, connect.drawer);
-            connect.SPoint[!for_back] = connect.CalcStrandPoint(target.SPoint[for_back], !for_back, connect.drawer);
-            target.SPoint[for_back] = target.CalcStrandPoint(connect.SPoint[!for_back], for_back, connect.drawer);
-            connect.calculated = true;
-        }
     }
 
     window.SiteNav = {
@@ -203,14 +259,8 @@ $(document).ready(function() {
 
             this.SmartNav(where);
         },
-        SmartScroll(where, chain_from, first, last) {
-            let data = _threads[where];
-
-            if (!data) {
-                data = _decors[where];
-            }
-
-            if (!data) {
+        SmartScroll(node, chain_from, first, last) {
+            if (!node) {
                 return chain_from;
             }
 
@@ -225,7 +275,7 @@ $(document).ready(function() {
 
                 let inner_half_size = new Coord(innerWidth / 2, innerHeight / 2);
 
-                let p = inner_half_size.Sub(data.centre);
+                let p = inner_half_size.Sub(node.centre);
 
                 let dp = old_pos.Sub(p);
                 let dist = dp.Dist();
@@ -257,16 +307,21 @@ $(document).ready(function() {
         SmartNav(where) {
             where = where || this.DefaultLocation;
 
+            let dest_node = _threads[where] || _decors[where];
+
+            if (!dest_node)
+                return;
+
             let steps = null;
 
-            if (this.PreviousLocation) {
-                let path = _paths.find(x => x.from === this.PreviousLocation && x.to === where );
+            if (this.CurrentNode) {
+                let path = _paths.find(x => x.from === this.CurrentNode && x.to === dest_node );
 
                 if (path) {
                     steps = path.waypoints;
                 } else {
                     // look for reverse of route
-                    path = _paths.find(x => x.to === this.PreviousLocation && x.from === where );
+                    path = _paths.find(x => x.to === this.CurrentNode && x.from === dest_node );
 
                     if (path) {
                         steps = path.waypoints.slice().reverse();
@@ -286,14 +341,14 @@ $(document).ready(function() {
             }
 
             this.SmartLoad(where, true);
-            this.SmartScroll(where, promise, first, true);
+            this.SmartScroll(dest_node, promise, first, true);
 
-            this.PreviousLocation = where;
+            this.CurrentNode = dest_node;
             history.replaceState(where, "", this.UrlStem + "#" + where);
         },
         Init: async function(home_id) {
             this.DefaultLocation = home_id;
-            this.PreviousLocation = false;
+            this.CurrentNode = null;
 
             let promise = this.RefreshNavData();
 
@@ -339,16 +394,6 @@ $(document).ready(function() {
 
             if (already.length == 0) {
                 if (!is_decor) {
-                    if (!data.ctor)
-                    {
-                        // fake connection-points for case of missing ctor
-                        data.connections.forEach(x => {
-                            x.SPoint = {}
-                            x.SPoint[true] = data.centre;
-                            x.SPoint[false] = data.centre;
-                        });
-                    }
-
                     // calculate our local connection points
                     data.connections.forEach(connect => {
                         calc_node_cpoint(connect, data);
@@ -370,49 +415,6 @@ $(document).ready(function() {
                     let already = sc.has("#" + id);
 
                     if (already.length == 0) {
-                        let dest_connect = connect.to.connections.find(x => x.to === data);
-                        // calculate connection point for far end, if required
-                        calc_node_cpoint(dest_connect, connect.to);
-
-                        this.SmartLoad(connect.to.url_title, false, true);
-
-                        let prev_wp = null;
-                        let for_back = connect.is_reversed;
-
-                        for(let i = 0; i < connect.waypoints.length; i++) {
-                            let wp = connect.waypoints[i];
-                            wp.SPoint = wp.SPoint || {};
-
-                            if (prev_wp) {
-                                wp.SPoint[for_back] = wp.centre;
-
-                                // iterate a couple of times in case both are responding to the other
-                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back, connect.drawer);
-                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back, connect.drawer);
-                                prev_wp.SPoint[!for_back] = prev_wp.CalcStrandPoint(wp.SPoint[for_back], !for_back, connect.drawer);
-                                wp.SPoint[for_back] = wp.CalcStrandPoint(prev_wp.SPoint[!for_back], for_back, connect.drawer);
-                            }
-
-                            prev_wp = wp;
-                        }
-
-                        let here = connect.SPoint[!for_back];
-
-                        connect.waypoints.forEach(wp => {
-                            DrawStrandBetweenPoints(sc,
-                                here,
-                                wp.SPoint[for_back],
-                                connect.drawer,
-                                id);
-
-                            here = wp.SPoint[!for_back];
-                        });
-
-                        DrawStrandBetweenPoints(sc,
-                            here,
-                            dest_connect.SPoint[for_back],
-                            connect.drawer,
-                            id);
                     }
                 });
             }

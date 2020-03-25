@@ -104,19 +104,7 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
     };
 }
 
-function DrawStrandBetweenPoints(el, p1, p2, drawer, id) {
-    let outer = el.children("#" + id);
-
-    if (outer.length == 0) {
-        outer = $("<div></div>")
-            .attr({
-                class: "absolute zero-spacing decor",
-                id: id
-            });
-
-        el.append(outer);
-    }
-
+function DrawStrandBetweenPoints(el, p1, p2, drawer) {
     let dp = p2.Sub(p1);
     let dist = dp.Dist();
 
@@ -147,5 +135,7 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer, id) {
 
     drawer.ForeDrawPolyline(svg, new CoordArray([[0, 0], [dist, 0]]), false);
 
-    outer.append(ne);
+    el.append(ne);
+
+    return el;
 }
