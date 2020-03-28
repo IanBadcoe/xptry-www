@@ -47,6 +47,25 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
     };
 }
 
+function GetRadialTieSPoint(tile, centre, offset, rad, width, drawer) {
+    let thick = drawer.Width;
+
+    let dist = offset.Dist();
+
+    let rad_dir = offset.Div(dist);
+    let tang_dir = rad_dir.Rot90();
+
+    function transform_point_abs(p) {
+        let h_rad = rad + width * p.Y;
+        let tang = p.X * thick;
+
+        return new Coord(centre.X + h_rad * rad_dir.X + tang * tang_dir.X,
+            centre.Y + h_rad * rad_dir.Y + tang * tang_dir.Y);
+    }
+
+    return transform_point_abs(tile.CPoint);
+}
+
 function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, dest) {
     let thick = drawer.Width;
 
@@ -137,5 +156,5 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
 
     el.append(ne);
 
-    return el;
+    return ne;
 }

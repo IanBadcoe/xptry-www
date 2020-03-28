@@ -26,15 +26,22 @@ $(document).ready(function() {
 
                 let dest = connect.forwards ? connect.path.to : connect.path.from;
 
-                connect.CalcStrandPoint = function(other_point) {
-                    this.tie = MakeRadialTieFromTargetPoint(tie_tile,
-                        node.centre,
-                        other_point.Sub(node.centre),
-                        torus_width * 0.695, torus_width * 0.3, connect.path.drawer,
-                        "#" + dest.url_title);
+                connect.CalcStrandPoint = function(other_point, forward, drawer, final) {
+                    if (final) {
+                        this.tie = MakeRadialTieFromTargetPoint(tie_tile,
+                            node.centre,
+                            other_point.Sub(node.centre),
+                            torus_width * 0.695, torus_width * 0.3, connect.path.drawer,
+                            "#" + dest.url_title);
 
-                    // recalculated by the above...
-                    return connect.tie.CPoint;
+                        // recalculated by the above...
+                        return connect.tie.CPoint;
+                    } else {
+                        return GetRadialTieSPoint(tie_tile,
+                            node.centre,
+                            other_point.Sub(node.centre),
+                            torus_width * 0.695, torus_width * 0.3, connect.path.drawer);
+                    }
                 }
             });
 
@@ -195,29 +202,30 @@ $(document).ready(function() {
 
             this.Draw = function() {};
 
-            let This = this;
+            let pulley_data = this;
 
             function load() {
-
                 let element = $(".scroll-container");
 
                 let svg = add_svg(element,
-                    This.centre,
-                    This.dims.Div(2).Inverse(),
-                    This.dims,
-                    "xx" + This.url_title + " strand",
+                    pulley_data.centre,
+                    pulley_data.dims.Div(2).Inverse(),
+                    pulley_data.dims,
+                    "xx" + pulley_data.url_title + " strand",
                     Zs.BehindNodeContent);
 
                 add_circle(svg,
                     [0, 0],
                     "fill: rgb(128,96,96);",
-                    "fake",
+                    null,
                     radius);
 
-                This.drawer.ForeDrawPolylineArc(svg,
-                    This.SPoint[false].Sub(This.centre), This.SPoint[true].Sub(This.centre), radius,
-                    This.clockwise,
-                    This.clockwise == (This.signed_angle < 0));
+                if (pulley_data.drawer) {
+                    pulley_data.drawer.ForeDrawPolylineArc(svg,
+                        pulley_data.SPoint[false].Sub(pulley_data.centre), pulley_data.SPoint[true].Sub(pulley_data.centre), radius,
+                        pulley_data.clockwise,
+                        pulley_data.clockwise == (pulley_data.signed_angle < 0));
+                }
 
                 return svg;
             };

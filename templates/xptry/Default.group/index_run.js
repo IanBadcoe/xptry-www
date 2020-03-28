@@ -16,7 +16,7 @@ $(document).ready(() => {
         let rect = new Rect(pos.Inverse(),
             pos.Inverse().Add(dim));
 
-        return rect.ExtendedBy(dim.Mult(0.5));
+        return rect;
     }
 
     DemandLoader.Init(200, 300000, 5000, active_rect);

@@ -5,7 +5,7 @@ $(document).ready(() => {
     let _existing = {};
     let _expire_ms = 5000;
     let _last_rect = new Rect(0, 0, -1, -1);
-    let _new_added = false;
+    let _force_processing = false;
     let _last_expire = 0;
     let _expire_cycle_ms = 1000;
     let _rect_fun = function() {
@@ -26,7 +26,7 @@ $(document).ready(() => {
             _cycle = cycle;
             _timer = setInterval(update_wrapper, _cycle);
         },
-        Register : function(id, rect, func, force = false) {
+        Register(id, rect, func, force = false) {
             // we assume, if we register a new function, that invalidates any existing element
             // but we don't generally intend to do that...
             if (_existing[id]) {
@@ -42,27 +42,37 @@ $(document).ready(() => {
                 func: func
             };
 
-            _new_added = true;
+            _force_processing = true;
         },
-        Update : function(rect) {
+        Update(rect) {
             let add_queue = [];
             let remove_queue = [];
 
             let ts = new Date().getTime();
 
-            if (_new_added || !_last_rect.Equal(rect)) {
+            let ext_rect = rect.ExtendedBy(rect.Dims().Mult(0.5));
+
+            if (_force_processing || !_last_rect.Equal(rect)) {
+                _force_processing = false;
 
                 for(const key in _data) {
                     const h_data = _data[key];
                     const h_exist = _existing[key];
 
-                    if (!h_exist && h_data.rect.Overlaps(rect)) {
-                        remove_queue = remove_queue.filter(x => x != key);
-                        add_queue.push(key);
+                    if (h_data.rect.Overlaps(ext_rect)) {
+                        if (!h_exist) {
+                            remove_queue = remove_queue.filter(x => x != key);
+                            add_queue.push(key);
+
+                        //     // we'll create them hidden and show them when they hit the screen
+                        //     // so we need to run once more to cover the case where they hit the screen immediately
+                        //     _force_processing = true;
+                        // } else if (!h_exist.shown && h_data.rect.Overlaps(rect)) {
+                        //     this.ShowElement(h_exist);
+                        }
                     }
                 }
 
-                _new_added = false;
                 _last_rect = rect;
             }
 
@@ -72,7 +82,7 @@ $(document).ready(() => {
                     const h_exist = _existing[key];
 
                     if (h_exist.ts + _expire_ms < ts) {
-                        if (h_data.rect.Overlaps(rect)) {
+                        if (h_data.rect.Overlaps(ext_rect)) {
                             h_exist.ts = ts;
                         } else {
                             add_queue = add_queue.filter(x => x != key);
@@ -88,7 +98,7 @@ $(document).ready(() => {
 
             remove_queue.forEach(id => this.RemoveElement(id));
         },
-        Remove : function(id) {
+        Remove(id) {
             this.RemoveElement(id);
 
             if (_data[id]) {
@@ -96,16 +106,29 @@ $(document).ready(() => {
             }
         },
         CreateElement(id, ts) {
+            let el = _data[id].func();
             _existing[id] = {
-                el : _data[id].func(),
+                el : el,
                 ts : ts
             };
+
+            // this.HideElement(_existing[id]);
         },
         RemoveElement(id) {
             if (_existing[id]) {
                 _existing[id].el.remove();
                 delete _existing[id];
             }
-        }
+        },
+        // ShowElement(exists) {
+        //     exists.el.find().show();
+        //     exists.el.show();
+        //     exists.shown = true;
+        // },
+        // HideElement(exists) {
+        //     exists.el.find().hide();
+        //     exists.el.hide();
+        //     exists.shown = false;
+        // }
     };
 });

@@ -35,6 +35,8 @@ $(document).ready(() => {
                         top: ely + e.pageY - clicky
                     });
 
+                    $(".hack").toggle();
+                    
                     return false;
                 }
             }

@@ -85,10 +85,10 @@ $(document).ready(function() {
             target.SPoint[!f] = node.centre;
 
             // iterate a couple of times in case both are responding to the other
-            connect.SPoint[f] = connect.CalcStrandPoint(target.SPoint[!f], f, connect.path.drawer);
-            target.SPoint[!f] = target.CalcStrandPoint(connect.SPoint[f], !f, connect.path.drawer);
-            connect.SPoint[f] = connect.CalcStrandPoint(target.SPoint[!f], f, connect.path.drawer);
-            target.SPoint[!f] = target.CalcStrandPoint(connect.SPoint[f], !f, connect.path.drawer);
+            connect.SPoint[f] = connect.CalcStrandPoint(target.SPoint[!f], f, connect.path.drawer, false);
+            target.SPoint[!f] = target.CalcStrandPoint(connect.SPoint[f], !f, connect.path.drawer, false);
+            connect.SPoint[f] = connect.CalcStrandPoint(target.SPoint[!f], f, connect.path.drawer, true);
+            target.SPoint[!f] = target.CalcStrandPoint(connect.SPoint[f], !f, connect.path.drawer, true);
 
             connect.calculated = true;
         }
@@ -115,10 +115,10 @@ $(document).ready(function() {
                 wp.SPoint[false] = wp.centre;
 
                 // iterate a couple of times in case both are responding to the other
-                prev_wp.SPoint[true] = prev_wp.CalcStrandPoint(wp.SPoint[false], true, path.drawer);
-                wp.SPoint[false] = wp.CalcStrandPoint(prev_wp.SPoint[true], false, path.drawer);
-                prev_wp.SPoint[true] = prev_wp.CalcStrandPoint(wp.SPoint[false], true, path.drawer);
-                wp.SPoint[false] = wp.CalcStrandPoint(prev_wp.SPoint[true], false, path.drawer);
+                prev_wp.SPoint[true] = prev_wp.CalcStrandPoint(wp.SPoint[false], true, path.drawer, false);
+                wp.SPoint[false] = wp.CalcStrandPoint(prev_wp.SPoint[true], false, path.drawer, false);
+                prev_wp.SPoint[true] = prev_wp.CalcStrandPoint(wp.SPoint[false], true, path.drawer, true);
+                wp.SPoint[false] = wp.CalcStrandPoint(prev_wp.SPoint[true], false, path.drawer, true);
             }
 
             prev_wp = wp;
@@ -407,16 +407,6 @@ $(document).ready(function() {
                 if (set_title) {
                     fix_title(data.title);
                 }
-            }
-
-            if (!suppress_connections && !is_decor) {
-                data.connections.forEach(connect => {
-                    let id = "xx" + connect.url_title;
-                    let already = sc.has("#" + id);
-
-                    if (already.length == 0) {
-                    }
-                });
             }
         }
     };
