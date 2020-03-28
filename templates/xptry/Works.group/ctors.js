@@ -45,8 +45,10 @@ $(document).ready(function() {
                 }
             });
 
-            let draw = (element) => {
-                let svg = add_svg(element,
+            let load1 = () => {
+                let el = $(".scroll-container");
+
+                let svg = add_svg(el,
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
@@ -54,6 +56,12 @@ $(document).ready(function() {
                     Zs.BehindNodeContent);
 
                 this.connections.forEach(connect => connect.tie.BackDraw(svg));
+
+                return svg;
+            }
+
+            let load2 = () => {
+                let el = $(".scroll-container");
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
                     left: (this.centre.X - torus_width) + "px",
@@ -63,9 +71,15 @@ $(document).ready(function() {
                     "z-index": Zs.NodeContent
                 }).addClass("absolute zero-spacing rotating xx" + this.url_title);
 
-                element.append(torus_image);
+                el.append(torus_image);
 
-                svg = add_svg(element,
+                return torus_image;
+            }
+
+            let load3 = () => {
+                let el = $(".scroll-container");
+
+                let svg = add_svg(el,
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
@@ -73,9 +87,19 @@ $(document).ready(function() {
                     Zs.InFrontOfNodeContent);
 
                 this.connections.forEach(connect => connect.tie.ForeDraw(svg));
+
+                return svg;
             };
 
-            this.Draw = draw;
+            let bounds = new Rect(this.centre.Sub(this.dims.Div(2)),
+                this.centre.Add(this.dims.Div(2))
+            );
+
+            DemandLoader.Register(this.url_title + "1", bounds, load1);
+            DemandLoader.Register(this.url_title + "2", bounds, load2);
+            DemandLoader.Register(this.url_title + "3", bounds, load3);
+
+            this.Draw = function() {};
         };
     };
 
