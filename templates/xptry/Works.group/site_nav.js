@@ -104,8 +104,6 @@ $(document).ready(function() {
         calc_node_cpoint(to_connect, to);
         calc_node_cpoint(from_connect, from);
 
-//        this.SmartLoad(connect.to.url_title, false, true);
-
         let prev_wp = null;
 
         path.waypoints.forEach(wp => {
@@ -334,13 +332,12 @@ $(document).ready(function() {
 
             if (steps) {
                 steps.forEach(step => {
-                    this.SmartLoad(step);
                     promise = this.SmartScroll(step, promise, first);
                     first = false;
                 });
             }
 
-            this.SmartLoad(where, true);
+            fix_title(where.title);
             this.SmartScroll(dest_node, promise, first, true);
 
             this.CurrentNode = dest_node;
@@ -375,39 +372,6 @@ $(document).ready(function() {
         },
         RefreshNavData: async function() {
             return load_nav_data(this, ["published"]);
-        },
-        SmartLoad(target, set_title, suppress_connections) {
-            let data = _threads[target];
-            let is_decor = false;
-
-            if (!data) {
-                is_decor = true;
-                data = _decors[target];
-            }
-
-            if (!data) {
-                return;
-            }
-
-            let sc = $(".scroll-container");
-            let already = sc.children(".xx" + target);
-
-            if (already.length == 0) {
-                if (!is_decor) {
-                    // calculate our local connection points
-                    data.connections.forEach(connect => {
-                        calc_node_cpoint(connect, data);
-                    });
-                }
-
-                if (data.Draw) {
-                    data.Draw(sc);
-                }
-
-                if (set_title) {
-                    fix_title(data.title);
-                }
-            }
         }
     };
     function ajax_error(hdr, status, error) {

@@ -98,8 +98,6 @@ $(document).ready(function() {
             DemandLoader.Register(this.url_title + "1", bounds, load1);
             DemandLoader.Register(this.url_title + "2", bounds, load2);
             DemandLoader.Register(this.url_title + "3", bounds, load3);
-
-            this.Draw = function() {};
         };
     };
 
@@ -165,7 +163,6 @@ $(document).ready(function() {
                 return this.centre;
             };
 
-            this.Draw = function() {};
             this.CalcStrandPoint = calc_strand_point;
         };
     };
@@ -237,8 +234,6 @@ $(document).ready(function() {
 
                 return tp;
             };
-
-            this.Draw = function() {};
 
             let pulley_data = this;
 
