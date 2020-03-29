@@ -119,7 +119,7 @@ $(document).ready(function() {
 
                 let ne = ImageCache.Element(images[idx]);
 
-                ne.addClass("absolute zero-spaceing xx" + this.url_title);
+                ne.addClass("absolute zero-spacing xx" + this.url_title);
 
                 let hx = x - ne.width() / 2 + centre.X;
                 let hy = y - ne.height() / 2 + centre.Y;
@@ -130,28 +130,42 @@ $(document).ready(function() {
                 });
 
                 element.append(ne);
+
+                return ne;
             };
 
-            let draw = (element) => {
+            let load = () => {
+                let ret = $();
+
+                let el = $(".scroll-container");
+
                 let area = this.width * this.height;
                 let number = area * density;
-                let rnd = MakeRand(element.attr("id"));
+                let rnd = MakeRand(this.url_title);
 
                 for(let i = 0; i < number; i++) {
-                    do_one_image(element, this.images, rnd,
+                    ret = ret.add(do_one_image(el, this.images, rnd,
                         this.centre,
                         this.dims,
-                        "xx" + this.url_title);
+                        "xx" + this.url_title));
                 }
+
+                return ret;
             };
+
+            // double size of rect to allow for pictures spilling over boundary a bit
+            DemandLoader.Register(this.url_title,
+                new Rect(this.centre.Sub(this.dims),
+                         this.centre.Add(this.dims)),
+                    load);
 
             // the only strand-point we have is the centre,
             // but we probably won't route strands through here in time...
-            let calc_strand_point = function(other_point, out) {
+            let calc_strand_point = function(other_point) {
                 return this.centre;
             };
 
-            this.Draw = draw;
+            this.Draw = function() {};
             this.CalcStrandPoint = calc_strand_point;
         };
     };
