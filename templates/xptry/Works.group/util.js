@@ -362,9 +362,14 @@ function add_holed_circle(el, outer, inner, style, klass, img_url, id) {
     return path_el;
 }
 
-function add_arc(el, p1, p2, radius, clockwise, largepart, style, klass) {
+function add_arc(el, p1, p2, radius, clockwise, largepart, style, klass, offset) {
     let path_el = $(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
 
+    if (offset) {
+        p1 = p1.Add(offset);
+        p2 = p2.Add(offset);
+    }
+    
     let path = "M " + p1.X + " " + p1.Y +
                "A " + radius + " " + radius + " 0 " + (largepart ? "1 " : "0 ") + (clockwise ? "1 " : "0 ") + p2.X + " " + p2.Y
 

@@ -248,7 +248,8 @@ $(document).ready(function() {
                     pulley_data.drawer.ForeDrawPolylineArc(svg,
                         pulley_data.SPoint[false].Sub(pulley_data.centre), pulley_data.SPoint[true].Sub(pulley_data.centre), radius,
                         pulley_data.clockwise,
-                        pulley_data.clockwise == (pulley_data.signed_angle < 0));
+                        pulley_data.clockwise == (pulley_data.signed_angle < 0),
+                        "strand-inner");
                 }
 
                 return svg;

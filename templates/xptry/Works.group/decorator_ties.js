@@ -127,13 +127,18 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
     let dp = p2.Sub(p1);
     let dist = dp.Dist();
 
+    // we make this svg slightly longer than it need be, in case we ever want to go back to rounded end-caps
     let length = dist + drawer.Width + 2;
 
     let angle = Math.atan2(dp.Y, dp.X);
 
     let width_offset = drawer.Width / 2 + 1;
 
-    let ne = $("<div></div>").attr({
+    let svg = add_svg(
+        el,
+        new Coord(length / 2, width_offset),
+        new Coord(-width_offset, -width_offset),
+        new Coord(length, drawer.Width + 2)).attr({
         class: "absolute zero-spacing decor"
     }).css({
         left: 0,
@@ -146,15 +151,7 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
             + "translate(" + -width_offset + "px," + -width_offset + "px)"
     });
 
-    let svg = add_svg(
-        ne,
-        new Coord(length / 2, width_offset),
-        new Coord(-width_offset, -width_offset),
-        new Coord(length, drawer.Width + 2));
+    drawer.ForeDrawPolyline(svg, new CoordArray([[0, 0], [dist, 0]]), false, "strand-inner", -angle);
 
-    drawer.ForeDrawPolyline(svg, new CoordArray([[0, 0], [dist, 0]]), false);
-
-    el.append(ne);
-
-    return ne;
+    return svg;
 }

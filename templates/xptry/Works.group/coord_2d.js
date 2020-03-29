@@ -144,6 +144,14 @@ class Coord extends Array {
     Min(c) {
         return new Coord(Math.min(this.X, c.X), Math.min(this.Y, c.Y));
     }
+
+    Rotate(angle) {
+        let ca = Math.cos(angle);
+        let sa = Math.sin(angle);
+
+        return new Coord(this.X * ca + this.Y * -sa,
+            this.X * sa + this.Y * ca);
+    }
 };
 
 // just a way of easily making an array off Coords at the moment,

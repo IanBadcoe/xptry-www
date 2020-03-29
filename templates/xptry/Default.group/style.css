@@ -67,10 +67,18 @@ svg.fill {
     height: auto;
 }
 
+/* used for ties on knot */
 path.strand,
 polyline.strand {
     fill: none;
     stroke-linecap: round;
+}
+
+/* used for strand between knots */
+path.strand-inner,
+polyline.strand-inner {
+    fill: none;
+    stroke-linecap: butt;
 }
 
 polyline.knot,
@@ -89,6 +97,14 @@ polygon.knot {
     stroke: rgb(64,64,255);
     stroke-width: 1px;
     fill: rgb(32,32,196);
+}
+
+.hack {
+    width: 1px;
+    height: 1px;
+    left:50%;
+    top:50%;
+    position: fixed;
 }
 
 /* animations */
