@@ -148,10 +148,11 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
         "transform-origin": "0 0",
         transform: "translate(" + p1.X + "px," + p1.Y + "px) "
             + "rotate(" + angle + "rad) "
-            + "translate(" + -width_offset + "px," + -width_offset + "px)"
+            + "translate(" + -width_offset + "px," + -width_offset + "px)",
+        "z-index" : Zs.Strand + 1
     });
 
-    drawer.ForeDrawPolyline(svg, new CoordArray([[0, 0], [dist, 0]]), false, "strand-inner", -angle);
+    drawer.ForeDrawLine(svg, new Coord(0, 0), new Coord(dist, 0), "strand-inner", -angle, new Coord(-1, 0));
 
     return svg;
 }

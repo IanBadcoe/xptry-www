@@ -100,6 +100,23 @@ $(document).ready(() => {
         };
 
         return {
+            ForeDrawLine(insert_element, p1, p2, override_klass, hilight_rotate, nudge) {
+                let h_klass = override_klass || klass;
+                if (edgestyle) {
+                    add_line(insert_element, p1, p2, edgestyle, h_klass);
+                }
+                add_line(insert_element, p1, p2, style, h_klass, null, nudge);
+                if (hilightstyle) {
+                    let h_ho = hilight_rotate ? hilightoffset.Rotate(hilight_rotate) : hilightoffset;
+                    add_line(insert_element, p1, p2, hilightstyle, h_klass, h_ho, nudge.Mult(3));
+                }
+            },
+            BackDrawLine(insert_element, p1, p2) {
+                if (edgestyle) {
+                    add_line(insert_element, p1, p2, edgestyle, klass);
+                }
+                add_line(insert_element, p1, p2, style, klass);
+            },
             ForeDrawPolyline(insert_element, points, close, override_klass, hilight_rotate) {
                 let h_klass = override_klass || klass;
                 if (edgestyle) {
@@ -168,7 +185,7 @@ $(document).ready(() => {
         strand3 : MakePolylineDrawer(
             10, [128,128,64],
             1, [0,0,0],
-            3, [196,196,128], [-2, -3],
+            3, [196,196,128], [-1.5, -3],
             "strand"
         ),
     };

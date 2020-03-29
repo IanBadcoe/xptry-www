@@ -58,16 +58,35 @@ function insert_clones(sel_ins, sel_ins_after, num) {
     }
 }
 
-// feed this an svg element for draw lines
-// handy for testing splines etc...
-function add_line(el, p1, p2, style) {
+function add_line(el, p1, p2, style, klass, offset, nudge_vec) {
+    if (nudge_vec) {
+        p1 = p1.Add(nudge_vec);
+        p2 = p2.Sub(nudge_vec);
+    }
+
+    if (offset) {
+        p1 = p1.Add(offset);
+        p2 = p2.Add(offset);
+    }
+
     let line = $(document.createElementNS('http://www.w3.org/2000/svg', 'line')).attr({
         x1: p1[0],
         y1: p1[1],
         x2: p2[0],
-        y2: p2[1],
-        style: style
+        y2: p2[1]
     });
+
+    if (klass) {
+        line.addClass(klass);
+    }
+
+    if (typeof style === "string") {
+        line.attr({
+            style: style
+        });
+    } else {
+        line.css(style);
+    }
 
     el.append(line);
 }
@@ -369,7 +388,7 @@ function add_arc(el, p1, p2, radius, clockwise, largepart, style, klass, offset)
         p1 = p1.Add(offset);
         p2 = p2.Add(offset);
     }
-    
+
     let path = "M " + p1.X + " " + p1.Y +
                "A " + radius + " " + radius + " 0 " + (largepart ? "1 " : "0 ") + (clockwise ? "1 " : "0 ") + p2.X + " " + p2.Y
 

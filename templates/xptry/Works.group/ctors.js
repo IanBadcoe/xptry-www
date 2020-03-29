@@ -236,7 +236,7 @@ $(document).ready(function() {
                     pulley_data.dims.Div(2).Inverse(),
                     pulley_data.dims,
                     "xx" + pulley_data.url_title + " strand",
-                    Zs.BehindNodeContent);
+                    Zs.Strand);
 
                 add_circle(svg,
                     [0, 0],
