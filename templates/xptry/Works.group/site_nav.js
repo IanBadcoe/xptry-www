@@ -19,11 +19,14 @@ $(document).ready(function() {
         // without any explict ctor, connections all go to the centre
         if (!obj.ctor) {
             obj.ctor = function() {
-                this.connections.forEach(connect => {
-                    connect.CalcStrandPoint = function() {
-                        return obj.centre;
-                    }
-                });
+                if (this.connections)
+                {
+                    this.connections.forEach(connect => {
+                        connect.CalcStrandPoint = function() {
+                            return obj.centre;
+                        }
+                    });
+                }
             }
         }
     }
@@ -220,6 +223,9 @@ $(document).ready(function() {
         let ready = Promise.all(promises);
 
         return ready.then(() => {
+            // this all waits until now, so we can do it in the right order
+            // e.g. setup the connections on the threads before running their ctors
+
             _paths.forEach(path => {
                 path.is_reversed = false;
                 setup_thread_connection(path);
