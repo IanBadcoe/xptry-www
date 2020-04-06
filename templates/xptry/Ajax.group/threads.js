@@ -8,6 +8,9 @@
     "height" : {height},
     "ctor" : "{ctor}",
     "status" : "{status}"
-    },
+    {parents field='thread' status='{segment_3}'}{if parents:count == 1}
+    , "num_articles" : {parents:total_results}
+    {/if}{/parents}
+  },
   {/exp:channel:entries}
 }
