@@ -270,9 +270,52 @@ $(document).ready(function() {
         };
     }
 
+    let horz_thread = function(height, width_step, grow_right) {
+        return function() {
+            let num = this.num_articles || 0;
+
+            let width = (num + 1) * width_step;
+
+            let tl = new Coord(this.centre);
+            tl.Y -= height / 2;
+
+            this.connections.forEach(connect => {
+                let node = this;
+
+                let dest = connect.forwards ? connect.path.to : connect.path.from;
+
+                connect.CalcStrandPoint = function(other_point, forward, drawer, final) {
+                    return node.centre;
+                }
+            });
+
+            let rect = new Rect(tl, tl.Add(new Coord(width, height)));
+
+            DemandLoader.Register(this.url_title, rect, function() {
+                let sc = $(".scroll-container");
+
+                let div = $("<div></div>")
+                    .addClass("zero-spacing absolute")
+                    .css({
+                    width: width,
+                    height: height,
+                    left: tl.X + "px",
+                    top: tl.Y + "px",
+                    "background-color" : "rgb(72, 60, 90)"
+                });
+
+                sc.append(div);
+
+                return div;
+            });
+        }
+    }
+
     window.Ctors = {
-        "home" : home,
-        "image_field" : image_field,
+        home : home,
+        image_field : image_field,
         dummy() {},
-        "pulley": pulley}
+        pulley : pulley,
+        horz_thread : horz_thread
+    };
 });
