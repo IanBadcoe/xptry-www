@@ -1,7 +1,7 @@
 "use strict";
 
 $(document).ready(function() {
-    let home = function() {
+    function home() {
         return function() {
             // x is measured in line thicknesses
             // y is 0 on the inside of the ring and 1 on the outside
@@ -19,7 +19,7 @@ $(document).ready(function() {
                 CPoint: new Coord(0, 1.8)
             };
 
-            let torus_width = this.width * 0.39;
+            let torus_width = this.dims.X * 0.39;
 
             this.connections.forEach(connect => {
                 let node = this;
@@ -101,7 +101,7 @@ $(document).ready(function() {
         };
     };
 
-    let image_field = function(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
+    function image_field(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
         return function() {
             let do_one_image = (element, images, rnd, centre, dims, klass) => {
                 let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.X;
@@ -137,7 +137,7 @@ $(document).ready(function() {
 
                 let el = $(".scroll-container");
 
-                let area = this.width * this.height;
+                let area = this.dims.X * this.dims.Y;
                 let number = area * density;
                 let rnd = MakeRand(this.url_title);
 
@@ -167,7 +167,7 @@ $(document).ready(function() {
         };
     };
 
-	let pulley = function(radius, clockwise) {
+	function pulley(radius, clockwise) {
         return function() {
             this.clockwise = clockwise;
             //
@@ -229,21 +229,25 @@ $(document).ready(function() {
 
                 if (this.spokes[true] && this.spokes[false]) {
                     this.signed_angle = this.spokes[false].SignedAngle(this.spokes[true]);
-                    this.drawer = drawer;   // we don't actually know this, it comes from the path...
+                    // this.drawer = drawer;   // we don't actually know this, it comes from the path...
+                    // we do now...
                 }
 
                 return tp;
             };
 
             let pulley_data = this;
+            let half_rad = radius + this.drawer.Width + 1;
+            let half_size = new Coord(half_rad, half_rad);
 
             function load() {
                 let element = $(".scroll-container");
 
+        
                 let svg = add_svg(element,
                     pulley_data.centre,
-                    pulley_data.dims.Div(2).Inverse(),
-                    pulley_data.dims,
+                    half_size.Inverse(),
+                    half_size.Mult(2),
                     "xx" + pulley_data.url_title + " strand",
                     Zs.Strand);
 
@@ -264,13 +268,15 @@ $(document).ready(function() {
                 return svg;
             };
 
-            let rect = new Rect(this.centre.Sub(this.dims.Div(2)), this.centre.Add(this.dims.Div(2)));
+            let rect = new Rect(this.centre.Sub(half_size), this.centre.Add(half_size));
 
             DemandLoader.Register(this.url_title, rect, load);
         };
     }
 
-    let horz_thread = function(height, width_step, grow_right) {
+    function synth_pulley(centre, radius) {}
+
+    function horz_thread (height, width_step, grow_right) {
         return function() {
             let num = this.num_articles || 0;
 
@@ -279,10 +285,11 @@ $(document).ready(function() {
             let tl = new Coord(this.centre);
             tl.Y -= height / 2;
 
+            // let conn_h_step = height / (this.connections.length + 1);
+            // let curr_conn_h_offset = conn_h_step / 2;
+
             this.connections.forEach(connect => {
                 let node = this;
-
-                let dest = connect.forwards ? connect.path.to : connect.path.from;
 
                 connect.CalcStrandPoint = function(other_point, forward, drawer, final) {
                     return node.centre;

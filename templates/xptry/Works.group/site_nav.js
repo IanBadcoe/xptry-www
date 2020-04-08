@@ -97,6 +97,12 @@ $(document).ready(function() {
         }
     }
 
+    function add_drawers_to_path_waypoints(path) {
+        path.waypoints.forEach(wp => {
+            wp.drawer = path.drawer;
+        });
+    }
+
     function build_path(path) {
         let from = path.from;
         let to = path.to;
@@ -168,7 +174,11 @@ $(document).ready(function() {
 
                     ent.url_title = k;
                     ent.centre = new Coord(ent.centre_x, ent.centre_y);
+                    delete ent.centre_x;
+                    delete ent.centre_y;
                     ent.dims = new Coord(ent.width, ent.height);
+                    delete ent.width;
+                    delete ent.height;
 
                     if (ent.images) {
                         ent.images.forEach(image_path => ImageCache.Preload(image_path));
@@ -194,7 +204,11 @@ $(document).ready(function() {
                     ent.connections = [];
                     ent.url_title = k;
                     ent.centre = new Coord(ent.centre_x, ent.centre_y);
+                    delete ent.centre_x;
+                    delete ent.centre_y;
                     ent.dims = new Coord(ent.width, ent.height);
+                    delete ent.width;
+                    delete ent.height;
 
                     if (ent.images) {
                         ent.images.forEach(image_path => ImageCache.Preload(image_path));
@@ -229,6 +243,7 @@ $(document).ready(function() {
             _paths.forEach(path => {
                 path.is_reversed = false;
                 setup_thread_connection(path);
+                add_drawers_to_path_waypoints(path);
             });
 
             for(const k in _threads) {
