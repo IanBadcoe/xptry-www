@@ -1,7 +1,5 @@
 $(document).ready(() => {
     let fn = function(i, j) {
-        let sc = $(".scroll-container");
-
         let d = $("<div></div>")
             .addClass("absolute zero-spacing")
             .css({
@@ -11,8 +9,6 @@ $(document).ready(() => {
                 height: 90,
                 "background-color": "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
             });
-
-        sc.append(d);
 
         return d;
     }

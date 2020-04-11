@@ -45,10 +45,8 @@ $(document).ready(function() {
                 }
             });
 
-            let load1 = (ret_fn) => {
-                let el = $(".scroll-container");
-
-                let svg = add_svg(el,
+            let load = (ret_fn) => {
+                let svg = add_svg(null,
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
@@ -58,10 +56,6 @@ $(document).ready(function() {
                 this.connections.forEach(connect => connect.tie.BackDraw(svg));
 
                 ret_fn(svg);
-            }
-
-            let load2 = (ret_fn) => {
-                let el = $(".scroll-container");
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
                     left: (this.centre.X - torus_width) + "px",
@@ -71,15 +65,9 @@ $(document).ready(function() {
                     "z-index": Zs.NodeContent
                 }).addClass("absolute zero-spacing rotating xx" + this.url_title);
 
-                el.append(torus_image);
-
                 ret_fn(torus_image);
-            }
 
-            let load3 = (ret_fn) => {
-                let el = $(".scroll-container");
-
-                let svg = add_svg(el,
+                svg = add_svg(null,
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
@@ -95,15 +83,13 @@ $(document).ready(function() {
                 this.centre.Add(this.dims.Div(2))
             );
 
-            DemandLoader.Register(this.url_title + "1", bounds, load1);
-            DemandLoader.Register(this.url_title + "2", bounds, load2);
-            DemandLoader.Register(this.url_title + "3", bounds, load3);
+            DemandLoader.Register(this.url_title, bounds, load);
         };
     };
 
     function image_field(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
         return function() {
-            let do_one_image = (element, images, rnd, centre, dims, klass) => {
+            let do_one_image = (images, rnd, centre, dims, klass) => {
                 let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.X;
                 let y = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.Y;
                 let scale = rnd.quick() * (max_scale - min_scale) + min_scale;
@@ -127,20 +113,16 @@ $(document).ready(function() {
                     "z-index": Zs.Decor
                 });
 
-                element.append(ne);
-
                 return ne;
             };
 
             let load = (ret_fn) => {
-                let el = $(".scroll-container");
-
                 let area = this.dims.X * this.dims.Y;
                 let number = area * density;
                 let rnd = MakeRand(this.url_title);
 
                 for(let i = 0; i < number; i++) {
-                    ret_fn(do_one_image(el, this.images, rnd,
+                    ret_fn(do_one_image(this.images, rnd,
                         this.centre,
                         this.dims,
                         "xx" + this.url_title));
@@ -237,10 +219,7 @@ $(document).ready(function() {
             let half_size = new Coord(half_rad, half_rad);
 
             function load(ret_fn) {
-                let element = $(".scroll-container");
-
-        
-                let svg = add_svg(element,
+                let svg = add_svg(null,
                     pulley_data.centre,
                     half_size.Inverse(),
                     half_size.Mult(2),
@@ -295,8 +274,6 @@ $(document).ready(function() {
             let rect = new Rect(tl, tl.Add(new Coord(width, height)));
 
             DemandLoader.Register(this.url_title, rect, function(ret_fn) {
-                let sc = $(".scroll-container");
-
                 let div = $("<div></div>")
                     .addClass("zero-spacing absolute")
                     .css({
@@ -306,8 +283,6 @@ $(document).ready(function() {
                     top: tl.Y + "px",
                     "background-color" : "rgb(72, 60, 90)"
                 });
-
-                sc.append(div);
 
                 ret_fn(div);
 
@@ -320,8 +295,6 @@ $(document).ready(function() {
                     top: tl.Y + "px",
                     "background-color" : "rgb(72, 60, 110)"
                 });
-
-                sc.append(div);
 
                 ret_fn(div);
             });

@@ -252,8 +252,11 @@ function add_svg(el, centre, coord_orig, coord_dims, klass, z) {
         ne.addClass(klass);
     }
 
-    el.append(ne);
-
+    if (el)
+    {
+        el.append(ne);
+    }
+    
     return ne;
 }
 

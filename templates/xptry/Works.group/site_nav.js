@@ -136,8 +136,6 @@ $(document).ready(function() {
 
         let xtend = [...path.waypoints, to_connect];
 
-        let sc =$(".scroll-container");
-
         xtend.forEach(wp => {
             let wp_name = wp.url_title || wp.debug_title;
             let p1 = prev;
@@ -146,7 +144,7 @@ $(document).ready(function() {
             DemandLoader.Register(prev_name + "|" + wp_name,
                 new Rect(prev, wp.SPoint[false]),
                 (ret_fn) => {
-                    ret_fn(DrawStrandBetweenPoints(sc, p1, p2, path.drawer));
+                    ret_fn(DrawStrandBetweenPoints(null, p1, p2, path.drawer));
                 }
             );
 

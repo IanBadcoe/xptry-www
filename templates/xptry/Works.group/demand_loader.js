@@ -106,9 +106,13 @@ $(document).ready(() => {
             }
         },
         CreateElement(id, ts) {
+            let sc = $(".scroll-container");
             let el = $();
             
-            _data[id].func(ne => el = el.add(ne));
+            _data[id].func(ne => {
+                el = el.add(ne);
+                sc.append(ne);
+            });
 
             _existing[id] = {
                 el : el,
