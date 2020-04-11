@@ -273,6 +273,8 @@ $(document).ready(function() {
 
             let rect = new Rect(tl, tl.Add(new Coord(width, height)));
 
+            let This = this;
+
             DemandLoader.Register(this.url_title, rect, function(ret_fn) {
                 let div = $("<div></div>")
                     .addClass("zero-spacing absolute")
@@ -297,6 +299,15 @@ $(document).ready(function() {
                 });
 
                 ret_fn(div);
+
+                $.ajax(
+                    "{path='Ajax/articles'}/" + This.url_title + "/published",
+                    {
+                        dataType: "json"
+                    }
+                ).then((data, status) => {
+                    This._articles = data;
+                })
             });
         }
     }

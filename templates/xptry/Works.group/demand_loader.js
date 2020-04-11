@@ -26,10 +26,10 @@ $(document).ready(() => {
             _cycle = cycle;
             _timer = setInterval(update_wrapper, _cycle);
         },
-        Register(id, rect, func, force = false) {
-            // we assume, if we register a new function, that invalidates any existing element
-            // but we don't generally intend to do that...
-            if (_existing[id]) {
+        // create_func actually creates the elements
+        // destroy_func is called before we destroy the elements, allow us to do any other clean-up
+        Register(id, rect, create_func, destroy_func,force = false) {
+            if (_data[id]) {
                 if (force) {
                     this.Remove(id);
                 } else {
@@ -39,7 +39,8 @@ $(document).ready(() => {
 
             _data[id] = {
                 rect: rect,
-                func: func
+                create_func: create_func,
+                destroy_func, destroy_func
             };
 
             _force_processing = true;
@@ -61,14 +62,7 @@ $(document).ready(() => {
 
                     if (h_data.rect.Overlaps(ext_rect)) {
                         if (!h_exist) {
-                            remove_queue = remove_queue.filter(x => x != key);
                             add_queue.push(key);
-
-                        //     // we'll create them hidden and show them when they hit the screen
-                        //     // so we need to run once more to cover the case where they hit the screen immediately
-                        //     _force_processing = true;
-                        // } else if (!h_exist.shown && h_data.rect.Overlaps(rect)) {
-                        //     this.ShowElement(h_exist);
                         }
                     }
                 }
@@ -85,7 +79,7 @@ $(document).ready(() => {
                         if (h_data.rect.Overlaps(ext_rect)) {
                             h_exist.ts = ts;
                         } else {
-                            add_queue = add_queue.filter(x => x != key);
+//                            add_queue = add_queue.filter(x => x != key); can't happen...
                             remove_queue.push(key);
                         }
                     }
@@ -109,7 +103,7 @@ $(document).ready(() => {
             let sc = $(".scroll-container");
             let el = $();
             
-            _data[id].func(ne => {
+            _data[id].create_func(ne => {
                 el = el.add(ne);
                 sc.append(ne);
             });
@@ -118,24 +112,16 @@ $(document).ready(() => {
                 el : el,
                 ts : ts
             };
-
-            // this.HideElement(_existing[id]);
         },
         RemoveElement(id) {
             if (_existing[id]) {
                 _existing[id].el.remove();
                 delete _existing[id];
             }
+
+            if (_data[id] && _data[id].destroy_func) {
+                _data[id].destroy_func();
+            }
         },
-        // ShowElement(exists) {
-        //     exists.el.find().show();
-        //     exists.el.show();
-        //     exists.shown = true;
-        // },
-        // HideElement(exists) {
-        //     exists.el.find().hide();
-        //     exists.el.hide();
-        //     exists.shown = false;
-        // }
     };
 });

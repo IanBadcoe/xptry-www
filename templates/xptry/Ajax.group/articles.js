@@ -1,19 +1,20 @@
 {
-  {exp:channel:entries channel='article' backspace='4' status='{segment_3}'}
-  "{url_title}" : {
-    "title" : {title:json},
-    "image" : {article_image:json},
-    "body" : {body_of_article:json},
+  {exp:channel:entries channel='thread' backspace='7' status='not closed'}
+  {parents field='thread' status='{segment_4}'}
+  "{parents:url_title}" : {
+    "title" : {parents:title:json},
+    "image" : {parents:article_image:json},
+    "body" : {parents:body_of_article:json},
     "authors" : [
-      {authors backspace="8"}
+      {parents:authors backspace="8"}
       {
-        "name": {authors:title:json},
-        "photo": {authors:author_photo:json}
+        "name": {parents:authors:title:json},
+        "photo": {parents:authors:author_photo:json}
       },
-      {/authors}
+      {/parents:authors}
     ],
-    "status" : "{status}",
-    "thread" : {thread status='not closed'}'{thread:url_title}'{/thread}
+    "status" : "{parents:status}"
   },
+  {/parents}
   {/exp:channel:entries}
 }
