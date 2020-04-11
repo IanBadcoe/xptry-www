@@ -106,7 +106,10 @@ $(document).ready(() => {
             }
         },
         CreateElement(id, ts) {
-            let el = _data[id].func();
+            let el = $();
+            
+            _data[id].func(ne => el = el.add(ne));
+
             _existing[id] = {
                 el : el,
                 ts : ts

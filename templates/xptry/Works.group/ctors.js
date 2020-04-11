@@ -45,7 +45,7 @@ $(document).ready(function() {
                 }
             });
 
-            let load1 = () => {
+            let load1 = (ret_fn) => {
                 let el = $(".scroll-container");
 
                 let svg = add_svg(el,
@@ -57,10 +57,10 @@ $(document).ready(function() {
 
                 this.connections.forEach(connect => connect.tie.BackDraw(svg));
 
-                return svg;
+                ret_fn(svg);
             }
 
-            let load2 = () => {
+            let load2 = (ret_fn) => {
                 let el = $(".scroll-container");
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
@@ -73,10 +73,10 @@ $(document).ready(function() {
 
                 el.append(torus_image);
 
-                return torus_image;
+                ret_fn(torus_image);
             }
 
-            let load3 = () => {
+            let load3 = (ret_fn) => {
                 let el = $(".scroll-container");
 
                 let svg = add_svg(el,
@@ -88,7 +88,7 @@ $(document).ready(function() {
 
                 this.connections.forEach(connect => connect.tie.ForeDraw(svg));
 
-                return svg;
+                ret_fn(svg);
             };
 
             let bounds = new Rect(this.centre.Sub(this.dims.Div(2)),
@@ -132,9 +132,7 @@ $(document).ready(function() {
                 return ne;
             };
 
-            let load = () => {
-                let ret = $();
-
+            let load = (ret_fn) => {
                 let el = $(".scroll-container");
 
                 let area = this.dims.X * this.dims.Y;
@@ -142,13 +140,11 @@ $(document).ready(function() {
                 let rnd = MakeRand(this.url_title);
 
                 for(let i = 0; i < number; i++) {
-                    ret = ret.add(do_one_image(el, this.images, rnd,
+                    ret_fn(do_one_image(el, this.images, rnd,
                         this.centre,
                         this.dims,
                         "xx" + this.url_title));
                 }
-
-                return ret;
             };
 
             // double size of rect to allow for pictures spilling over boundary a bit
@@ -240,7 +236,7 @@ $(document).ready(function() {
             let half_rad = radius + this.drawer.Width + 1;
             let half_size = new Coord(half_rad, half_rad);
 
-            function load() {
+            function load(ret_fn) {
                 let element = $(".scroll-container");
 
         
@@ -265,7 +261,7 @@ $(document).ready(function() {
                         "strand-inner");
                 }
 
-                return svg;
+                ret_fn(svg);
             };
 
             let rect = new Rect(this.centre.Sub(half_size), this.centre.Add(half_size));
@@ -280,7 +276,7 @@ $(document).ready(function() {
         return function() {
             let num = this.num_articles || 0;
 
-            let width = (num + 1) * width_step;
+            let width = (num + 2) * width_step;
 
             let tl = new Coord(this.centre);
             tl.Y -= height / 2;
@@ -298,7 +294,7 @@ $(document).ready(function() {
 
             let rect = new Rect(tl, tl.Add(new Coord(width, height)));
 
-            DemandLoader.Register(this.url_title, rect, function() {
+            DemandLoader.Register(this.url_title, rect, function(ret_fn) {
                 let sc = $(".scroll-container");
 
                 let div = $("<div></div>")
@@ -306,14 +302,28 @@ $(document).ready(function() {
                     .css({
                     width: width,
                     height: height,
-                    left: tl.X + "px",
+                    left: tl.X + width_step + "px",
                     top: tl.Y + "px",
                     "background-color" : "rgb(72, 60, 90)"
                 });
 
                 sc.append(div);
 
-                return div;
+                ret_fn(div);
+
+                div = $("<div></div>")
+                    .addClass("zero-spacing absolute")
+                    .css({
+                    width: width_step,
+                    height: height,
+                    left: tl.X + "px",
+                    top: tl.Y + "px",
+                    "background-color" : "rgb(72, 60, 110)"
+                });
+
+                sc.append(div);
+
+                ret_fn(div);
             });
         }
     }

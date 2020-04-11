@@ -24,7 +24,7 @@ $(document).ready(() => {
             DemandLoader.Register(
                 id,
                 new Rect(i, j, i + 90, j + 90),
-                () => fn(i, j)
+                (ret_fn) => ret_fn(fn(i, j))
             );
         }
     }

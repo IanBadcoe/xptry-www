@@ -145,8 +145,8 @@ $(document).ready(function() {
 
             DemandLoader.Register(prev_name + "|" + wp_name,
                 new Rect(prev, wp.SPoint[false]),
-                () => {
-                    return DrawStrandBetweenPoints(sc, p1, p2, path.drawer);
+                (ret_fn) => {
+                    ret_fn(DrawStrandBetweenPoints(sc, p1, p2, path.drawer));
                 }
             );
 
