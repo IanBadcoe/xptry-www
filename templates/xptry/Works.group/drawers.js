@@ -107,8 +107,8 @@ $(document).ready(() => {
                 }
                 add_line(insert_element, p1, p2, style, h_klass, null, nudge);
                 if (hilightstyle) {
-                    let h_ho = hilight_rotate ? hilightoffset.Rotate(hilight_rotate) : hilightoffset;
-                    add_line(insert_element, p1, p2, hilightstyle, h_klass, h_ho, nudge.Mult(3));
+                    let h_ho = new Coord(hilight_rotate ? hilightoffset.Rotate(hilight_rotate) : hilightoffset);
+                    add_line(insert_element, p1, p2, hilightstyle, h_klass, h_ho, nudge.Mult(2));
                 }
             },
             BackDrawLine(insert_element, p1, p2) {
