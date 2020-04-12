@@ -254,7 +254,7 @@ $(document).ready(function() {
 
     function synth_pulley(centre, radius) {}
 
-    function horz_thread (height, width_step, grow_right) {
+    function horz_thread (height, width_step) {
         return function() {
             let num = this.num_articles || 0;
 
@@ -280,7 +280,7 @@ $(document).ready(function() {
                 let div = $("<div></div>")
                     .addClass("zero-spacing absolute")
                     .css({
-                    width: width,
+                    width: width - width_step,
                     height: height,
                     left: tl.X + width_step,
                     top: tl.Y,
@@ -308,6 +308,34 @@ $(document).ready(function() {
                     }
                 ).then((data, status) => {
                     this._articles = data;
+
+                    let idx = 0;
+
+                    for(const key in this._articles) {
+                        let art = this._articles[key];
+
+                        let tl = this.rect.tl.Add(new Coord((idx + 1.5) * width_step, 0));
+                        let br = this.rect.tl.Add(new Coord((idx + 2.5) * width_step, height));
+    
+                        art.rect = new Rect(tl, br);
+                        art.load = (ret_fn) => {
+                            let div = $("<div></div>")
+                                .addClass("zero-spacing absolute")
+                                .css({
+                                width: width_step,
+                                height: height,
+                                left: tl.X,
+                                top: tl.Y,
+                                "background-color" : "rgb(60, 90, 72)"
+                            });
+            
+                            ret_fn(div);        
+                        };
+
+                        DemandLoader.Register(art);
+
+                        idx++;
+                    }
                 });
             };
 
