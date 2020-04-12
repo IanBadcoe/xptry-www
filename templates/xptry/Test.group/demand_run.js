@@ -15,19 +15,15 @@ $(document).ready(() => {
 
     for(let i = -500; i < 1500; i += 100) {
         for(let j = -500; j < 1500; j += 100) {
-            let id = "xx" + i + ":" + j;
-
             let obj = {
+                url_title: "xx" + i + ":" + j,
                 load(ret_fn) {
                     ret_fn(fn(i, j));
-                }
+                },
+                rect: new Rect(i, j, i + 90, j + 90)
             };
 
-            DemandLoader.Register(
-                id,
-                new Rect(i, j, i + 90, j + 90),
-                obj
-            );
+            DemandLoader.Register(obj);
         }
     }
 

@@ -28,7 +28,9 @@ $(document).ready(() => {
         },
         // obj.load actually creates the elements
         // destroy_func is called before we destroy the elements, allow us to do any other clean-up
-        Register(id, rect, obj, force = false) {
+        Register(obj, force = false) {
+            let id = obj.url_title;
+
             if (_data[id]) {
                 if (force) {
                     this.Remove(id);
@@ -37,10 +39,7 @@ $(document).ready(() => {
                 }
             }
 
-            _data[id] = {
-                rect: rect,
-                obj: obj
-            };
+            _data[id] = obj;
 
             _force_processing = true;
         },
@@ -101,7 +100,7 @@ $(document).ready(() => {
             let sc = $(".scroll-container");
             let el = $();
             
-            _data[id].obj.load(ne => {
+            _data[id].load(ne => {
                 el = el.add(ne);
                 sc.append(ne);
             });

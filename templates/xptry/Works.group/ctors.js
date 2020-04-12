@@ -79,11 +79,12 @@ $(document).ready(function() {
                 ret_fn(svg);
             };
 
-            let bounds = new Rect(this.centre.Sub(this.dims.Div(2)),
+            this.rect = new Rect(
+                this.centre.Sub(this.dims.Div(2)),
                 this.centre.Add(this.dims.Div(2))
             );
 
-            DemandLoader.Register(this.url_title, bounds, this);
+            DemandLoader.Register(this);
         };
     };
 
@@ -129,11 +130,13 @@ $(document).ready(function() {
                 }
             };
 
+            this.rect = new Rect(
+                this.centre.Sub(this.dims),
+                this.centre.Add(this.dims)
+            );
+
             // double size of rect to allow for pictures spilling over boundary a bit
-            DemandLoader.Register(this.url_title,
-                new Rect(this.centre.Sub(this.dims),
-                         this.centre.Add(this.dims)),
-                    this);
+            DemandLoader.Register(this);
 
             // the only strand-point we have is the centre,
             // but we probably won't route strands through here in time...
@@ -243,9 +246,9 @@ $(document).ready(function() {
                 ret_fn(svg);
             };
 
-            let rect = new Rect(this.centre.Sub(half_size), this.centre.Add(half_size));
+            this.rect = new Rect(this.centre.Sub(half_size), this.centre.Add(half_size));
 
-            DemandLoader.Register(this.url_title, rect, this);
+            DemandLoader.Register(this);
         };
     }
 
@@ -271,7 +274,7 @@ $(document).ready(function() {
                 }
             });
 
-            let rect = new Rect(tl, tl.Add(new Coord(width, height)));
+            this.rect = new Rect(tl, tl.Add(new Coord(width, height)));
 
             this.load = (ret_fn) => {
                 let div = $("<div></div>")
@@ -308,7 +311,7 @@ $(document).ready(function() {
                 });
             };
 
-            DemandLoader.Register(this.url_title, rect, this);
+            DemandLoader.Register(this);
         }
     }
 
