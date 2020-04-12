@@ -26,9 +26,9 @@ $(document).ready(() => {
             _cycle = cycle;
             _timer = setInterval(update_wrapper, _cycle);
         },
-        // create_func actually creates the elements
+        // obj.load actually creates the elements
         // destroy_func is called before we destroy the elements, allow us to do any other clean-up
-        Register(id, rect, create_func, destroy_func,force = false) {
+        Register(id, rect, obj, force = false) {
             if (_data[id]) {
                 if (force) {
                     this.Remove(id);
@@ -39,8 +39,7 @@ $(document).ready(() => {
 
             _data[id] = {
                 rect: rect,
-                create_func: create_func,
-                destroy_func, destroy_func
+                obj: obj
             };
 
             _force_processing = true;
@@ -79,7 +78,6 @@ $(document).ready(() => {
                         if (h_data.rect.Overlaps(ext_rect)) {
                             h_exist.ts = ts;
                         } else {
-//                            add_queue = add_queue.filter(x => x != key); can't happen...
                             remove_queue.push(key);
                         }
                     }
@@ -103,7 +101,7 @@ $(document).ready(() => {
             let sc = $(".scroll-container");
             let el = $();
             
-            _data[id].create_func(ne => {
+            _data[id].obj.load(ne => {
                 el = el.add(ne);
                 sc.append(ne);
             });
@@ -117,10 +115,6 @@ $(document).ready(() => {
             if (_existing[id]) {
                 _existing[id].el.remove();
                 delete _existing[id];
-            }
-
-            if (_data[id] && _data[id].destroy_func) {
-                _data[id].destroy_func();
             }
         },
     };

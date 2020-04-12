@@ -17,10 +17,16 @@ $(document).ready(() => {
         for(let j = -500; j < 1500; j += 100) {
             let id = "xx" + i + ":" + j;
 
+            let obj = {
+                load(ret_fn) {
+                    ret_fn(fn(i, j));
+                }
+            };
+
             DemandLoader.Register(
                 id,
                 new Rect(i, j, i + 90, j + 90),
-                (ret_fn) => ret_fn(fn(i, j))
+                obj
             );
         }
     }

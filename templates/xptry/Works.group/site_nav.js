@@ -141,12 +141,14 @@ $(document).ready(function() {
             let p1 = prev;
             let p2 = wp.SPoint[false];
 
-            DemandLoader.Register(prev_name + "|" + wp_name,
-                new Rect(prev, wp.SPoint[false]),
-                (ret_fn) => {
-                    ret_fn(DrawStrandBetweenPoints(null, p1, p2, path.drawer));
-                }
-            );
+            // the only point of obj is in case we ever want to support more than one strand through a waypoint
+            // otherwise could just put load straight in wp...
+            let obj = {
+                load: (ret_fn)=> ret_fn(DrawStrandBetweenPoints(null, p1, p2, path.drawer)),
+                wp: wp
+            };
+
+            DemandLoader.Register(prev_name + "|" + wp_name, new Rect(prev, wp.SPoint[false]), obj);
 
             prev = wp.SPoint[true];
             prev_name = wp_name;

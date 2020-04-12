@@ -45,7 +45,7 @@ $(document).ready(function() {
                 }
             });
 
-            let load = (ret_fn) => {
+            this.load = (ret_fn) => {
                 let svg = add_svg(null,
                     this.centre,
                     this.dims.Div(2).Inverse(),
@@ -83,7 +83,7 @@ $(document).ready(function() {
                 this.centre.Add(this.dims.Div(2))
             );
 
-            DemandLoader.Register(this.url_title, bounds, load);
+            DemandLoader.Register(this.url_title, bounds, this);
         };
     };
 
@@ -116,7 +116,7 @@ $(document).ready(function() {
                 return ne;
             };
 
-            let load = (ret_fn) => {
+            this.load = (ret_fn) => {
                 let area = this.dims.X * this.dims.Y;
                 let number = area * density;
                 let rnd = MakeRand(this.url_title);
@@ -133,7 +133,7 @@ $(document).ready(function() {
             DemandLoader.Register(this.url_title,
                 new Rect(this.centre.Sub(this.dims),
                          this.centre.Add(this.dims)),
-                    load);
+                    this);
 
             // the only strand-point we have is the centre,
             // but we probably won't route strands through here in time...
@@ -218,7 +218,7 @@ $(document).ready(function() {
             let half_rad = radius + this.drawer.Width + 1;
             let half_size = new Coord(half_rad, half_rad);
 
-            function load(ret_fn) {
+            this.load = (ret_fn) => {
                 let svg = add_svg(null,
                     pulley_data.centre,
                     half_size.Inverse(),
@@ -245,7 +245,7 @@ $(document).ready(function() {
 
             let rect = new Rect(this.centre.Sub(half_size), this.centre.Add(half_size));
 
-            DemandLoader.Register(this.url_title, rect, load);
+            DemandLoader.Register(this.url_title, rect, this);
         };
     }
 
@@ -273,9 +273,7 @@ $(document).ready(function() {
 
             let rect = new Rect(tl, tl.Add(new Coord(width, height)));
 
-            let This = this;
-
-            DemandLoader.Register(this.url_title, rect, function(ret_fn) {
+            this.load = (ret_fn) => {
                 let div = $("<div></div>")
                     .addClass("zero-spacing absolute")
                     .css({
@@ -301,14 +299,16 @@ $(document).ready(function() {
                 ret_fn(div);
 
                 $.ajax(
-                    "{path='Ajax/articles'}/" + This.url_title + "/published",
+                    "{path='Ajax/articles'}/" + this.url_title + "/published",
                     {
                         dataType: "json"
                     }
                 ).then((data, status) => {
-                    This._articles = data;
-                })
-            });
+                    this._articles = data;
+                });
+            };
+
+            DemandLoader.Register(this.url_title, rect, this);
         }
     }
 
