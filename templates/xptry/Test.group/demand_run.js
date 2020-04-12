@@ -49,10 +49,10 @@ $(document).ready(() => {
 
     let div = $("<div></div>")
         .css({
-            left: rect.tl.X + "px",
-            top: rect.tl.Y + "px",
-            width: dims.X + "px",
-            height: dims.Y + "px",
+            left: rect.tl.X,
+            top: rect.tl.Y,
+            width: dims.X,
+            height: dims.Y,
             "background-color" : "rgba(128,128,128,128)"
         }).
         addClass("absolute zero-spacing");

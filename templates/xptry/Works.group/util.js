@@ -241,10 +241,10 @@ function add_svg(el, centre, coord_orig, coord_dims, klass, z) {
     let tl = centre.Sub(coord_dims.Div(2));
 
     ne.css({
-        left: tl.X + "px",
-        top: tl.Y + "px",
-        width: coord_dims.X + "px",
-        height: coord_dims.Y + "px",
+        left: tl.X,
+        top: tl.Y,
+        width: coord_dims.X,
+        height: coord_dims.Y,
         "z-index": z
     });
 
@@ -315,8 +315,8 @@ function add_img_fill_defs(el, img_url, id, radius) {
 
     let ptn = add_pattern(defs, {
         id: id,
-        width: radius * 2 + "px",
-        height: radius * 2 + "px",
+        width: radius * 2,
+        height: radius * 2,
         x: "50%",
         y: "50%",
         patternUnits: "userSpaceOnUse"

@@ -316,8 +316,8 @@ $(document).ready(function() {
 
                 return sc.animate(
                     {
-                        left: p.X + "px",
-                        top: p.Y + "px"
+                        left: p.X,
+                        top: p.Y
                     },
                     dist * speed,
                     easing

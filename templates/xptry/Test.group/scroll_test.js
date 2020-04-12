@@ -13,8 +13,8 @@ $(document).ready(function () {
         let tpos = target.offset();
 
         $(".scroll-container").animate({
-            left: "-=" + tpos.left + "px",
-            top: "-=" + tpos.top + "px"
+            left: "-=" + tpos.left,
+            top: "-=" + tpos.top
         });
     }
 

@@ -58,10 +58,10 @@ $(document).ready(function() {
                 ret_fn(svg);
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
-                    left: (this.centre.X - torus_width) + "px",
-                    top: (this.centre.Y - torus_width) + "px",
-                    width: (torus_width * 2) + "px",
-                    height: (torus_width * 2) + "px",
+                    left: (this.centre.X - torus_width),
+                    top: (this.centre.Y - torus_width),
+                    width: (torus_width * 2),
+                    height: (torus_width * 2),
                     "z-index": Zs.NodeContent
                 }).addClass("absolute zero-spacing rotating xx" + this.url_title);
 
@@ -282,8 +282,8 @@ $(document).ready(function() {
                     .css({
                     width: width,
                     height: height,
-                    left: tl.X + width_step + "px",
-                    top: tl.Y + "px",
+                    left: tl.X + width_step,
+                    top: tl.Y,
                     "background-color" : "rgb(72, 60, 90)"
                 });
 
@@ -294,8 +294,8 @@ $(document).ready(function() {
                     .css({
                     width: width_step,
                     height: height,
-                    left: tl.X + "px",
-                    top: tl.Y + "px",
+                    left: tl.X,
+                    top: tl.Y,
                     "background-color" : "rgb(72, 60, 110)"
                 });
 
