@@ -181,7 +181,7 @@ $(document).ready(function() {
                     delete ent.width;
                     delete ent.height;
 
-                    if (ent.images) {
+                    if (ent.images && ent.images.length) {
                         ent.images.forEach(image_path => ImageCache.Preload(image_path));
                     }
                 }
@@ -211,8 +211,8 @@ $(document).ready(function() {
                     delete ent.width;
                     delete ent.height;
 
-                    if (ent.images) {
-                        ent.images.forEach(image_path => ImageCache.Preload(image_path));
+                    if (ent.images && ent.images.length) {
+                        ent.images.forEach(image_row => ImageCache.Preload(image_row.file));
                     }
                 }
             })
