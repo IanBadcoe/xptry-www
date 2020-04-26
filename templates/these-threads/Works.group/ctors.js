@@ -50,7 +50,7 @@ $(document).ready(function() {
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
-                    "xx" + this.url_title,
+                    null,
                     Zs.BehindNodeContent);
 
                 this.connections.forEach(connect => connect.tie.BackDraw(svg));
@@ -62,8 +62,8 @@ $(document).ready(function() {
                     top: (this.centre.Y - torus_width),
                     width: (torus_width * 2),
                     height: (torus_width * 2),
-                    "z-index": Zs.NodeContent
-                }).addClass("absolute zero-spacing rotating xx" + this.url_title);
+                    "z-index": Zs.NodeContentL1
+                }).addClass("absolute zero-spacing rotating");
 
                 ret_fn(torus_image);
 
@@ -71,7 +71,7 @@ $(document).ready(function() {
                     this.centre,
                     this.dims.Div(2).Inverse(),
                     this.dims,
-                    "xx" + this.url_title,
+                    null,
                     Zs.InFrontOfNodeContent);
 
                 this.connections.forEach(connect => connect.tie.ForeDraw(svg));
@@ -90,7 +90,7 @@ $(document).ready(function() {
 
     function image_field(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
         return function() {
-            let do_one_image = (images, rnd, centre, dims, klass) => {
+            let do_one_image = (images, rnd, centre, dims) => {
                 let x = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.X;
                 let y = (rnd.quick() + rnd.quick() + rnd.quick()) / 3 * dims.Y;
                 let scale = rnd.quick() * (max_scale - min_scale) + min_scale;
@@ -104,7 +104,7 @@ $(document).ready(function() {
 
                 let ne = ImageCache.Element(images[idx]);
 
-                ne.addClass("absolute zero-spacing xx" + this.url_title);
+                ne.addClass("absolute zero-spacing");
 
                 let hx = x - ne.width() / 2 + centre.X;
                 let hy = y - ne.height() / 2 + centre.Y;
@@ -125,8 +125,7 @@ $(document).ready(function() {
                 for(let i = 0; i < number; i++) {
                     ret_fn(do_one_image(this.images, rnd,
                         this.centre,
-                        this.dims,
-                        "xx" + this.url_title));
+                        this.dims));
                 }
             };
 
@@ -226,7 +225,7 @@ $(document).ready(function() {
                     pulley_data.centre,
                     half_size.Inverse(),
                     half_size.Mult(2),
-                    "xx" + pulley_data.url_title + " strand",
+                    null,
                     Zs.Strand);
 
                 add_circle(svg,
@@ -276,66 +275,131 @@ $(document).ready(function() {
 
             this.rect = new Rect(tl, tl.Add(new Coord(width, height)));
 
-            this.load = (ret_fn) => {
-                let div = $("<div></div>")
-                    .addClass("zero-spacing absolute")
-                    .css({
-                    width: width - width_step,
-                    height: height,
-                    left: tl.X + width_step,
-                    top: tl.Y,
-                    "background-color" : "rgb(72, 60, 90)"
-                });
+            let promises = [];
 
-                ret_fn(div);
+            this.images.forEach(image => {
+                promises.push(ImageCache.Promise(image.file));
+            });
 
-                div = $("<div></div>")
-                    .addClass("zero-spacing absolute")
-                    .css({
-                    width: width_step,
-                    height: height,
-                    left: tl.X,
-                    top: tl.Y,
-                    "background-color" : "rgb(72, 60, 110)"
-                });
+            let image_sets = {};
 
-                ret_fn(div);
+            let max_image_height = 0;
 
-                $.ajax(
-                    "{path='Ajax/articles'}/" + this.url_title + "/published",
-                    {
-                        dataType: "json"
+            let all_images_promise = Promise.all(promises)
+                .then(
+                    () => {
+                        console.log("all_images");
+                        
+                        this.images.forEach(image => {
+                            image_sets[image.type] = image_sets[image.type] || [];
+
+                            image_sets[image.type].push(image.file);
+
+                            max_image_height = Math.max(max_image_height, ImageCache.Dims(image.file).Y);
+                        });                    
+
+                        console.log("all_images - done");
                     }
-                ).then((data, status) => {
-                    this._articles = data;
+                );
 
-                    let idx = 0;
+            this.load = (ret_fn) => {
+                let rnd = MakeRand(this.url_title);
 
-                    for(const key in this._articles) {
-                        let art = this._articles[key];
+                // let div = $("<div></div>")
+                //     .addClass("zero-spacing absolute")
+                //     .css({
+                //     width: width - width_step,
+                //     height: height,
+                //     left: tl.X + width_step,
+                //     top: tl.Y,
+                //     "background-color" : "rgb(72, 60, 90)"
+                // });
 
-                        let tl = this.rect.tl.Add(new Coord((idx + 1.5) * width_step, 0));
-                        let br = this.rect.tl.Add(new Coord((idx + 2.5) * width_step, height));
-    
-                        art.rect = new Rect(tl, br);
-                        art.load = (ret_fn) => {
-                            let div = $("<div></div>")
-                                .addClass("zero-spacing absolute")
-                                .css({
-                                width: width_step,
-                                height: height,
-                                left: tl.X,
-                                top: tl.Y,
-                                "background-color" : "rgb(60, 90, 72)"
-                            });
-            
-                            ret_fn(div);        
+                // ret_fn(div);
+
+                // div = $("<div></div>")
+                //     .addClass("zero-spacing absolute")
+                //     .css({
+                //     width: width_step,
+                //     height: height,
+                //     left: tl.X,
+                //     top: tl.Y,
+                //     "background-color" : "rgb(72, 60, 110)"
+                // });
+
+                // ret_fn(div);
+
+                var promises = [];
+
+                promises.push(all_images_promise);
+
+                promises.push(
+                    $.ajax(
+                        "{path='Ajax/articles'}/" + this.url_title + "/published",
+                        {
+                            dataType: "json"
+                        }
+                    ).then((data, status) => {
+                        this._articles = data;
+                    })
+                );
+                
+                Promise.all(promises)
+                    .then(() => {
+
+                    let scale4height = height / max_image_height;
+
+                    for(let i = 0; i <= this.num_articles; i++) {
+                        let img_name = rand_from_array(image_sets["Anchor"], rnd);
+                        let image = ImageCache.Element(img_name);
+                        let dims = ImageCache.Dims(img_name).Mult(scale4height);
+
+                        let tl = this.rect.BL.Add(new Coord((i + 1) * width_step - dims.X / 2, -dims.Y));
+                        let br = tl.Add(new Coord(dims.X, dims.Y));
+
+                        image.css({
+                            left: tl.X,
+                            top: tl.Y,
+                            height: dims.Y,
+                            width: dims.X,
+                            "z-index": Zs.NodeContentL1
+                        }).addClass("absolute zero-spacing");
+
+                        let hanger = {
+                            rect: new Rect(tl, br),
+                            load: (ret_fn) => { ret_fn(image); },
+                            url_title: this.url_title + ":hanger:" + i
                         };
 
-                        DemandLoader.Register(art);
-
-                        idx++;
+                        DemandLoader.Register(hanger);
                     }
+                    // let idx = 0;
+
+                    // for(const key in this._articles) {
+                    //     let art = this._articles[key];
+
+                    //     let tl = this.rect.tl.Add(new Coord((idx + 1.5) * width_step, 0));
+                    //     let br = this.rect.tl.Add(new Coord((idx + 2.5) * width_step, height));
+    
+                    //     art.rect = new Rect(tl, br);
+                    //     art.load = (ret_fn) => {
+                    //         let div = $("<div></div>")
+                    //             .addClass("zero-spacing absolute")
+                    //             .css({
+                    //             width: width_step,
+                    //             height: height,
+                    //             left: tl.X,
+                    //             top: tl.Y,
+                    //             "background-color" : "rgb(60, 90, 72)"
+                    //         });
+            
+                    //         ret_fn(div);        
+                    //     };
+
+                    //     DemandLoader.Register(art);
+
+                    //     idx++;
+                    // }
                 });
             };
 

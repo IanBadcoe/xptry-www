@@ -49,8 +49,8 @@ $(document).ready(() => {
 
     let div = $("<div></div>")
         .css({
-            left: rect.tl.X,
-            top: rect.tl.Y,
+            left: rect.TL.X,
+            top: rect.TL.Y,
             width: dims.X,
             height: dims.Y,
             "background-color" : "rgba(128,128,128,128)"

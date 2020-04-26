@@ -99,8 +99,11 @@ $(document).ready(() => {
         CreateElement(id, ts) {
             let sc = $(".scroll-container");
             let el = $();
+            let idx = 0;
             
             _data[id].load(ne => {
+                ne.attr("id", id + ":" + idx);
+                idx++;
                 el = el.add(ne);
                 sc.append(ne);
             });

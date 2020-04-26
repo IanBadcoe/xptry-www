@@ -156,3 +156,98 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
 
     return svg;
 }
+
+// a is the strands weight per unit length / the horizontal tension (e.g. tension at the low-point)
+// just setting by eye, but something like 2 or 4 seems like it might work
+// equation of a catenary is y = a.cosh(x/a)
+// which is symmetric around zero
+// to draw curve with p1 and p2 at different heights just means finding the right
+// x offset so that the two sides hit the right heights at the right x values
+// to find this we define:
+// d = difference in height
+// n = x separation
+// and ask Wolfram Alpha to solve:
+// d = a.(cosh(x / a) - cosh((x - n)/a)) for real x
+// e.g. this means that p1 will be at (x - n, y) and p2 will be at (x, y + d):
+//
+//y+d                       p2
+// |
+// y     p1
+// |
+// |
+// +---- x-n -------------- x -------------
+//
+// Wolfram gives for this:
+//
+// x = a log(sqrt((e^(n/a) (a^2 (e^(n/a) - 1)^2 + d^2 e^(n/a)))/(a^2 (e^(n/a) - 1)^2)) + (d e^(n/a))/(a (e^(n/a) - 1)))
+// (where "log" is natural log)
+//
+// if we define:
+// q = e^(n/a)
+// then this becomes
+// x = a log(sqrt((q (a^2 (q - 1)^2 + d^2 q))/(a^2 (q - 1)^2)) + (d q)/(a (q - 1)))
+// and qm1 - q - 1 gives:
+// x = a log(sqrt((q (a^2 (qm1)^2 + d^2 q))/(a^2 (qm1)^2)) + (d q)/(a (qm1)))
+// x = a Math.log(Math.sqrt((q * (a*a * qm1*qm1 + d*d * q))/(a*a * qm1*qm1)) + (d * q)/(a * qm1)))
+
+function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer) {
+    // // we'll transform everything relative to P1, because I am a bit wary of very large numbers in the maths if ew get a long way from the origin
+    // let orig_p1 = p1;
+    // p2 = p2.Sub(p1);
+    // p1 = new Coord(0, 0);
+    // // we'll put that back when positioning the svg
+
+    let d = p2.Y - p1.Y;
+    let n = p2.X - p1.X;
+
+    let q = Math.exp(n/a);
+    let qm1 = q - 1;
+
+    // negating d in here and negating the catenary equation corrects for the Y axis being the wrong way up on-screen
+    let x = a * Math.log(Math.sqrt((q * (a*a * qm1*qm1 + d*d * q)) / (a*a * qm1*qm1)) + (-d * q)/(a * qm1));
+    let catenary = x => -a * Math.cosh(x / a); 
+
+    let x_offset = x - p2.X;
+
+    let y_offset = p2.Y - catenary(x);
+
+    let points = [];
+
+    let steps = 10;
+
+    // find low-point of curve (the absolute low-point )
+    let ymax = null;
+
+    for(let i = 0; i <= steps; i++) {
+        let hx = p1.X + (n / steps) * i; 
+        let hy = y_offset + catenary(hx + x_offset);
+        points.push(new Coord(hx, hy));
+
+        if (ymax === null || hy > ymax)
+        {
+            ymax = hy;
+        }
+    }
+
+    let ymin = Math.min(p1.Y, p2.Y);
+    let xmin = Math.min(p1.X, p2.X);
+    let xmax = Math.max(p1.X, p2.X);
+
+    ymin -= 10;
+    ymax += 10;
+    xmin -= 10;
+    xmax += 10;
+
+    let tl = new Coord(xmin, ymin);
+    let br = new Coord(xmax, ymax);
+    let centre = br.Add(tl).Div(2);
+    let dims = br.Sub(tl);
+
+    let svg = add_svg(el, centre, tl, dims, Zs.NodeContentL3).attr({
+        class: "absolute zero-spacing decor"
+    });
+
+    drawer.ForeDrawPolyline(svg, points, false);
+
+    return svg;
+}

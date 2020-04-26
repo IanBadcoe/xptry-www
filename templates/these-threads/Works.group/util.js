@@ -333,3 +333,7 @@ function add_arc(el, p1, p2, radius, clockwise, largepart, style, klass, offset)
 
     return path_el;
 }
+
+function rand_from_array(arr, rand) {
+    return arr[Math.floor(rand.quick() * arr.length)];
+}
