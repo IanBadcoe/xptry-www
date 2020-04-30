@@ -288,17 +288,13 @@ $(document).ready(function() {
             let all_images_promise = Promise.all(promises)
                 .then(
                     () => {
-                        console.log("all_images");
-                        
                         this.images.forEach(image => {
                             image_sets[image.type] = image_sets[image.type] || [];
 
-                            image_sets[image.type].push(image.file);
+                            image_sets[image.type].push(image);
 
                             max_image_height = Math.max(max_image_height, ImageCache.Dims(image.file).Y);
                         });                    
-
-                        console.log("all_images - done");
                     }
                 );
 
@@ -348,9 +344,13 @@ $(document).ready(function() {
                     .then(() => {
 
                     let scale4height = height / max_image_height;
+                    let prev_row = null;
+                    let prev_tl = null;
+                    let prev_dims = null;
 
                     for(let i = 0; i <= this.num_articles; i++) {
-                        let img_name = rand_from_array(image_sets["Anchor"], rnd);
+                        let img_row = rand_from_array(image_sets["Anchor"], rnd);
+                        let img_name = img_row.file;
                         let image = ImageCache.Element(img_name);
                         let dims = ImageCache.Dims(img_name).Mult(scale4height);
 
@@ -365,13 +365,33 @@ $(document).ready(function() {
                             "z-index": Zs.NodeContentL1
                         }).addClass("absolute zero-spacing");
 
-                        let hanger = {
+                        let anchor = {
                             rect: new Rect(tl, br),
                             load: (ret_fn) => { ret_fn(image); },
-                            url_title: this.url_title + ":hanger:" + i
+                            url_title: this.url_title + ":anchor:" + i
                         };
 
-                        DemandLoader.Register(hanger);
+                        DemandLoader.Register(anchor);
+
+                        if (prev_row) {
+                            let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height));
+                            let p2 = tl.Add(new Coord((img_row.spointx + prev_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
+                            let catenary = {
+                                rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"], true),
+                                load: ret_fn => {
+                                    ret_fn(DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"]).css({
+                                        "z-index" : Zs.NodeContentL4
+                                    }));
+                                },
+                                url_title: this.url_title + ":catenary:" + i
+                            };
+
+                            DemandLoader.Register(catenary);
+                        }
+
+                        prev_row = img_row;
+                        prev_tl = tl;
+                        prev_dims = dims;
                     }
                     // let idx = 0;
 

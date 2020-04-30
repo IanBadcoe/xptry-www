@@ -190,7 +190,7 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
 // x = a log(sqrt((q (a^2 (qm1)^2 + d^2 q))/(a^2 (qm1)^2)) + (d q)/(a (qm1)))
 // x = a Math.log(Math.sqrt((q * (a*a * qm1*qm1 + d*d * q))/(a*a * qm1*qm1)) + (d * q)/(a * qm1)))
 
-function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer) {
+function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
     // // we'll transform everything relative to P1, because I am a bit wary of very large numbers in the maths if ew get a long way from the origin
     // let orig_p1 = p1;
     // p2 = p2.Sub(p1);
@@ -211,24 +211,8 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer) {
 
     let y_offset = p2.Y - catenary(x);
 
-    let points = [];
-
-    let steps = 10;
-
-    // find low-point of curve (the absolute low-point )
-    let ymax = null;
-
-    for(let i = 0; i <= steps; i++) {
-        let hx = p1.X + (n / steps) * i; 
-        let hy = y_offset + catenary(hx + x_offset);
-        points.push(new Coord(hx, hy));
-
-        if (ymax === null || hy > ymax)
-        {
-            ymax = hy;
-        }
-    }
-
+    // the low point is always at -a
+    let ymax = y_offset - a;
     let ymin = Math.min(p1.Y, p2.Y);
     let xmin = Math.min(p1.X, p2.X);
     let xmax = Math.max(p1.X, p2.X);
@@ -237,6 +221,20 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer) {
     ymax += 10;
     xmin -= 10;
     xmax += 10;
+
+    if (rect_only) {
+        return new Rect(xmin, ymin, xmax, ymax);
+    }
+
+    let points = [];
+
+    let steps = Math.ceil(n / 10);
+
+    for(let i = 0; i <= steps; i++) {
+        let hx = p1.X + (n / steps) * i; 
+        let hy = y_offset + catenary(hx + x_offset);
+        points.push(new Coord(hx, hy));
+    }
 
     let tl = new Coord(xmin, ymin);
     let br = new Coord(xmax, ymax);

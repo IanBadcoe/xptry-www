@@ -188,5 +188,17 @@ $(document).ready(() => {
             3, [196,196,128], [-1.5, -3],
             "strand"
         ),
+        wire : MakePolylineDrawer(
+            1, [0, 0, 0],
+            0, [0,0,0],
+            0, [0,0,0], [0,0],
+            "strand"
+        ),
+        debugwire : MakePolylineDrawer(
+            1, [255, 0, 0],
+            0, [0,0,0],
+            0, [0,0,0], [0,0],
+            "strand"
+        ),
     };
 });

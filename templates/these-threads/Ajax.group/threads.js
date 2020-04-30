@@ -13,7 +13,10 @@
       {
         "name" : {thread_images:name:json},
         "type" : {thread_images:type:json},
-        "file" : "{thread_images:file}"
+        "file" : "{thread_images:file}",
+        "spointx" : {thread_images:spointx},
+        "spointy" : {thread_images:spointy},
+        "swidth" : {thread_images:swidth}
       },
       {/thread_images}
     ]
