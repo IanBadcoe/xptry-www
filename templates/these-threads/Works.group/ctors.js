@@ -347,6 +347,7 @@ $(document).ready(function() {
                     let prev_row = null;
                     let prev_tl = null;
                     let prev_dims = null;
+                    let prev_height_offset = 0;
 
                     for(let i = 0; i <= this.num_articles; i++) {
                         let img_row = rand_from_array(image_sets["Anchor"], rnd);
@@ -373,15 +374,37 @@ $(document).ready(function() {
 
                         DemandLoader.Register(anchor);
 
+                        function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
+                            let num_wraps = Math.max(Math.ceil(Math.abs(start_h - end_h) / width) + 1, 2);
+                            let ch = start_h;
+                            let step = (end_h - start_h) / (num_wraps * 2 + 1);
+                            let rand_range = Math.abs(step) / 2 + width / 2;
+            
+                            for(let i = 0; i < num_wraps; i++) {
+                                drawer.ForeDrawLine(svg, new Coord(right - width, ch + step + rand_range * (rnd.quick() - 0.5)), new Coord(right, ch + step * 2 + rand_range * (rnd.quick() - 0.5)));
+                                ch += step * 2;
+                            }
+                        }
+
+                        let strand_height_offset = i == this.num_articles ? 0 : (rnd.quick() + rnd.quick() + rnd.quick() - 1.5) * img_row.swidth * 2 * scale4height;
+
                         if (prev_row) {
-                            let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height));
-                            let p2 = tl.Add(new Coord((img_row.spointx + prev_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
+                            let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
+                            let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                             let catenary = {
                                 rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"], true),
                                 load: ret_fn => {
-                                    ret_fn(DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"]).css({
+                                    let svg = DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"]).css({
                                         "z-index" : Zs.NodeContentL4
-                                    }));
+                                    });
+
+                                    add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
+
+                                    if (i == 1) {
+                                        add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], rnd);
+                                    }
+ 
+                                    ret_fn(svg);
                                 },
                                 url_title: this.url_title + ":catenary:" + i
                             };
@@ -392,6 +415,7 @@ $(document).ready(function() {
                         prev_row = img_row;
                         prev_tl = tl;
                         prev_dims = dims;
+                        prev_height_offset = strand_height_offset;
                     }
                     // let idx = 0;
 
