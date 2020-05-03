@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
-	<head>
-    	<meta charset="UTF-8">
-    	<title>title</title>
-		<link rel="stylesheet" type="text/css" media="all" href="{path=default/style}" />
-        <script
-            src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
-		<script src="{path='Test/scroll_test'}"></script>
-	</head>
-	<body>
-		<div class="scroll-container" style="left:0;right:0;position:relative;">
+    <head>
+        <meta charset="UTF-8">
+            <title>title</title>
+            <link rel="stylesheet" type="text/css" media="all" href="{path=default/style}" />
+            <script
+                src="https://code.jquery.com/jquery-3.4.1.min.js"
+                integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+                crossorigin="anonymous"></script>
+            <script src="{path='Test/scroll_test'}"></script>
+    </head>
+    <body>
+        <div class="scroll-container" style="left:0;right:0;position:relative;">
             <div id="home" style="width:400px; height:400px; background-color: red; position: absolute; top:20px"
                     onclick="smart_nav('#targetx')">
             </div>
@@ -22,6 +22,6 @@
             <div id="targetx" style="width:400px; height:400px; background-color: green; position: absolute; left: 2100px;"
                     onclick="smart_nav('#home')">
             </div>
-		</div>
+        </div>
     </body>
 </html>
