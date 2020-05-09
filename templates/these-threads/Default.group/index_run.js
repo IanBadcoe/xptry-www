@@ -19,5 +19,5 @@ $(document).ready(() => {
         return rect;
     }
 
-    DemandLoader.Init(200, 300000, 5000, active_rect);
+    window.DemandLoader = CreateDemandLoader($(".scroll-container"), 200, 300000, 5000, active_rect);
 });

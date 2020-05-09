@@ -43,7 +43,7 @@ $(document).ready(() => {
                     [main_target, ...other_targets].forEach(x => {
                         x.element.css({
                             left: main_pos.X / x.dist,
-                            top: main_pos.Y    
+                            top: main_pos.Y
                         });
                     });
 
