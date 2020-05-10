@@ -1,6 +1,6 @@
 "use strict";
 
-window.CreateDemandLoader = function(target_element, cycle, expire_ms, expire_cycle_ms, rect_fun) {
+window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun) {
     let _data = {};
     let _existing = {};
     let _expire_ms = 5000;
@@ -9,7 +9,7 @@ window.CreateDemandLoader = function(target_element, cycle, expire_ms, expire_cy
     let _last_expire = expire_ms;
     let _expire_cycle_ms = expire_cycle_ms;
     let _rect_fun = rect_fun;
-    let _cycle = cycle;
+    let _cycle_ms = cycle_ms;
     let _target_element = target_element;
 
     let ret = {
@@ -114,7 +114,7 @@ window.CreateDemandLoader = function(target_element, cycle, expire_ms, expire_cy
         ret.Update(_rect_fun());
     }
 
-    let _timer = setInterval(update_wrapper, _cycle);
+    let _timer = setInterval(update_wrapper, _cycle_ms);
 
     return ret;
 };

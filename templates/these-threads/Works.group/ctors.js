@@ -84,7 +84,7 @@ $(document).ready(function() {
                 this.centre.Add(this.dims.Div(2))
             );
 
-            DemandLoader.Register(this);
+            PSM.GetDemandLoader(1.0).Register(this);
         };
     };
 
@@ -135,7 +135,7 @@ $(document).ready(function() {
             );
 
             // double size of rect to allow for pictures spilling over boundary a bit
-            DemandLoader.Register(this);
+            PSM.GetDemandLoader(1.0).Register(this);
 
             // the only strand-point we have is the centre,
             // but we probably won't route strands through here in time...
@@ -247,7 +247,7 @@ $(document).ready(function() {
 
             this.rect = new Rect(this.centre.Sub(half_size), this.centre.Add(half_size));
 
-            DemandLoader.Register(this);
+            PSM.GetDemandLoader(1.0).Register(this);
         };
     }
 
@@ -372,7 +372,7 @@ $(document).ready(function() {
                             url_title: this.url_title + ":anchor:" + i
                         };
 
-                        DemandLoader.Register(anchor);
+                        PSM.GetDemandLoader(1.0).Register(anchor);
 
                         function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
                             let num_wraps = Math.max(Math.ceil(Math.abs(start_h - end_h) / width) + 1, 2);
@@ -409,7 +409,7 @@ $(document).ready(function() {
                                 url_title: this.url_title + ":catenary:" + i
                             };
 
-                            DemandLoader.Register(catenary);
+                            PSM.GetDemandLoader(1.0).Register(catenary);
                         }
 
                         prev_row = img_row;
@@ -440,14 +440,14 @@ $(document).ready(function() {
                     //         ret_fn(div);        
                     //     };
 
-                    //     DemandLoader.Register(art);
+                    //     PSM.GetDemandLoader(1.0).Register(art);
 
                     //     idx++;
                     // }
                 });
             };
 
-            DemandLoader.Register(this);
+            PSM.GetDemandLoader(1.0).Register(this);
         }
     }
 

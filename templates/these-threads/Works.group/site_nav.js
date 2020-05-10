@@ -149,7 +149,7 @@ $(document).ready(function() {
                 rect: new Rect(prev, wp.SPoint[false])
             };
 
-            DemandLoader.Register(strand_seg);
+            PSM.GetDemandLoader(1.0).Register(strand_seg);
 
             prev = wp.SPoint[true];
             prev_name = wp_name;
@@ -289,7 +289,7 @@ $(document).ready(function() {
             }
 
             return chain_from.then(() => {
-                let sc = $(".scroll-container");
+                let sc = PSM.GetElement(1.0);
                 let old_pos = sc.position();
                 old_pos = new Coord(old_pos.left, old_pos.top);
 
