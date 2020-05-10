@@ -318,9 +318,11 @@ $(document).ready(function() {
                     {
                         left: p.X,
                         top: p.Y
-                    },
-                    dist * speed,
-                    easing
+                    }, {
+                        duration: dist * speed,
+                        easing: easing,
+                        step: DraggablePersp.Refresh
+                    }
                 ).promise();
             });
         },

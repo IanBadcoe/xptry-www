@@ -5,16 +5,39 @@ $(document).ready(() => {
     let _click_pos = null;
     let _main_target = null;
     let _all_targets = [];
-    let _old_pos = null;
+    let _start_pos = null;
     let _container = null;
     let _mouse_target = null;
+    let _old_pos = new Coord(0, 0);
+
+    function refresh_secondary_targets() {
+        if (!_main_target)
+            return;
+            
+        let pos = _main_target.position();
+        pos = new Coord(pos.left, pos.top);
+
+        if (pos.Equal(_old_pos))
+            return;
+
+        _all_targets.forEach(x => {
+            if (x.dist != 1.0) {
+                x.element.css({
+                    left: pos.X / x.dist,
+                    top: pos.Y
+                });
+            }
+        });
+
+        _old_pos = pos;
+    }
 
     function mousedown(e) {
         if (!_md) {
             _md = true;
             _click_pos = new Coord(e.pageX, e.pageY);
             let pos = _main_target.position();
-            _old_pos = new Coord(pos.left, pos.top);
+            _start_pos = new Coord(pos.left, pos.top);
         }
 
         return false;
@@ -23,14 +46,14 @@ $(document).ready(() => {
     function mousemove(e) {
         if (_md) {
             let move = new Coord(e.pageX, e.pageY).Sub(_click_pos);
-            let main_pos = _old_pos.Add(move);
+            let main_pos = _start_pos.Add(move);
 
-            _all_targets.forEach(x => {
-                x.element.css({
-                    left: main_pos.X / x.dist,
-                    top: main_pos.Y
-                });
+            _main_target.css({
+                left: main_pos.X,
+                top: main_pos.Y
             });
+
+            refresh_secondary_targets();
 
             $(".hack").toggle();
             
@@ -101,6 +124,9 @@ $(document).ready(() => {
             _all_targets.splice(ins_before, 0, ent);
 
             return ent.element;
+        },
+        Refresh() {
+            refresh_secondary_targets();
         }
     };
 });
