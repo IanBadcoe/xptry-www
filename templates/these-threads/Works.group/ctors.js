@@ -253,7 +253,7 @@ $(document).ready(function() {
 
     function synth_pulley(centre, radius) {}
 
-    function horz_thread (height, width_step) {
+    function horz_thread (height, width_step, strip_offset_frac) {
         return function() {
             let num = this.num_articles || 0;
 
@@ -301,30 +301,6 @@ $(document).ready(function() {
             this.load = (ret_fn) => {
                 let rnd = MakeRand(this.url_title);
 
-                // let div = $("<div></div>")
-                //     .addClass("zero-spacing absolute")
-                //     .css({
-                //     width: width - width_step,
-                //     height: height,
-                //     left: tl.X + width_step,
-                //     top: tl.Y,
-                //     "background-color" : "rgb(72, 60, 90)"
-                // });
-
-                // ret_fn(div);
-
-                // div = $("<div></div>")
-                //     .addClass("zero-spacing absolute")
-                //     .css({
-                //     width: width_step,
-                //     height: height,
-                //     left: tl.X,
-                //     top: tl.Y,
-                //     "background-color" : "rgb(72, 60, 110)"
-                // });
-
-                // ret_fn(div);
-
                 var promises = [];
 
                 promises.push(all_images_promise);
@@ -342,114 +318,133 @@ $(document).ready(function() {
                 
                 Promise.all(promises)
                     .then(() => {
+                        // we use three layers, each of less than the total height,
+                        // with the second and third layers back offset by this amount (and twice that)
+                        let strip_height = height * (1 - strip_offset_frac * 2);
+                        let scale4height = strip_height / max_image_height;
 
-                    let scale4height = height / max_image_height;
-                    let prev_row = null;
-                    let prev_tl = null;
-                    let prev_dims = null;
-                    let prev_height_offset = 0;
+                        make_anchors_and_thread(scale4height, image_sets["Anchor"], this.num_articles, this.rect.BL, this.url_title, rnd);
 
-                    for(let i = 0; i <= this.num_articles; i++) {
-                        let img_row = rand_from_array(image_sets["Anchor"], rnd);
-                        let img_name = img_row.file;
-                        let image = ImageCache.Element(img_name);
-                        let dims = ImageCache.Dims(img_name).Mult(scale4height);
-
-                        let tl = this.rect.BL.Add(new Coord((i + 1) * width_step - dims.X / 2, -dims.Y));
-                        let br = tl.Add(new Coord(dims.X, dims.Y));
-
-                        image.css({
-                            left: tl.X,
-                            top: tl.Y,
-                            height: dims.Y,
-                            width: dims.X,
-                            "z-index": Zs.NodeContentL1
-                        }).addClass("absolute zero-spacing");
-
-                        let anchor = {
-                            rect: new Rect(tl, br),
-                            load: (ret_fn) => { ret_fn(image); },
-                            url_title: this.url_title + ":anchor:" + i
-                        };
-
-                        PSM.GetDemandLoader(1.0).Register(anchor);
-
-                        function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
-                            let num_wraps = Math.max(Math.ceil(Math.abs(start_h - end_h) / width) + 1, 2);
-                            let ch = start_h;
-                            let step = (end_h - start_h) / (num_wraps * 2 + 1);
-                            let rand_range = Math.abs(step) / 2 + width / 2;
-            
-                            for(let i = 0; i < num_wraps; i++) {
-                                drawer.ForeDrawLine(svg, new Coord(right - width, ch + step + rand_range * (rnd.quick() - 0.5)), new Coord(right, ch + step * 2 + rand_range * (rnd.quick() - 0.5)));
-                                ch += step * 2;
-                            }
-                        }
-
-                        let strand_height_offset = i == this.num_articles ? 0 : (rnd.quick() + rnd.quick() + rnd.quick() - 1.5) * img_row.swidth * 2 * scale4height;
-
-                        if (prev_row) {
-                            let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
-                            let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
-                            let catenary = {
-                                rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"], true),
-                                load: ret_fn => {
-                                    let svg = DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"]).css({
-                                        "z-index" : Zs.NodeContentL4
-                                    });
-
-                                    add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
-
-                                    if (i == 1) {
-                                        add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], rnd);
-                                    }
- 
-                                    ret_fn(svg);
-                                },
-                                url_title: this.url_title + ":catenary:" + i
-                            };
-
-                            PSM.GetDemandLoader(1.0).Register(catenary);
-                        }
-
-                        prev_row = img_row;
-                        prev_tl = tl;
-                        prev_dims = dims;
-                        prev_height_offset = strand_height_offset;
+                        make_image_strip(PSM.GetDemandLoader(1.5), image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
                     }
-                    // let idx = 0;
-
-                    // for(const key in this._articles) {
-                    //     let art = this._articles[key];
-
-                    //     let tl = this.rect.tl.Add(new Coord((idx + 1.5) * width_step, 0));
-                    //     let br = this.rect.tl.Add(new Coord((idx + 2.5) * width_step, height));
-    
-                    //     art.rect = new Rect(tl, br);
-                    //     art.load = (ret_fn) => {
-                    //         let div = $("<div></div>")
-                    //             .addClass("zero-spacing absolute")
-                    //             .css({
-                    //             width: width_step,
-                    //             height: height,
-                    //             left: tl.X,
-                    //             top: tl.Y,
-                    //             "background-color" : "rgb(60, 90, 72)"
-                    //         });
-            
-                    //         ret_fn(div);        
-                    //     };
-
-                    //     PSM.GetDemandLoader(1.0).Register(art);
-
-                    //     idx++;
-                    // }
-                });
+                );
             };
 
             PSM.GetDemandLoader(1.0).Register(this);
         }
-    }
+
+        function make_anchors_and_thread(scale4height, image_set, num_articles, bl, url_title, rnd) {
+            let prev_row = null;
+            let prev_tl = null;
+            let prev_dims = null;
+            let prev_height_offset = 0;
+
+            for (let i = 0; i <= num_articles; i++) {
+                let img_row = rand_from_array(image_set, rnd);
+                let img_name = img_row.file;
+                let dims = ImageCache.Dims(img_name).Mult(scale4height);
+                let tl = bl.Add(new Coord((i + 1) * width_step - dims.X / 2, -dims.Y));
+                let br = tl.Add(dims);
+
+                let anchor = {
+                    rect: new Rect(tl, br),
+                    load: (ret_fn) => {
+                        let image = ImageCache.Element(img_name)
+                            .css({
+                                left: tl.X,
+                                top: tl.Y,
+                                height: dims.Y,
+                                width: dims.X,
+                                "z-index": Zs.NodeContentL1
+                            })
+                            .addClass("absolute zero-spacing");
+                        ret_fn(image);
+                    },
+                    url_title: url_title + ":anchor:" + i
+                };
+
+                PSM.GetDemandLoader(1.0).Register(anchor);
+
+                function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
+                    let num_wraps = Math.max(Math.ceil(Math.abs(start_h - end_h) / width) + 1, 2);
+                    let ch = start_h;
+                    let step = (end_h - start_h) / (num_wraps * 2 + 1);
+                    let rand_range = Math.abs(step) / 2 + width / 2;
+                    for (let i = 0; i < num_wraps; i++) {
+                        drawer.ForeDrawLine(svg, new Coord(right - width, ch + step + rand_range * (rnd.quick() - 0.5)), new Coord(right, ch + step * 2 + rand_range * (rnd.quick() - 0.5)));
+                        ch += step * 2;
+                    }
+                }
+
+                let strand_height_offset = i == num_articles ? 0 : (rnd.quick() + rnd.quick() + rnd.quick() - 1.5) * img_row.swidth * 2 * scale4height;
+
+                if (prev_row) {
+                    let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
+                    let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
+                    let catenary = {
+                        rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"], true),
+                        load: ret_fn => {
+                            let svg = DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"]).css({
+                                "z-index": Zs.NodeContentL4
+                            });
+                            add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
+                            if (i == 1) {
+                                add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], rnd);
+                            }
+                            ret_fn(svg);
+                        },
+                        url_title: url_title + ":catenary:" + i
+                    };
+
+                    PSM.GetDemandLoader(1.0).Register(catenary);
+                }
+                prev_row = img_row;
+                prev_tl = tl;
+                prev_dims = dims;
+                prev_height_offset = strand_height_offset;
+            }
+            return scale4height;
+        }
+
+        function make_image_strip(loader, image_set, bl, right, scale4height, url_title, rnd) {
+            let b = bl.Y;
+            let curr_left = bl.X;
+            let i = 0;
+
+            while(curr_left < right) {
+                let img_row = rand_from_array(image_set, rnd);
+                let img_name = img_row.file;
+                let dims = ImageCache.Dims(img_name).Mult(scale4height);
+
+                let tl = new Coord(curr_left, b - dims.Y);
+                let br = tl.Add(dims); 
+
+                let building = {
+                    rect: new Rect(tl, br),
+                    load: (ret_fn) => {
+                        let image = ImageCache.Element(img_name)
+                            .css({
+                                left: tl.X,
+                                top: tl.Y,
+                                height: dims.Y,
+                                width: dims.X,
+                                "z-index": Zs.NodeContentL1
+                            })
+                            .addClass("absolute zero-spacing");
+
+                        ret_fn(image); 
+                    },
+                    url_title: url_title + ":building:" + i
+                };
+
+                i++;
+
+                loader.Register(building);
+
+                curr_left = br.X;            
+            }
+        }
+     }
 
     window.Ctors = {
         home : home,

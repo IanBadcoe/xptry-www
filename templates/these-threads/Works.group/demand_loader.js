@@ -1,16 +1,23 @@
 "use strict";
 
-window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun) {
+// external_margin_fraction is how much we extend the rect by so as to load things a little before they are needed
+// (allowing for things that take moment to load)
+window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun, external_margin_fraction) {
     let _data = {};
     let _existing = {};
-    let _expire_ms = 5000;
+    let _expire_ms = expire_ms;
     let _last_rect = new Rect(0, 0, -1, -1);
     let _force_processing = false;
-    let _last_expire = expire_ms;
+    let _last_expire = 0;
     let _expire_cycle_ms = expire_cycle_ms;
     let _rect_fun = rect_fun;
     let _cycle_ms = cycle_ms;
     let _target_element = target_element;
+    let _external_margin_fraction = 0.5;
+
+    if (external_margin_fraction != null && external_margin_fraction != undefined) {
+        _external_margin_fraction = external_margin_fraction;
+    }
 
     let ret = {
         Stop() {
@@ -39,7 +46,7 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
 
             let ts = new Date().getTime();
 
-            let ext_rect = rect.ExtendedBy(rect.Dims().Mult(0.5));
+            let ext_rect = rect.ExtendedBy(rect.Dims().Mult(_external_margin_fraction));
 
             if (_force_processing || !_last_rect.Equal(rect)) {
                 _force_processing = false;

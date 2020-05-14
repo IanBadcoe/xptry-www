@@ -10,14 +10,14 @@ $(document).ready(() => {
     let _mouse_target = null;
     let _old_pos = new Coord(0, 0);
 
-    function refresh_secondary_targets() {
+    function refresh_secondary_targets(force) {
         if (!_main_target)
             return;
             
         let pos = _main_target.position();
         pos = new Coord(pos.left, pos.top);
 
-        if (pos.Equal(_old_pos))
+        if (!force && pos.Equal(_old_pos))
             return;
 
         _all_targets.forEach(x => {
@@ -123,10 +123,16 @@ $(document).ready(() => {
 
             _all_targets.splice(ins_before, 0, ent);
 
+            refresh_secondary_targets(true);
+
             return ent.element;
         },
         Refresh() {
             refresh_secondary_targets();
-        }
+        },
+        // // takes a rect on the _main_target plane and converts it to one on the given dist plane
+        // TransformRect(dist, rect) {
+        //     return new Rect(rect.TL.Mult(dist), rect.BR.Mult(dist));
+        // }
     };
 });
