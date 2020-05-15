@@ -143,7 +143,7 @@ $(document).ready(function() {
 
             let strand_seg = {
                 url_title: prev_name + "|" + wp_name,
-                load: (ret_fn)=> ret_fn(DrawStrandBetweenPoints(null, p1, p2, path.drawer)),
+                load: ret_fn=> ret_fn(DrawStrandBetweenPoints(null, p1, p2, path.drawer)),
                 from: prev,
                 to: wp,
                 rect: new Rect(prev, wp.SPoint[false])

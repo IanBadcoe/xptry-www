@@ -45,7 +45,7 @@ $(document).ready(function() {
                 }
             });
 
-            this.load = (ret_fn) => {
+            this.load = ret_fn => {
                 let svg = add_svg(null,
                     this.centre,
                     this.dims.Div(2).Inverse(),
@@ -117,7 +117,7 @@ $(document).ready(function() {
                 return ne;
             };
 
-            this.load = (ret_fn) => {
+            this.load = ret_fn => {
                 let area = this.dims.X * this.dims.Y;
                 let number = area * density;
                 let rnd = MakeRand(this.url_title);
@@ -220,7 +220,7 @@ $(document).ready(function() {
             let half_rad = radius + this.drawer.Width + 1;
             let half_size = new Coord(half_rad, half_rad);
 
-            this.load = (ret_fn) => {
+            this.load = ret_fn => {
                 let svg = add_svg(null,
                     pulley_data.centre,
                     half_size.Inverse(),
@@ -298,7 +298,7 @@ $(document).ready(function() {
                     }
                 );
 
-            this.load = (ret_fn) => {
+            this.load = ret_fn => {
                 let rnd = MakeRand(this.url_title);
 
                 var promises = [];
@@ -323,9 +323,9 @@ $(document).ready(function() {
                         let strip_height = height * (1 - strip_offset_frac * 2);
                         let scale4height = strip_height / max_image_height;
 
-                        make_anchors_and_thread(scale4height, image_sets["Anchor"], this.num_articles, this.rect.BL, this.url_title, rnd);
+                        make_anchors_and_thread(scale4height, image_sets["Anchor"], this.num_articles, this.rect.BL, this.url_title, rnd, image_sets["Furniture"]);
 
-                        make_image_strip(PSM.GetDemandLoader(1.5), image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
+                        make_image_strip(1.1, image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
                     }
                 );
             };
@@ -333,14 +333,14 @@ $(document).ready(function() {
             PSM.GetDemandLoader(1.0).Register(this);
         }
 
-        function make_anchors_and_thread(scale4height, image_set, num_articles, bl, url_title, rnd) {
+        function make_anchors_and_thread(scale4height, anchor_image_set, num_articles, bl, url_title, rnd, furniture_image_set) {
             let prev_row = null;
             let prev_tl = null;
             let prev_dims = null;
             let prev_height_offset = 0;
 
             for (let i = 0; i <= num_articles; i++) {
-                let img_row = rand_from_array(image_set, rnd);
+                let img_row = rand_from_array(anchor_image_set, rnd);
                 let img_name = img_row.file;
                 let dims = ImageCache.Dims(img_name).Mult(scale4height);
                 let tl = bl.Add(new Coord((i + 1) * width_step - dims.X / 2, -dims.Y));
@@ -348,7 +348,7 @@ $(document).ready(function() {
 
                 let anchor = {
                     rect: new Rect(tl, br),
-                    load: (ret_fn) => {
+                    load: ret_fn => {
                         let image = ImageCache.Element(img_name)
                             .css({
                                 left: tl.X,
@@ -364,6 +364,33 @@ $(document).ready(function() {
                 };
 
                 PSM.GetDemandLoader(1.0).Register(anchor);
+
+                if (rnd.quick() < 0.25) {
+                    let f_img_row = rand_from_array(furniture_image_set, rnd);
+                    let f_img_name = f_img_row.file;
+                    let f_dims = ImageCache.Dims(f_img_name).Mult(scale4height);
+                    let f_tl = bl.Add(new Coord((i + 1) * width_step + f_dims.X / 2, -f_dims.Y));
+                    let f_br = f_tl.Add(f_dims);
+
+                    let furn = {
+                        rect: new Rect(f_tl, f_br),
+                        load: ret_fn => {
+                            let image = ImageCache.Element(f_img_name)
+                                .css({
+                                    left: f_tl.X,
+                                    top: f_tl.Y,
+                                    height: f_dims.Y,
+                                    width: f_dims.X,
+                                    "z-index": Zs.NodeContentL1
+                                })
+                                .addClass("absolute zero-spacing");
+                            ret_fn(image);
+                        },
+                        url_title: url_title + ":anchor:" + i + ":f_right"
+                    };
+
+                    PSM.GetDemandLoader(1.0).Register(furn);
+                }
 
                 function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
                     let num_wraps = Math.max(Math.ceil(Math.abs(start_h - end_h) / width) + 1, 2);
@@ -406,7 +433,8 @@ $(document).ready(function() {
             return scale4height;
         }
 
-        function make_image_strip(loader, image_set, bl, right, scale4height, url_title, rnd) {
+        function make_image_strip(dist, image_set, bl, right, scale4height, url_title, rnd) {
+            let loader = PSM.GetDemandLoader(dist);
             let b = bl.Y;
             let curr_left = bl.X;
             let i = 0;
@@ -416,7 +444,12 @@ $(document).ready(function() {
                 let img_name = img_row.file;
                 let dims = ImageCache.Dims(img_name).Mult(scale4height);
 
-                let tl = new Coord(curr_left, b - dims.Y);
+                // we do not have perspective on Y, which means there isn't a perfect way to position this
+                // (as X and Y need to be scaled down the same, which means the height of the image is scaled, so that I can position either the top or the bottom aligned with
+                //  the 1.0 plane, but not both)
+                // since Y is scaled down, but not moved with parallaxm we need to pick which out of top or bottom will be in the right place and since we want the ground to line up,
+                // it has to be the bottom, so we need to pre-scale that up to get it in the right place after scaling (paralax puts X in the right place)
+                let tl = new Coord(curr_left, b * dist - dims.Y);
                 let br = tl.Add(dims); 
 
                 let building = {
