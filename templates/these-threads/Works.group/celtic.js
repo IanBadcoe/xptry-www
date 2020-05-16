@@ -121,7 +121,7 @@ var MakeCKnot = function(loops) {
                 loop.Points.forEach((pnt, pnt_idx) => {
                     let inter = intersects[pnt];
 
-                    if (inter.is_over != null) {
+                    if (inter.is_over !== null) {
                         found_idx = loop_idx;
                         // this will be the first intersecting element we hit, so set next_over
                         // to send it the right way
@@ -135,7 +135,7 @@ var MakeCKnot = function(loops) {
             });
         }
         catch (e) {
-            if (e != "got one!")
+            if (e !== "got one!")
                 throw e;
         }
 

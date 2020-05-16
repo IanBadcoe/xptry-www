@@ -15,7 +15,7 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
     let _target_element = target_element;
     let _external_margin_fraction = 0.5;
 
-    if (external_margin_fraction != null && external_margin_fraction != undefined) {
+    if (external_margin_fraction !== null && external_margin_fraction !== undefined) {
         _external_margin_fraction = external_margin_fraction;
     }
 

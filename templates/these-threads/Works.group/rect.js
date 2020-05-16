@@ -1,12 +1,12 @@
 class Rect {
     constructor(a, b, c, d) {
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             a = new Coord(a);
             b = new Coord(b);
-        } else if (arguments.length == 4) {
+        } else if (arguments.length === 4) {
             a = new Coord(a, b);
             b = new Coord(c, d);
-        } else if (arguments.length == 0) {
+        } else if (arguments.length === 0) {
             a = new Coord();
             b = new Coord();
         } else {

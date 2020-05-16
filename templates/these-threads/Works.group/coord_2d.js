@@ -133,8 +133,8 @@ class Coord extends Array {
     }
 
     Equal(c) {
-        return this[0] == c[0]
-            && this[1] == c[1];
+        return this[0] === c[0]
+            && this[1] === c[1];
     }
 
     Max(c) {

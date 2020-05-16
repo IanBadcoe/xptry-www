@@ -21,7 +21,7 @@ $(document).ready(() => {
             return;
 
         _all_targets.forEach(x => {
-            if (x.dist != 1.0) {
+            if (x.dist !== 1.0) {
                 x.element.css({
                     left: pos.X / x.dist,
                     top: pos.Y

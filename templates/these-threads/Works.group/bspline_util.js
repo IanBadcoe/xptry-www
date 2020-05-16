@@ -28,7 +28,7 @@ function BSplineBasis(x, i, k, knots, max_knot, closed) {
                 return 0;
             }
 
-            if (prev_k != max_knot && next_k === max_knot) {
+            if (prev_k !== max_knot && next_k === max_knot) {
                 // for open curves (max_knot should be -1 for closed curves...)
                 //
                 // if we are the last, non-empty interval allow the upper bound to

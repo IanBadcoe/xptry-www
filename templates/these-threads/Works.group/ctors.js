@@ -185,7 +185,7 @@ $(document).ready(function() {
             //
             this.CalcStrandPoint = function (other_point, out, drawer) {
                 // XOR the direction we're tracing in with whether this is a left or righthand pulley
-                let h_out = (!out) != (!clockwise);
+                let h_out = (!out) !== (!clockwise);
 
                 // won't need this when we've converted more to coords...
                 let vA = this.centre.Sub(other_point);
@@ -238,7 +238,7 @@ $(document).ready(function() {
                     pulley_data.drawer.ForeDrawPolylineArc(svg,
                         pulley_data.SPoint[false].Sub(pulley_data.centre), pulley_data.SPoint[true].Sub(pulley_data.centre), radius,
                         pulley_data.clockwise,
-                        pulley_data.clockwise == (pulley_data.signed_angle < 0),
+                        pulley_data.clockwise === (pulley_data.signed_angle < 0),
                         "strand-inner");
                 }
 
@@ -365,7 +365,7 @@ $(document).ready(function() {
                     }
                 }
 
-                let strand_height_offset = i == num_articles ? 0 : (rnd.quick() + rnd.quick() + rnd.quick() - 1.5) * img_row.swidth * 2 * scale4height;
+                let strand_height_offset = i === num_articles ? 0 : (rnd.quick() + rnd.quick() + rnd.quick() - 1.5) * img_row.swidth * 2 * scale4height;
                 let tl = a_bc.Add(new Coord(-dims.X / 2, -dims.Y));
 
                 if (prev_row) {
@@ -378,7 +378,7 @@ $(document).ready(function() {
                                 "z-index": Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
-                            if (i == 1) {
+                            if (i === 1) {
                                 add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], rnd);
                             }
                             ret_fn(svg);
@@ -397,47 +397,25 @@ $(document).ready(function() {
         }
 
         function make_image_strip(dist, image_set, bl, right, scale4height, url_title, rnd) {
-            let loader = PSM.GetDemandLoader(dist);
             let b = bl.Y;
             let curr_left = bl.X;
             let i = 0;
 
             while(curr_left < right) {
                 let img_row = rand_from_array(image_set, rnd);
-                let img_name = img_row.file;
-                let dims = ImageCache.Dims(img_name).Mult(scale4height);
 
                 // we do not have perspective on Y, which means there isn't a perfect way to position this
                 // (as X and Y need to be scaled down the same, which means the height of the image is scaled, so that I can position either the top or the bottom aligned with
                 //  the 1.0 plane, but not both)
-                // since Y is scaled down, but not moved with parallaxm we need to pick which out of top or bottom will be in the right place and since we want the ground to line up,
-                // it has to be the bottom, so we need to pre-scale that up to get it in the right place after scaling (paralax puts X in the right place)
-                let tl = new Coord(curr_left, b * dist - dims.Y);
-                let br = tl.Add(dims); 
+                // since Y is scaled down, but not moved with parallax we need to pick which out of top or bottom will be in the right place and since we want the ground to line up,
+                // it has to be the bottom, so we need to pre-scale that up to get it in the right place after scaling down (parallax puts X in the right place)
+                let pos = new Coord(curr_left, b * dist);
 
-                let building = {
-                    rect: new Rect(tl, br),
-                    load: (ret_fn) => {
-                        let image = ImageCache.Element(img_name)
-                            .css({
-                                left: tl.X,
-                                top: tl.Y,
-                                height: dims.Y,
-                                width: dims.X,
-                                "z-index": Zs.NodeContentL1
-                            })
-                            .addClass("absolute zero-spacing");
+                let dims = place_parallax_image(dist, img_row, scale4height, pos, url_title + ":building:" + i, "l");
 
-                        ret_fn(image); 
-                    },
-                    url_title: url_title + ":building:" + i
-                };
+                curr_left += dims.X;
 
                 i++;
-
-                loader.Register(building);
-
-                curr_left = br.X;            
             }
         }
      }

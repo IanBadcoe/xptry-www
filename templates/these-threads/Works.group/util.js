@@ -289,7 +289,7 @@ function add_circle(el, coords, style, klass, width) {
 function add_defs(el) {
     let already = el.children("defs");
 
-    if (already.length == 0) {
+    if (already.length === 0) {
         already = $(document.createElementNS('http://www.w3.org/2000/svg', 'defs'))
 
         el.prepend(already);
