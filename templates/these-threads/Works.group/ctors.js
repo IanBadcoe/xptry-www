@@ -325,7 +325,7 @@ $(document).ready(function() {
 
                         make_anchors_and_thread(scale4height, image_sets["Anchor"], this.num_articles, this.rect.BL, this.url_title, rnd, image_sets["Furniture"]);
 
-                        make_image_strip(1.1, image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
+                        make_image_strip(1.05, image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
                     }
                 );
             };
@@ -340,56 +340,18 @@ $(document).ready(function() {
             let prev_height_offset = 0;
 
             for (let i = 0; i <= num_articles; i++) {
+                let a_bc = bl.Add(new Coord((i + 1) * width_step, 0));
+
                 let img_row = rand_from_array(anchor_image_set, rnd);
-                let img_name = img_row.file;
-                let dims = ImageCache.Dims(img_name).Mult(scale4height);
-                let tl = bl.Add(new Coord((i + 1) * width_step - dims.X / 2, -dims.Y));
-                let br = tl.Add(dims);
 
-                let anchor = {
-                    rect: new Rect(tl, br),
-                    load: ret_fn => {
-                        let image = ImageCache.Element(img_name)
-                            .css({
-                                left: tl.X,
-                                top: tl.Y,
-                                height: dims.Y,
-                                width: dims.X,
-                                "z-index": Zs.NodeContentL1
-                            })
-                            .addClass("absolute zero-spacing");
-                        ret_fn(image);
-                    },
-                    url_title: url_title + ":anchor:" + i
-                };
+                let dims = place_parallax_image(1.0, img_row, scale4height, a_bc, url_title + ":anchor:" + i, "c");
+                
+                if (rnd.quick() < 0.15) {
+                    place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(dims.X / 2, 0)), url_title + ":anchor:" + i + ":f_right", "l");
+                }
 
-                PSM.GetDemandLoader(1.0).Register(anchor);
-
-                if (rnd.quick() < 0.25) {
-                    let f_img_row = rand_from_array(furniture_image_set, rnd);
-                    let f_img_name = f_img_row.file;
-                    let f_dims = ImageCache.Dims(f_img_name).Mult(scale4height);
-                    let f_tl = bl.Add(new Coord((i + 1) * width_step + f_dims.X / 2, -f_dims.Y));
-                    let f_br = f_tl.Add(f_dims);
-
-                    let furn = {
-                        rect: new Rect(f_tl, f_br),
-                        load: ret_fn => {
-                            let image = ImageCache.Element(f_img_name)
-                                .css({
-                                    left: f_tl.X,
-                                    top: f_tl.Y,
-                                    height: f_dims.Y,
-                                    width: f_dims.X,
-                                    "z-index": Zs.NodeContentL1
-                                })
-                                .addClass("absolute zero-spacing");
-                            ret_fn(image);
-                        },
-                        url_title: url_title + ":anchor:" + i + ":f_right"
-                    };
-
-                    PSM.GetDemandLoader(1.0).Register(furn);
+                if (rnd.quick() < 0.15) {
+                    place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(-dims.X / 2, 0)), url_title + ":anchor:" + i + ":f_left", "r");
                 }
 
                 function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
@@ -404,6 +366,7 @@ $(document).ready(function() {
                 }
 
                 let strand_height_offset = i == num_articles ? 0 : (rnd.quick() + rnd.quick() + rnd.quick() - 1.5) * img_row.swidth * 2 * scale4height;
+                let tl = a_bc.Add(new Coord(-dims.X / 2, -dims.Y));
 
                 if (prev_row) {
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
@@ -487,3 +450,44 @@ $(document).ready(function() {
         horz_thread : horz_thread
     };
 });
+
+// posmode = "l", "r" or "c" for whether pos is bottom-left, bottom-right, or bottom-centre
+function place_parallax_image(dist, img_row, scale, pos, here_title, posmode) {
+    let img_name = img_row.file;
+    let dims = ImageCache.Dims(img_name).Mult(scale);
+
+    // assume pos === bl and, if it is not, fix up the resulting bl below
+    let tl = pos.Add(new Coord(0, -dims.Y));
+
+    if (posmode === "r") {
+        tl = tl.Sub(new Coord(dims.X, 0));
+    } else if (posmode === "c") {
+        tl = tl.Sub(new Coord(dims.X / 2, 0));
+    } else if (posmode !== "l") {
+        throw "Bad posmode!"
+    }
+
+    let br = tl.Add(dims);
+
+    let d_load = {
+        rect: new Rect(tl, br),
+        load: ret_fn => {
+            let image = ImageCache.Element(img_name)
+                .css({
+                    left: tl.X,
+                    top: tl.Y,
+                    height: dims.Y,
+                    width: dims.X,
+                    "z-index": Zs.NodeContentL1
+                })
+                .addClass("absolute zero-spacing");
+
+            ret_fn(image);
+        },
+        url_title: here_title
+    };
+
+    PSM.GetDemandLoader(dist).Register(d_load);
+
+    return dims;
+}
