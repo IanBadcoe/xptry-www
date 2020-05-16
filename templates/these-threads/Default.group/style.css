@@ -87,6 +87,10 @@ polygon.knot {
     stroke-linecap: butt;
 }
 
+.street-p2 {
+    filter: sepia(100%) hue-rotate(135deg) brightness(0.95);
+}
+
 .debug-white {
     stroke: rgb(255,255,255);
     stroke-width: 1px;

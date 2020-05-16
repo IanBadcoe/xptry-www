@@ -325,7 +325,7 @@ $(document).ready(function() {
 
                         make_anchors_and_thread(scale4height, image_sets["Anchor"], this.num_articles, this.rect.BL, this.url_title, rnd, image_sets["Furniture"]);
 
-                        make_image_strip(1.05, image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
+                        make_image_strip(1.07, image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
                     }
                 );
             };
@@ -411,7 +411,7 @@ $(document).ready(function() {
                 // it has to be the bottom, so we need to pre-scale that up to get it in the right place after scaling down (parallax puts X in the right place)
                 let pos = new Coord(curr_left, b * dist);
 
-                let dims = place_parallax_image(dist, img_row, scale4height, pos, url_title + ":building:" + i, "l");
+                let dims = place_parallax_image(dist, img_row, scale4height, pos, url_title + ":building:" + i, "l", "street-p2");
 
                 curr_left += dims.X;
 
@@ -430,7 +430,7 @@ $(document).ready(function() {
 });
 
 // posmode = "l", "r" or "c" for whether pos is bottom-left, bottom-right, or bottom-centre
-function place_parallax_image(dist, img_row, scale, pos, here_title, posmode) {
+function place_parallax_image(dist, img_row, scale, pos, here_title, posmode, klass) {
     let img_name = img_row.file;
     let dims = ImageCache.Dims(img_name).Mult(scale);
 
@@ -459,6 +459,10 @@ function place_parallax_image(dist, img_row, scale, pos, here_title, posmode) {
                     "z-index": Zs.NodeContentL1
                 })
                 .addClass("absolute zero-spacing");
+
+            if (klass) {
+                image.addClass(klass);
+            }
 
             ret_fn(image);
         },
