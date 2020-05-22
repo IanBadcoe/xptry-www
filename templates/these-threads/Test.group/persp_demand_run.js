@@ -1,5 +1,5 @@
 $(document).ready(() => {
-    window.PSM.Init(200, 3000, 50, $(".scroll-container-container"), 0.8);
+    window.PSM.Init(200, 3000, 50, $(".scroll-container-container"), 1, 0.8);
     let dl1 = PSM.GetDemandLoader(1.0);
     let dl2 = PSM.GetDemandLoader(1.5);
     let dl3 = PSM.GetDemandLoader(2.0);

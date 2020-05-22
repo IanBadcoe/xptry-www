@@ -13,7 +13,7 @@ $(document).ready(() => {
         // allowing test pages to show what's happening "off screen"
         // setting this 1.0 would remove the rect altogether, 0.8 will take 40% off all around
         // when we have a test_scale, turn off the external margin on the demand loaders so wysiwyg
-        Init(cycle_ms, expire_ms, expire_cycle_ms, container_container, test_scale) {
+        Init(cycle_ms, expire_ms, expire_cycle_ms, container_container, scale, test_scale) {
             _cycle_ms = cycle_ms;
             _expire_ms = expire_ms;
             _expire_cycle_ms = expire_cycle_ms;
@@ -22,7 +22,7 @@ $(document).ready(() => {
                 _test_scale = test_scale;
             }
 
-            DraggablePersp.Init(container_container, $("body"));
+            DraggablePersp.Init(container_container, $("body"), scale);
         },
         GetElement(dist) {
             return DraggablePersp.Get(dist);

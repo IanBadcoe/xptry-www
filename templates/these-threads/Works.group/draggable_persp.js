@@ -9,6 +9,7 @@ $(document).ready(() => {
     let _container = null;
     let _mouse_target = null;
     let _old_pos = new Coord(0, 0);
+    let _scale = 1;
 
     function refresh_secondary_targets(force) {
         if (!_main_target)
@@ -36,8 +37,10 @@ $(document).ready(() => {
         if (!_md) {
             _md = true;
             _click_pos = new Coord(e.pageX, e.pageY);
-            let pos = _main_target.position();
-            _start_pos = new Coord(pos.left, pos.top);
+            _start_pos = new Coord(
+                parseFloat(_main_target.css("left")),
+                parseFloat(_main_target.css("top"))
+            );
         }
 
         return false;
@@ -46,7 +49,7 @@ $(document).ready(() => {
     function mousemove(e) {
         if (_md) {
             let move = new Coord(e.pageX, e.pageY).Sub(_click_pos);
-            let main_pos = _start_pos.Add(move);
+            let main_pos = _start_pos.Add(move.Mult(_scale));
 
             _main_target.css({
                 left: main_pos.X,
@@ -74,7 +77,7 @@ $(document).ready(() => {
         // 2) the initial position of all planes is acceptable at (0, 0)
         //    ( if that wasn't the case, then we'd need to record the start pos of all targets
         //      and add/subtract those when going between the main and other targets )
-        Init(container, mouse_target) {
+        Init(container, mouse_target, scale) {
             _container = container;
             _mouse_target = mouse_target;
 
@@ -83,6 +86,10 @@ $(document).ready(() => {
             _mouse_target.on("mousemove", mousemove);
 
             _main_target = this.Get(1.0);
+
+            if (scale) {
+                _scale = scale;
+            }
         },
         Get(dist) {
             let ins_before = 0;

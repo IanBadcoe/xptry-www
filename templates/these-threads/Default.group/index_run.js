@@ -1,5 +1,11 @@
 $(document).ready(() => {
-    window.PSM.Init(200, 300000, 5000, $(".scroll-container-container"));
+    let scale = Math.min(innerWidth, innerHeight) / 1100;
+
+    window.PSM.Init(200, 300000, 5000, $(".scroll-container-container"), 1 / scale);
+
+    $(".scroll-container-container").css({
+        transform: "scale(" + scale + ")"
+    });
 
     SiteNav.Init("home-knot");
 
