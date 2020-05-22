@@ -1,5 +1,7 @@
 $(document).ready(() => {
-    let scale = Math.min(innerWidth, innerHeight) / 1100;
+    // auto-scale the page, but continue to respect any zoom the user has already set
+    let zoom = window.outerWidth / window.document.documentElement.clientWidth
+    let scale = Math.min(innerWidth, innerHeight) / 1100 * zoom;
 
     window.PSM.Init(200, 300000, 5000, $(".scroll-container-container"), 1 / scale);
 
