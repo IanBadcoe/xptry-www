@@ -361,7 +361,7 @@ $(document).ready(function() {
                 });
             }
 
-            fix_title(where.title);
+            fix_title(dest_node.title);
             this.SmartScroll(dest_node, promise, first, true);
 
             this.CurrentNode = dest_node;
