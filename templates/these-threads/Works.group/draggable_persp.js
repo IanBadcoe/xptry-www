@@ -15,8 +15,10 @@ $(document).ready(() => {
         if (!_main_target)
             return;
             
-        let pos = _main_target.position();
-        pos = new Coord(pos.left, pos.top);
+        let pos = new Coord(
+            parseFloat(_main_target.css("left")),
+            parseFloat(_main_target.css("top"))
+        );
 
         if (!force && pos.Equal(_old_pos))
             return;

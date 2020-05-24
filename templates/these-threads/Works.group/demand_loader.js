@@ -2,7 +2,7 @@
 
 // external_margin_fraction is how much we extend the rect by so as to load things a little before they are needed
 // (allowing for things that take moment to load)
-window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun, external_margin_fraction) {
+window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun, external_margin_fraction, scale) {
     let _data = {};
     let _existing = {};
     let _expire_ms = expire_ms;
@@ -14,6 +14,7 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
     let _cycle_ms = cycle_ms;
     let _target_element = target_element;
     let _external_margin_fraction = 0.5;
+    let _scale = scale;
 
     if (external_margin_fraction !== null && external_margin_fraction !== undefined) {
         _external_margin_fraction = external_margin_fraction;
@@ -41,6 +42,8 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
             _force_processing = true;
         },
         Update(rect) {
+            rect = rect.Mult(_scale);
+
             let add_queue = [];
             let remove_queue = [];
 

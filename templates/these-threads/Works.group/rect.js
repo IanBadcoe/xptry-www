@@ -66,4 +66,8 @@ class Rect {
     get R() {
         return this.BR.X;
     }
+
+    Mult(scale) {
+        return new Rect(this.TL.Mult(scale), this.BR.Mult(scale));
+    }
 }

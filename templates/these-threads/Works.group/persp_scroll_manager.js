@@ -6,6 +6,7 @@ $(document).ready(() => {
     let _expire_ms = 300000;
     let _expire_cycle_ms = 5000;
     let _test_scale = 0.0;
+    let _scale = 1.0;
 
     // highly abbreviated as used a lot...
     window.PSM = {
@@ -17,6 +18,7 @@ $(document).ready(() => {
             _cycle_ms = cycle_ms;
             _expire_ms = expire_ms;
             _expire_cycle_ms = expire_cycle_ms;
+            _scale = scale;
 
             if (test_scale) {
                 _test_scale = test_scale;
@@ -52,7 +54,7 @@ $(document).ready(() => {
 
                 let dl_margin = _test_scale ? 0.0 : 0.5;
             
-                ret = CreateDemandLoader(el, _cycle_ms, _expire_ms, _expire_cycle_ms, active_rect, dl_margin);
+                ret = CreateDemandLoader(el, _cycle_ms, _expire_ms, _expire_cycle_ms, active_rect, dl_margin, _scale);
 
                 _loaders[dist] = ret;
             }

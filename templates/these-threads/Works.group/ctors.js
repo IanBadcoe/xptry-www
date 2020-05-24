@@ -372,9 +372,9 @@ $(document).ready(function() {
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
                     let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                     let catenary = {
-                        rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"], true),
+                        rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 1000, Drawers["wire"], true),
                         load: ret_fn => {
-                            let svg = DrawCatenaryStrandBetweenPoints(null, p1, p2, 500, Drawers["wire"]).css({
+                            let svg = DrawCatenaryStrandBetweenPoints(null, p1, p2, 1000, Drawers["wire"]).css({
                                 "z-index": Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
