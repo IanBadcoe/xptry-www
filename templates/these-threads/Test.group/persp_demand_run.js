@@ -1,15 +1,15 @@
 $(document).ready(() => {
-    // auto-scale the page, but (by using outer*, rather that inner*) continue to respect any zoom the user has already set
-    let scale = Math.min(outerWidth, outerHeight) / 1800;
+    // auto-scale the page, but continue to respect any zoom the user has already set
+    let scale = 1.0; // Math.min(innerWidth, innerHeight) / 700;
 
     $(".scroll-container-container").css({
-        transform: "scale(" + scale + ")"
+        transform: "scale(" + scale * PSM.Zoom + ")"
     });
 
-    window.PSM.Init(200, 3000, 50, $(".scroll-container-container"), 1 / scale, 0.8);
+    window.PSM.Init(20, 300, 5, $(".scroll-container-container"), 1 / scale, 0.8);
     let dl1 = PSM.GetDemandLoader(1.0);
-    let dl2 = PSM.GetDemandLoader(1.5);
-    let dl3 = PSM.GetDemandLoader(2.0);
+    let dl2 = PSM.GetDemandLoader(2.0);
+    let dl3 = PSM.GetDemandLoader(4.0);
 
     function fn(i, j, force_colour) {
         let colour = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")";

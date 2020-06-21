@@ -24,7 +24,7 @@ $(document).ready(() => {
                 _test_scale = test_scale;
             }
 
-            DraggablePersp.Init(container_container, $("body"), scale);
+            DraggablePersp.Init(container_container, $("body"));
         },
         GetElement(dist) {
             return DraggablePersp.Get(dist);
@@ -39,27 +39,41 @@ $(document).ready(() => {
                 function active_rect() {
                     let pos = el.position();
                     pos = new Coord(pos.left, pos.top).Mult(dist);
+                    let pos2 = new Coord(
+                        parseFloat(el.css("left")),
+                        parseFloat(el.css("top"))
+                    ).Mult(dist);
             
                     let dim = new Coord(innerWidth, innerHeight).Mult(dist);
-            
-                    let rect = new Rect(pos.Inverse(),
-                        pos.Inverse().Add(dim));
+
+                    let rect = new Rect(pos2.Inverse(),
+                        pos2.Inverse().Add(dim));
 
 //                    rect = DraggablePersp.TransformRect(dist, rect);
 
                     rect = rect.ExtendedBy(dim.Mult(-_test_scale / 2));
+                    
+                    let d_klass = ("debug-" + dist).replace(".", "-");
+                    let d_el = $("." + d_klass);
+                    d_el.children(".region").text("left:" + rect.L + ", top:" + rect.T);
             
                     return rect;
                 }
 
                 let dl_margin = _test_scale ? 0.0 : 0.5;
             
-                ret = CreateDemandLoader(el, _cycle_ms, _expire_ms, _expire_cycle_ms, active_rect, dl_margin, _scale);
+                ret = CreateDemandLoader(el, _cycle_ms, _expire_ms, _expire_cycle_ms, active_rect, dl_margin, _test_scale != 0.0);
 
                 _loaders[dist] = ret;
             }
 
             return ret;
+        },
+        get Scale() {
+            return _scale;
+        },
+        get Zoom() {
+            return window.outerWidth / window.document.documentElement.clientWidth;
         }
     }
 });

@@ -9,7 +9,6 @@ $(document).ready(() => {
     let _container = null;
     let _mouse_target = null;
     let _old_pos = new Coord(0, 0);
-    let _scale = 1;
 
     function refresh_secondary_targets(force) {
         if (!_main_target)
@@ -25,7 +24,7 @@ $(document).ready(() => {
 
         _all_targets.forEach(x => {
             if (x.dist !== 1.0) {
-                x.element.css({
+                x.el.css({
                     left: pos.X / x.dist,
                     top: pos.Y
                 });
@@ -33,6 +32,14 @@ $(document).ready(() => {
         });
 
         _old_pos = pos;
+
+        debug_print();
+    }
+
+    function debug_print() {
+        _all_targets.forEach(x => {
+            x.d_el.children(".coords").text("x:" + x.el.css("left") + ", y:" + x.el.css("top"));
+        });
     }
 
     function mousedown(e) {
@@ -51,7 +58,7 @@ $(document).ready(() => {
     function mousemove(e) {
         if (_md) {
             let move = new Coord(e.pageX, e.pageY).Sub(_click_pos);
-            let main_pos = _start_pos.Add(move.Mult(_scale));
+            let main_pos = _start_pos.Add(move.Mult(PSM.Scale * PSM.Zoom));
 
             _main_target.css({
                 left: main_pos.X,
@@ -79,7 +86,7 @@ $(document).ready(() => {
         // 2) the initial position of all planes is acceptable at (0, 0)
         //    ( if that wasn't the case, then we'd need to record the start pos of all targets
         //      and add/subtract those when going between the main and other targets )
-        Init(container, mouse_target, scale) {
+        Init(container, mouse_target) {
             _container = container;
             _mouse_target = mouse_target;
 
@@ -88,10 +95,6 @@ $(document).ready(() => {
             _mouse_target.on("mousemove", mousemove);
 
             _main_target = this.Get(1.0);
-
-            if (scale) {
-                _scale = scale;
-            }
         },
         Get(dist) {
             let ins_before = 0;
@@ -99,7 +102,7 @@ $(document).ready(() => {
 
             _all_targets.forEach(x => {
                 if (x.dist === dist) {
-                    found = x.element;
+                    found = x.el;
                 }
                 if(x.dist > dist) {
                     ins_before++;
@@ -110,6 +113,7 @@ $(document).ready(() => {
                 return found;
 
             let klass = ("scroll-container-" + dist).replace(".", "-");
+            let d_klass = ("debug-" + dist).replace(".", "-");
 
             let el = $("<div></div>")
                 .addClass("scroll-container zero-spacing")
@@ -118,10 +122,13 @@ $(document).ready(() => {
                     transform: "scale(" + 1 / dist + ")"
                 });
 
+            let d_el = $("." + d_klass);
+
             let ent = {
-                element: el,
+                el: el,
                 dist: dist,
-                klass: klass
+                klass: klass,
+                d_el: d_el
             };
 
             if (!_all_targets.length) {
@@ -134,7 +141,7 @@ $(document).ready(() => {
 
             refresh_secondary_targets(true);
 
-            return ent.element;
+            return ent.el;
         },
         Refresh() {
             refresh_secondary_targets();

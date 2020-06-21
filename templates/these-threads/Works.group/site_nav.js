@@ -5,11 +5,17 @@ $(document).ready(function() {
     let _threads;
     let _paths;
 
-    let fix_title = function(title) {
+    function get_pos_to_centre_node(node) {
+        let inner_half_size = new Coord(innerWidth / 2, innerHeight / 2).Mult(PSM.Scale / PSM.Zoom);
+
+        return inner_half_size.Sub(node.centre);
+    }
+
+    function fix_title(title) {
         $("title").html(title);
     }
 
-    let fix_ctor = function(obj) {
+    function fix_ctor(obj) {
         let ctor_string = obj.ctor;
 
         if (ctor_string) {
@@ -290,12 +296,12 @@ $(document).ready(function() {
 
             return chain_from.then(() => {
                 let sc = PSM.GetElement(1.0);
-                let old_pos = sc.position();
-                old_pos = new Coord(old_pos.left, old_pos.top);
+                let old_pos  = new Coord(
+                    parseFloat(sc.css("left")),
+                    parseFloat(sc.css("top"))
+                );
 
-                let inner_half_size = new Coord(innerWidth / 2, innerHeight / 2);
-
-                let p = inner_half_size.Sub(node.centre);
+                let p = get_pos_to_centre_node(node);
 
                 let dp = old_pos.Sub(p);
                 let dist = dp.Dist();
@@ -326,7 +332,17 @@ $(document).ready(function() {
                 ).promise();
             });
         },
-        SmartNav(where) {
+        Teleport(node) {
+            let sc = PSM.GetElement(1.0);
+
+            let p = get_pos_to_centre_node(node);
+
+            sc.css({
+                left: p.X,
+                top: p.Y
+            });
+        },
+        SmartNav(where, teleport) {
             where = where || this.DefaultLocation;
 
             let dest_node = _threads[where] || _decors[where];
@@ -351,18 +367,22 @@ $(document).ready(function() {
                 }
             }
 
-            let promise = null;
-            let first = true;
+            if (!teleport) {
+                let promise = null;
+                let first = true;
 
-            if (steps) {
-                steps.forEach(step => {
-                    promise = this.SmartScroll(step, promise, first);
-                    first = false;
-                });
+                if (steps) {
+                    steps.forEach(step => {
+                        promise = this.SmartScroll(step, promise, first);
+                        first = false;
+                    });
+                }
+
+                fix_title(dest_node.title);
+                this.SmartScroll(dest_node, promise, first, true);
+            } else {
+                this.Teleport(dest_node);
             }
-
-            fix_title(dest_node.title);
-            this.SmartScroll(dest_node, promise, first, true);
 
             this.CurrentNode = dest_node;
             history.replaceState(where, "", this.UrlStem + "#" + where);
@@ -387,7 +407,7 @@ $(document).ready(function() {
 
             await promise;
 
-            this.SmartNav(init_loc);
+            this.SmartNav(init_loc, true);
 
             // listen for history navigation
             addEventListener("popstate", event => {

@@ -2,7 +2,7 @@
 
 // external_margin_fraction is how much we extend the rect by so as to load things a little before they are needed
 // (allowing for things that take moment to load)
-window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun, external_margin_fraction, scale) {
+window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire_cycle_ms, rect_fun, external_margin_fraction, draw_debug_rect) {
     let _data = {};
     let _existing = {};
     let _expire_ms = expire_ms;
@@ -14,10 +14,14 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
     let _cycle_ms = cycle_ms;
     let _target_element = target_element;
     let _external_margin_fraction = 0.5;
-    let _scale = scale;
+    let _draw_debug_rect = false;
 
     if (external_margin_fraction !== null && external_margin_fraction !== undefined) {
         _external_margin_fraction = external_margin_fraction;
+    }
+
+    if (draw_debug_rect !== null && draw_debug_rect !== undefined) {
+        _draw_debug_rect = draw_debug_rect;
     }
 
     let ret = {
@@ -42,7 +46,7 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
             _force_processing = true;
         },
         Update(rect) {
-            rect = rect.Mult(_scale);
+            rect = rect.Mult(PSM.Scale);
 
             let add_queue = [];
             let remove_queue = [];
@@ -50,6 +54,41 @@ window.CreateDemandLoader = function(target_element, cycle_ms, expire_ms, expire
             let ts = new Date().getTime();
 
             let ext_rect = rect.ExtendedBy(rect.Dims().Mult(_external_margin_fraction));
+
+            if (_draw_debug_rect) {
+                let debug_element = _target_element.find(".demand_debug_rect");
+
+                if (!debug_element.length) {
+                    debug_element = $("<div></dinv>").css({
+                        "background-color" : "rgba(128,64,64,0.5)",
+                        position: "absolute"
+                    }).addClass("demand_debug_rect");
+
+                    _target_element.append(debug_element);
+                }
+
+                debug_element.css({
+                    left: ext_rect.L,
+                    top: ext_rect.T,
+                    width: ext_rect.Dims().X,
+                    height: ext_rect.Dims().Y
+                });
+
+                debug_element = _target_element.find(".demand_debug_rect2");
+
+                if (!debug_element.length) {
+                    debug_element = $("<div></dinv>").css({
+                        "background-color" : "rgba(128,128,128,0.5)",
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        width: 1920,
+                        height: 969
+                    }).addClass("demand_debug_rect2");
+
+                    _target_element.append(debug_element);
+                }
+            }
 
             if (_force_processing || !_last_rect.Equal(rect)) {
                 _force_processing = false;
