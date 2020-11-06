@@ -6,7 +6,7 @@ $(document).ready(function() {
     let _paths;
 
     function get_pos_to_centre_node(node) {
-        let inner_half_size = new Coord(innerWidth / 2, innerHeight / 2).Mult(PSM.Scale / PSM.Zoom);
+        let inner_half_size = new Coord(innerWidth / 2, innerHeight / 2).Mult(PSM.Scale);
 
         return inner_half_size.Sub(node.centre);
     }

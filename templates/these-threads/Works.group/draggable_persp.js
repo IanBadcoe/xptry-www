@@ -58,17 +58,21 @@ $(document).ready(() => {
     function mousemove(e) {
         if (_md) {
             let move = new Coord(e.pageX, e.pageY).Sub(_click_pos);
-            let main_pos = _start_pos.Add(move.Mult(PSM.Scale * PSM.Zoom));
 
-            _main_target.css({
-                left: main_pos.X,
-                top: main_pos.Y
-            });
+            if (!move.Equal(Coord.Zero))
+            {
+                let main_pos = _start_pos.Add(move.Mult(PSM.Scale));
 
-            refresh_secondary_targets();
+                _main_target.css({
+                    left: main_pos.X,
+                    top: main_pos.Y
+                });
 
-            $(".hack").toggle();
-            
+                refresh_secondary_targets();
+
+                $(".hack").toggle();
+            }
+
             return false;
         }
     }
@@ -146,9 +150,9 @@ $(document).ready(() => {
         Refresh() {
             refresh_secondary_targets();
         },
-        // // takes a rect on the _main_target plane and converts it to one on the given dist plane
-        // TransformRect(dist, rect) {
-        //     return new Rect(rect.TL.Mult(dist), rect.BR.Mult(dist));
-        // }
+        // takes a rect on the _main_target plane and converts it to one on the given dist plane
+        TransformRect(dist, rect) {
+            return new Rect(rect.TL.Mult(dist), rect.BR.Mult(dist));
+        }
     };
 });

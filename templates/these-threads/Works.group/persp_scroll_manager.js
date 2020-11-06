@@ -38,21 +38,17 @@ $(document).ready(() => {
 
                 function active_rect() {
                     let pos = el.position();
-                    pos = new Coord(pos.left, pos.top).Mult(dist);
-                    let pos2 = new Coord(
-                        parseFloat(el.css("left")),
-                        parseFloat(el.css("top"))
-                    ).Mult(dist);
+                    pos = new Coord(pos.left, pos.top);
             
-                    let dim = new Coord(innerWidth, innerHeight).Mult(dist);
+                    let dim = new Coord(innerWidth, innerHeight);
 
-                    let rect = new Rect(pos2.Inverse(),
-                        pos2.Inverse().Add(dim));
-
-//                    rect = DraggablePersp.TransformRect(dist, rect);
+                    let rect = new Rect(pos.Inverse(),
+                        pos.Inverse().Add(dim));
 
                     rect = rect.ExtendedBy(dim.Mult(-_test_scale / 2));
                     
+                    rect = DraggablePersp.TransformRect(dist, rect);
+
                     let d_klass = ("debug-" + dist).replace(".", "-");
                     let d_el = $("." + d_klass);
                     d_el.children(".region").text("left:" + rect.L + ", top:" + rect.T);
