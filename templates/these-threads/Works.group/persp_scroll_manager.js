@@ -49,9 +49,9 @@ $(document).ready(() => {
                     
                     rect = DraggablePersp.TransformRect(dist, rect);
 
-                    let d_klass = ("debug-" + dist).replace(".", "-");
-                    let d_el = $("." + d_klass);
-                    d_el.children(".region").text("left:" + rect.L + ", top:" + rect.T);
+                    // let d_klass = ("debug-" + dist).replace(".", "-");
+                    // let d_el = $("." + d_klass);
+                    // d_el.children(".region").text("left:" + rect.L + ", top:" + rect.T);
             
                     return rect;
                 }

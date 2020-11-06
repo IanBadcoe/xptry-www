@@ -33,14 +33,14 @@ $(document).ready(() => {
 
         _old_pos = pos;
 
-        debug_print();
+        // debug_print();
     }
 
-    function debug_print() {
-        _all_targets.forEach(x => {
-            x.d_el.children(".coords").text("x:" + x.el.css("left") + ", y:" + x.el.css("top"));
-        });
-    }
+    // function debug_print() {
+    //     _all_targets.forEach(x => {
+    //         x.d_el.children(".coords").text("x:" + x.el.css("left") + ", y:" + x.el.css("top"));
+    //     });
+    // }
 
     function mousedown(e) {
         if (!_md) {
@@ -117,7 +117,7 @@ $(document).ready(() => {
                 return found;
 
             let klass = ("scroll-container-" + dist).replace(".", "-");
-            let d_klass = ("debug-" + dist).replace(".", "-");
+//            let d_klass = ("debug-" + dist).replace(".", "-");
 
             let el = $("<div></div>")
                 .addClass("scroll-container zero-spacing")
@@ -126,13 +126,13 @@ $(document).ready(() => {
                     transform: "scale(" + 1 / dist + ")"
                 });
 
-            let d_el = $("." + d_klass);
+//            let d_el = $("." + d_klass);
 
             let ent = {
                 el: el,
                 dist: dist,
                 klass: klass,
-                d_el: d_el
+//                d_el: d_el
             };
 
             if (!_all_targets.length) {
