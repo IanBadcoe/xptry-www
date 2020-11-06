@@ -1,12 +1,20 @@
 $(document).ready(() => {
-    // auto-scale the page, but continue to respect any zoom the user has already set
-    let scale = 1.0; // Math.min(innerWidth, innerHeight) / 700 * PSM.Zoom;
+    window.PSM.Init(200, 300000, 5000, $(".scroll-container-container"), 1);
 
-    window.PSM.Init(200, 300000, 5000, $(".scroll-container-container"), 1 / scale);
+    let OnResize = () => {
+        // auto-scale the page, but continue to respect any zoom the user has already set
+        let scale = Math.min(innerHeight, innerWidth) / 700 * PSM.Zoom;
 
-    $(".scroll-container-container").css({
-        transform: "scale(" + scale  + ")"
-    });
+        $(".scroll-container-container").css({
+            transform: "scale(" + scale  + ")"
+        });
+
+        PSM.SetScale(1 / scale);
+    }
+
+    window.onresize = OnResize;
+
+    OnResize();
 
     SiteNav.Init("home-knot");
 

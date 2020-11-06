@@ -1,12 +1,21 @@
 $(document).ready(() => {
-    // auto-scale the page, but continue to respect any zoom the user has already set
-    let scale = Math.min(innerWidth, innerHeight) / 700 * PSM.Zoom;
+    PSM.Init(20, 300, 5, $(".scroll-container-container"), 1, 0.8);
 
-    $(".scroll-container-container").css({
-        transform: "scale(" + scale  + ")"
-    });
+    let OnResize = () => {
+        // auto-scale the page, but continue to respect any zoom the user has already set
+        let scale = Math.min(innerHeight, innerWidth) / 700 * PSM.Zoom;
 
-    PSM.Init(20, 300, 5, $(".scroll-container-container"), 1 / scale, 0.8);
+        $(".scroll-container-container").css({
+            transform: "scale(" + scale  + ")"
+        });
+
+        PSM.SetScale(1 / scale);
+    }
+
+    window.onresize = OnResize;
+
+    OnResize();
+
     let dl1 = PSM.GetDemandLoader(1.0);
     let dl2 = PSM.GetDemandLoader(2.0);
     let dl3 = PSM.GetDemandLoader(4.0);

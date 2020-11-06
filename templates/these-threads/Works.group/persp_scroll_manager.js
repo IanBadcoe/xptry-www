@@ -70,6 +70,9 @@ $(document).ready(() => {
         },
         get Zoom() {
             return window.outerWidth / window.document.documentElement.clientWidth;
+        },
+        SetScale(val) {
+            _scale = val;
         }
     }
 });
