@@ -152,6 +152,8 @@ class Coord extends Array {
         return new Coord(this.X * ca + this.Y * -sa,
             this.X * sa + this.Y * ca);
     }
+
+    static Zero = new Coord(0, 0);
 };
 
 // just a way of easily making an array off Coords at the moment,
