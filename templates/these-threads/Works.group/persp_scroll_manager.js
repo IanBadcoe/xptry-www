@@ -3,8 +3,6 @@
 $(document).ready(() => {
     let _loaders = {};
     let _cycle_ms = 200;
-    let _expire_ms = 300000;
-    let _expire_cycle_ms = 5000;
     let _test_scale = 0.0;
     let _scale = 1.0;
 
@@ -14,10 +12,8 @@ $(document).ready(() => {
         // allowing test pages to show what's happening "off screen"
         // setting this 1.0 would remove the rect altogether, 0.8 will take 40% off all around
         // when we have a test_scale, turn off the external margin on the demand loaders so wysiwyg
-        Init(cycle_ms, expire_ms, expire_cycle_ms, container_container, scale, test_scale) {
+        Init(cycle_ms, container_container, scale, test_scale) {
             _cycle_ms = cycle_ms;
-            _expire_ms = expire_ms;
-            _expire_cycle_ms = expire_cycle_ms;
             _scale = scale;
 
             if (test_scale) {
@@ -56,9 +52,9 @@ $(document).ready(() => {
                     return rect;
                 }
 
-                let dl_margin = _test_scale ? 0.0 : 0.5;
+                let dl_margin = /* _test_scale ? 0.0 : */ 0.5;
             
-                ret = CreateDemandLoader(el, _cycle_ms, _expire_ms, _expire_cycle_ms, active_rect, dl_margin, _test_scale != 0.0);
+                ret = CreateDemandLoader(el, _cycle_ms, active_rect, dl_margin /*, _test_scale != 0.0*/);
 
                 _loaders[dist] = ret;
             }
