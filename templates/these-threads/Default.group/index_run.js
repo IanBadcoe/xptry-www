@@ -1,5 +1,6 @@
 $(document).ready(() => {
-    window.PSM.Init(200, $(".scroll-container-container"), 1);
+    window.PSM.Init(25, $(".scroll-container-container"), 1,
+        600, 100);
 
     let OnResize = () => {
         // auto-scale the page, but continue to respect any zoom the user has already set

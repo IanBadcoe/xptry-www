@@ -5,6 +5,8 @@ $(document).ready(() => {
     let _cycle_ms = 200;
     let _test_scale = 0.0;
     let _scale = 1.0;
+    let _fade_in_time_ms = 3.0;
+    let _fade_out_time_ms = 2.0;
 
     // highly abbreviated as used a lot...
     window.PSM = {
@@ -12,9 +14,13 @@ $(document).ready(() => {
         // allowing test pages to show what's happening "off screen"
         // setting this 1.0 would remove the rect altogether, 0.8 will take 40% off all around
         // when we have a test_scale, turn off the external margin on the demand loaders so wysiwyg
-        Init(cycle_ms, container_container, scale, test_scale) {
+        Init(cycle_ms, container_container, scale,
+                fade_in_time_ms, fade_out_time_ms,
+                test_scale) {
             _cycle_ms = cycle_ms;
             _scale = scale;
+            _fade_in_time_ms = fade_in_time_ms;
+            _fade_out_time_ms = fade_out_time_ms;
 
             if (test_scale) {
                 _test_scale = test_scale;
@@ -54,7 +60,8 @@ $(document).ready(() => {
 
                 let dl_margin = /* _test_scale ? 0.0 : */ 0.5;
             
-                ret = CreateDemandLoader(el, _cycle_ms, active_rect, dl_margin /*, _test_scale != 0.0*/);
+                ret = CreateDemandLoader(el, _cycle_ms, active_rect, dl_margin,
+                    _fade_in_time_ms, _fade_out_time_ms);
 
                 _loaders[dist] = ret;
             }
