@@ -85,8 +85,6 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
             let fade_out_queue = [];
             let remove_queue = [];
 
-            let ts = new Date().getTime();
-
             let ext_rect = rect.ExtendedBy(rect.Dims().Mult(_external_margin_fraction));
 
             if (_draw_debug_rect) {
@@ -114,14 +112,12 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
                 const h_data = _data[key];
                 const h_exist = _existing[key];
 
-                if (h_data.rect.Overlaps(ext_rect)) {
-                    h_exist.ts = ts;
-                } else {
+                if (!h_data.rect.Overlaps(ext_rect)) {
                     remove_queue.push(key);
                 }
             }
 
-            add_queue.forEach(id => this.CreateElement(id, ts));
+            add_queue.forEach(id => this.CreateElement(id));
 
             remove_queue.forEach(id => this.RemoveElement(id));
         },
@@ -132,7 +128,7 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
                 delete _data[id];
             }
         },
-        CreateElement(id, ts) {
+        CreateElement(id) {
             let el = $();
             let idx = 0;
             
@@ -145,7 +141,6 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
 
             _existing[id] = {
                 el : el,
-                ts : ts,
                 opacity: 0
             };
         },
