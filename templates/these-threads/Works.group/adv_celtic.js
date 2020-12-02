@@ -1,30 +1,49 @@
 "use strict";
 
-function MakeAdvCKnot(loops, base_plate, decorators) {
-    let _base_plate = base_plate;
-    let _decorators = decorators;
+function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
+    threshold = threshold || 0.01;
+    let threshold2 = threshold * threshold;
 
     if (!Array.isArray(loops))
     {
         loops = [loops];
     }
 
-    let intersects = {};
+    let intersects = [];
+
+    function find_intersect(pnt) {
+        for(let i = 0; i < intersects.length; i++) {
+            let inter = intersects[i];
+
+            if (inter.point.Dist2(pnt) < threshold2)
+            {
+                return inter;
+            }
+        }
+
+        return null;
+    }
 
     loops.forEach(loop => {
         loop.Points.forEach(pnt => {
-            intersects[pnt] = {
-                count: 0,
-                is_over: null       // three valued logic, null = unset...
-            };
+            if (!find_intersect(pnt))
+            {
+                intersects.push({
+                    point: pnt,
+                    count: 0,
+                    is_over: null       // three valued logic, null = unset...
+                });
+            }
         });
     });
 
     loops.forEach(loop => {
         loop.Points.forEach(pnt => {
-            intersects[pnt].count++;
+            let inter = find_intersect(pnt);
 
-            if (intersects[pnt].count > 2) {
+            inter.count++;
+
+            if (inter.count > 2) {
                 throw "triple and greater intersections are not supported"
             }
         });
@@ -33,7 +52,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
     let loop = loops[0];
     loops.splice(0, 1);
     let next_over = false;
-    let _knots = [];
+    let knots = [];
 
     while(loop)
     {
@@ -49,7 +68,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
         let points = [];
 
         loop.Points.forEach(pnt => {
-            let inter = intersects[pnt];
+            let inter = find_intersect(pnt);
 
             if (inter.count < 2)
             {
@@ -81,7 +100,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
             }
         });
 
-        _knots.push({
+        knots.push({
             Spline: spline,
             OverlayRanges: overlay_ranges,
             Drawer: loop.Drawer,
@@ -123,7 +142,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
                 let invert = false;
 
                 loop.Points.forEach((pnt, pnt_idx) => {
-                    let inter = intersects[pnt];
+                    let inter = find_intersect(pnt);
 
                     if (inter.is_over !== null) {
                         found_idx = loop_idx;
@@ -156,15 +175,15 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
 
     return {
         Draw(insert_element) {
-            if (_decorators) {
-                _decorators.forEach(dec => dec.BackDraw(insert_element));
+            if (decorators) {
+                decorators.forEach(dec => dec.BackDraw(insert_element));
             }
 
-            if (_base_plate) {
-                _base_plate.Draw(insert_element);
+            if (base_plate) {
+                base_plate.Draw(insert_element);
             }
 
-            _knots.forEach(knot => {
+            knots.forEach(knot => {
                 // we could, rather than drawing overlay for everything that is "over"
                 // do BackDrawHere and then only do overlays for those bits of "over"
                 // which are not already drawn later
@@ -180,7 +199,7 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
                     !knot.Open, !knot.Open, knot.Klass);
             });
 
-            _knots.forEach(knot => {
+            knots.forEach(knot => {
                 knot.OverlayRanges.forEach(el => {
                     knot.Drawer.BackDrawKnot(insert_element,
                         el[0], el[1], knot.Step, knot,
@@ -191,8 +210,8 @@ function MakeAdvCKnot(loops, base_plate, decorators) {
                     });
             });
 
-            if (_decorators) {
-                _decorators.forEach(dec => dec.ForeDraw(insert_element));
+            if (decorators) {
+                decorators.forEach(dec => dec.ForeDraw(insert_element));
             }
         }
     };

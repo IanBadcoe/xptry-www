@@ -19,6 +19,14 @@ class Coord extends Array {
         return this[0] * this[0] + this[1] * this[1];
     }
 
+    Dist(v) {
+        return this.Sub(v).Length();
+    }
+
+    Dist2(v) {
+        return this.Sub(v).Length2();
+    }
+
     get X() {
         return this[0];
     }
