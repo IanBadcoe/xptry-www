@@ -11,11 +11,11 @@ class Coord extends Array {
         }
     }
 
-    Dist() {
-        return Math.sqrt(this.Dist2());
+    Length() {
+        return Math.sqrt(this.Length2());
     }
 
-    Dist2() {
+    Length2() {
         return this[0] * this[0] + this[1] * this[1];
     }
 
@@ -48,7 +48,7 @@ class Coord extends Array {
     };
 
     ToUnit() {
-        return this.Div(this.Dist());
+        return this.Div(this.Length());
     };
 
     Div(v) {

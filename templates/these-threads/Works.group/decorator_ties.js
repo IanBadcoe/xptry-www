@@ -50,7 +50,7 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
 function GetRadialTieSPoint(tile, centre, offset, rad, width, drawer) {
     let thick = drawer.Width;
 
-    let dist = offset.Dist();
+    let dist = offset.Length();
 
     let rad_dir = offset.Div(dist);
     let tang_dir = rad_dir.Rot90();
@@ -69,7 +69,7 @@ function GetRadialTieSPoint(tile, centre, offset, rad, width, drawer) {
 function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, dest) {
     let thick = drawer.Width;
 
-    let dist = offset.Dist();
+    let dist = offset.Length();
 
     let rad_dir = offset.Div(dist);
     let tang_dir = rad_dir.Rot90();
@@ -125,7 +125,7 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
 
 function DrawStrandBetweenPoints(el, p1, p2, drawer) {
     let dp = p2.Sub(p1);
-    let dist = dp.Dist();
+    let dist = dp.Length();
 
     // we make this svg slightly longer than it need be, in case we ever want to go back to rounded end-caps
     let length = dist + drawer.Width + 2;

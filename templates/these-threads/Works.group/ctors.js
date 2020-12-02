@@ -189,7 +189,7 @@ $(document).ready(function() {
 
                 // won't need this when we've converted more to coords...
                 let vA = this.centre.Sub(other_point);
-                let A = vA.Dist();
+                let A = vA.Length();
                 let h_radius = radius + drawer.Width / 2;
                 let r2 = h_radius * h_radius;
                 let b = r2 / A;

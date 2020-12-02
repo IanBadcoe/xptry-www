@@ -304,7 +304,7 @@ $(document).ready(function() {
                 let p = get_pos_to_centre_node(node);
 
                 let dp = old_pos.Sub(p);
-                let dist = dp.Dist();
+                let dist = dp.Length();
 
                 let easing = "linear";
 
