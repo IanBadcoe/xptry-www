@@ -90,6 +90,101 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 
         let spline = MakeParamScaler(MakeNonUniformBSpline(points, loop.Order, !loop.Open));
 
+        function find_intersection_params(idx1, idx2) {
+            const thres = 0.01;
+
+            // limits, we must find something between these...
+            var idx1_s = spline.Point2Param(idx1 - 1);
+            var idx1_e = spline.Point2Param(idx1 + 1);
+            var idx2_s = spline.Point2Param(idx2 - 1);
+            var idx2_e = spline.Point2Param(idx3 + 1);
+
+            // current solutions
+            var idx1_curr = spline.Point2Param(idx1);
+            var idx2_curr = spline.Point2Param(idx2);
+
+            // current points
+            var idx1_p = spline.Interp(idx1_curr);
+            var idx2_p = spline.Interp(idx2_curr);
+
+            // current distance
+            var dist2 = idx1_p.Dist2(spline.interp(idx2_curr));
+
+            // step sizes
+            var idx1_step = (idx1_e - idx1_s) * 0.1;
+            var idx2_step = (idx2_e - idx2_s) * 0.1;
+
+            while (idx1_step > thres || idx2_step > thres) {
+                // try step idx1
+
+                var moved = false;
+
+                if (idx1_curr != idx1_e) {
+                    var temp = Math.min(idx1_curr + idx1_step, idx1_e);
+                    var temp_p = spline.Interp(temp);
+                    var temp_d = temp_p.Dist2(idx2_p);
+
+                    if (temp_d < dist) {
+                        dist = temp_d;
+                        idx1_p = temp_p;
+                        idx1_curr = temp;
+
+                        moved = true;
+                    }
+                }
+
+                if (idx1_c != idx1_s) {
+                    var temp = Math.max(idx1_curr - idx1_step, idx1_s);
+                    var temp_p = spline.Interp(temp);
+                    var temp_d = temp_p.Dist2(idx2_p);
+
+                    if (temp_d < dist) {
+                        dist = temp_d;
+                        idx1_p = temp_p;
+                        idx1_curr = temp;
+
+                        moved = true;
+                    }
+                }
+
+
+                if (idx2_curr != idx2_e) {
+                    var temp = Math.min(idx2_curr + idx2_step, idx2_e);
+                    var temp_p = spline.Interp(temp);
+                    var temp_d = temp_p.Dist2(idx1_p);
+
+                    if (temp_d < dist) {
+                        dist = temp_d;
+                        idx2_p = temp_p;
+                        idx2_curr = temp;
+
+                        moved = true;
+                    }
+                }
+
+                if (idx2_c != idx2_s) {
+                    var temp = Math.max(idx2_curr - idx2_step, idx2_s);
+                    var temp_p = spline.Interp(temp);
+                    var temp_d = temp_p.Dist2(idx1_p);
+
+                    if (temp_d < dist) {
+                        dist = temp_d;
+                        idx2_p = temp_p;
+                        idx2_curr = temp;
+
+                        moved = true;
+                    }
+                }
+
+                if (moved) {
+                    idx1_step /= 2;
+                    idx2_step /= 2;
+                }
+            }
+
+            return [idx1_c, idx2_c];
+        }
+
         let overlay_ranges = [];
 
         anno_points.forEach((el, idx) => {
@@ -194,6 +289,9 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                 //
                 // cons:
                 // - SVG bits bigger as whole knot back-drawn instead of just some overlays
+                // knot.Drawer.BackDrawKnot(insert_element,
+                //     0, knot.EndParam, knot.Step, knot,
+                //     !knot.Open, !knot.Open, knot.Klass);
                 knot.Drawer.ForeDrawKnot(insert_element,
                     0, knot.EndParam, knot.Step, knot,
                     !knot.Open, !knot.Open, knot.Klass);
