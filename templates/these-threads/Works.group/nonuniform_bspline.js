@@ -19,24 +19,22 @@ var MakeNonUniformBSpline = function(points, order, closed) {
         _max_knot = _max_param - _knots[0];
     }
 
-    let _points = points;
+    let _points = new CoordArray(points);
     let _closed = closed;
     let _order = order;
 
-    function spline_interp(x, p, knots, k)
+    function spline_interp(param, p, knots, k)
     {
-        let ret = [];
+        let ret = new Coord(0, 0);
         ret.length = p[0].length;
         ret.fill(0);
 
         _points.forEach(function(el, idx) {
-            let f = BSplineBasis(x, idx, k, knots, _max_knot, _closed);
+            let f = BSplineBasis(param, idx, k, knots, _max_knot, _closed);
 
-            let t = el.map(function(q) { return f * q; });
+            let t = el.Mult(f);
 
-            ret = ret.map(function(q, i){
-                return q + t[i];
-            });
+            ret = ret.Add(t);
         });
 
         return ret;
