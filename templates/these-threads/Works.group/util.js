@@ -187,22 +187,19 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
 
     let coords = "";
 
-    let range = end_p - start_p + nudge * 2;
+    let range = end_p - start_p;
 
-    // we'll do nudge * 1/2 step on either end...
-    let num_steps = Math.floor(range / p_step) + 1;
+    let num_steps = Math.floor(range / p_step);
 
     let act_step = range / num_steps;
 
-    for(let p = 0; p <= num_steps; p++) {
-        let hp = p * act_step + start_p - nudge;
-
+    function do_coord_for_param(hp) {
         if (wrap) {
-            if (hp < 0) {
+            while (hp < 0) {
                 hp += interpable.EndParam;
             }
 
-            if (hp > interpable.EndParam) {
+            while (hp > interpable.EndParam) {
                 hp -= interpable.EndParam;
             }
         }
@@ -212,6 +209,20 @@ function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,
 
             coords += cp[0] + "," + cp[1] + " ";
         }
+    }
+
+    if (nudge) {
+        do_coord_for_param(start_p - nudge);
+    }
+
+    for(let p = 0; p <= num_steps; p++) {
+        let hp = p * act_step + start_p;
+
+        do_coord_for_param(hp);
+    }
+
+    if (nudge) {
+        do_coord_for_param(end_p + nudge);
     }
 
     add_raw_polyline(el, coords, style, closed, klass);

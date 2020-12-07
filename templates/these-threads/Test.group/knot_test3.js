@@ -1,9 +1,5 @@
 $(document).ready(function(){
     let points = [];
-    const steps = 20;
-    const end_pos = 0.2;
-    const rad = 100;
-    const knot_thick = 13;
 
     function push_point(vec, ang, rad) {
         if (ang < 0) {
@@ -11,26 +7,35 @@ $(document).ready(function(){
         } else if (ang > Math.PI * 2) {
             ang -= Math.PI * 2;
         }
-        vec.push(new Coord(Math.sin(ang) * rad, Math.cos(ang) * rad));
+        vec.push(new Coord(Math.sin(ang) * rad, Math.cos(ang) * rad - 100));
     }
 
+    const steps = 20;
+    const end_pos = 0.3;
+    const rad = 100;
+    const line_thick = 20;
+    const intermediate_frac = 0.5;
+    const intermediate_offset = 1;
+    const halves_offset = 0.45;
+
     let half_knot_points = [
+        [end_pos, rad],
         [0, rad],
-        [-end_pos / 2, rad - knot_thick],
+        [-end_pos * intermediate_frac, rad - intermediate_offset * line_thick],
         [-end_pos, rad],
-        [-end_pos, rad + knot_thick],
-        [-end_pos / 2, rad + knot_thick * 2],
-        [0, rad + knot_thick],
-        [end_pos, rad + knot_thick],
-        [end_pos, rad * 1.5]
+        [-end_pos, rad + halves_offset * line_thick],
+        [-end_pos * intermediate_frac, rad + line_thick * (intermediate_offset + halves_offset)],
+        [0, rad + line_thick * halves_offset],
+        [end_pos, rad + line_thick * halves_offset],
+        [end_pos * intermediate_frac, rad + line_thick * 3]
     ]
 
     half_knot_points.slice().reverse().forEach( p => {
         push_point(points, p[0], p[1]);
     });
 
-    let a = end_pos;
-    let step = (Math.PI - end_pos) * 2 / steps;
+    let a = end_pos * 2;
+    let step = (Math.PI - end_pos * 2) * 2 / steps;
 
     for(let i = 0; i < steps + 1; i++)
     {
@@ -42,16 +47,18 @@ $(document).ready(function(){
         push_point(points, -p[0], p[1]);
     });
 
+    let last = points.slice(-1)[0];
+
+    points.push(new Coord(last[0], last[1] * 1.3));
+
     let knot = MakeAdvCKnot(
         [{
-            Drawer: Drawers.home_knot,
+            Drawer: Drawers.cartouche1,
             Step: 2,
             Points: new CoordArray(points),
             Open: true,
             Order: 3,
-//            Klass: "rotating"
-        }],
-//        base_plate, decorators
+        }]
     );
 
     knot.Draw($(".test-line"));
