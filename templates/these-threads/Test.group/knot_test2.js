@@ -1,4 +1,6 @@
-$(document).ready(function(){
+$(document).ready(function() {
+    var start = new Date().getTime();
+
     let knot_tile = {
         Width: 6,       // column 6 will overlap column 0 of next cell
         Height: 1,      // if we wanted a "next layer out" to come in at the same spacing, would use +1 here
@@ -55,4 +57,6 @@ $(document).ready(function(){
         [ /* tie1, tie2, tie3 */ ], Drawers.home_knot);
 
     knot.Draw($(".test-line"));
+
+    console.log(new Date().getTime() - start + " ms");
 });

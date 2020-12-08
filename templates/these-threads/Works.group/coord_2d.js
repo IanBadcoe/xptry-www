@@ -179,6 +179,10 @@ class CoordArray extends Array {
         }
     }
 
+    push(v) {
+        super.push(new Coord(v));
+    }
+
     // ToArray() {
     //     return [...this.map(x => x.ToArray())];
     // }
