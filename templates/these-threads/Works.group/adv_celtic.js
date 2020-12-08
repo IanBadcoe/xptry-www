@@ -1,6 +1,111 @@
 "use strict";
 
 function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
+    function find_intersection_params(idx1, idx2, spline1, spline2) {
+        // generally we have scaled the spline to have a param measured roughly in pixels
+        // so 1 should be fine enough
+        const thres = 1;
+
+        // limits, we must find something between these...
+        var idx1_s = spline1.Point2Param(idx1 - 1);
+        var idx1_e = spline1.Point2Param(idx1 + 1);
+        var idx2_s = spline2.Point2Param(idx2 - 1);
+        var idx2_e = spline2.Point2Param(idx2 + 1);
+
+        // current solutions
+        var idx1_curr = spline1.Point2Param(idx1);
+        var idx2_curr = spline2.Point2Param(idx2);
+
+        // current points
+        var idx1_p = spline1.Interp(idx1_curr);
+        var idx2_p = spline2.Interp(idx2_curr);
+
+        // current distance
+        var dist2 = idx1_p.Dist2(idx2_p);
+
+        // step sizes
+        var idx1_step = (idx1_e - idx1_s) * 0.25;
+        var idx2_step = (idx2_e - idx2_s) * 0.25;
+
+        while (idx1_step > thres || idx2_step > thres) {
+            // try step idx1
+
+            var moved = false;
+
+            var idx1_prev = idx1_curr;
+            var idx2_prev = idx2_curr;
+
+            if (idx1_prev != idx1_e) {
+                var temp = Math.min(idx1_prev + idx1_step, idx1_e);
+                var temp_p = spline1.Interp(temp);
+                var temp_d2 = temp_p.Dist2(idx2_p);
+
+                if (temp_d2 < dist2) {
+                    dist2 = temp_d2;
+                    idx1_p = temp_p;
+                    idx1_curr = temp;
+
+                    moved = true;
+                }
+            }
+
+            // checking moved means we will only try one way on the first pass, even if both ways are an improvement
+            // but we cannot handle any case with >1 solution reliably anyway
+            if (!moved && idx1_prev != idx1_s) {
+                var temp = Math.max(idx1_prev - idx1_step, idx1_s);
+                var temp_p = spline1.Interp(temp);
+                var temp_d2 = temp_p.Dist2(idx2_p);
+
+                if (temp_d2 < dist2) {
+                    dist2 = temp_d2;
+                    idx1_p = temp_p;
+                    idx1_curr = temp;
+
+                    moved = true;
+                }
+            }
+
+            // see comment above about checking "moved"
+            if (!moved && idx2_prev != idx2_e) {
+                var temp = Math.min(idx2_prev + idx2_step, idx2_e);
+                var temp_p = spline2.Interp(temp);
+                var temp_d2 = temp_p.Dist2(idx1_p);
+
+                if (temp_d2 < dist2) {
+                    dist2 = temp_d2;
+                    idx2_p = temp_p;
+                    idx2_curr = temp;
+
+                    moved = true;
+                }
+            }
+
+            // see comment above about checking "moved"
+            if (!moved && idx2_prev != idx2_s) {
+                var temp = Math.max(idx2_prev - idx2_step, idx2_s);
+                var temp_p = spline2.Interp(temp);
+                var temp_d2 = temp_p.Dist2(idx1_p);
+
+                if (temp_d2 < dist2) {
+                    dist2 = temp_d2;
+                    idx2_p = temp_p;
+                    idx2_curr = temp;
+
+                    moved = true;
+                }
+            }
+
+            if (!moved) {
+                idx1_step /= 2;
+                idx2_step /= 2;
+            }
+        }
+
+        return [idx1_curr, idx2_curr];
+    }
+
+    if (false) return;
+
     threshold = threshold || 0.01;
     let threshold2 = threshold * threshold;
 
@@ -31,7 +136,10 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                 intersects.push({
                     point: pnt,
                     count: 0,
-                    is_over: null       // three valued logic, null = unset...
+                    over_loop: null,
+                    under_loop: null,
+                    over_idx: null,
+                    under_idx: null
                 });
             }
         });
@@ -54,6 +162,8 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
     let next_over = false;
     let knots = [];
 
+    let new_loops = [];
+
     while(loop)
     {
         if (!('Open' in loop)) {
@@ -64,23 +174,28 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
             loop.Order = 3;
         }
 
-        let anno_points = [];
         let points = [];
 
-        loop.Points.forEach(pnt => {
+        loop.Points.forEach((pnt, idx) => {
             let inter = find_intersect(pnt);
 
-            if (inter.count < 2)
+            if (inter.count > 1)
             {
-                anno_points.push({
-                    over: null
-                });
-            } else {
-                anno_points.push({
-                    over: next_over
-                });
+                if (next_over) {
+                    if (inter.over_loop) {
+                        throw "Two things going over!";
+                    }
 
-                inter.is_over = next_over;
+                    inter.over_loop = loop;
+                    inter.over_idx = idx;
+                } else {
+                    if (inter.under_loop) {
+                        throw "Two things going under!";
+                    }
+
+                    inter.under_loop = loop;
+                    inter.under_idx = idx;
+                }
 
                 next_over = !next_over;
             }
@@ -90,136 +205,10 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 
         let spline = MakeParamScaler(MakeNonUniformBSpline(points, loop.Order, !loop.Open));
 
-        function find_intersection_params(idx1, idx2) {
-            const thres = 0.01;
+        loop.Spline = spline;
+        loop.NextOver = next_over;
 
-            // limits, we must find something between these...
-            var idx1_s = spline.Point2Param(idx1 - 1);
-            var idx1_e = spline.Point2Param(idx1 + 1);
-            var idx2_s = spline.Point2Param(idx2 - 1);
-            var idx2_e = spline.Point2Param(idx3 + 1);
-
-            // current solutions
-            var idx1_curr = spline.Point2Param(idx1);
-            var idx2_curr = spline.Point2Param(idx2);
-
-            // current points
-            var idx1_p = spline.Interp(idx1_curr);
-            var idx2_p = spline.Interp(idx2_curr);
-
-            // current distance
-            var dist2 = idx1_p.Dist2(spline.interp(idx2_curr));
-
-            // step sizes
-            var idx1_step = (idx1_e - idx1_s) * 0.1;
-            var idx2_step = (idx2_e - idx2_s) * 0.1;
-
-            while (idx1_step > thres || idx2_step > thres) {
-                // try step idx1
-
-                var moved = false;
-
-                if (idx1_curr != idx1_e) {
-                    var temp = Math.min(idx1_curr + idx1_step, idx1_e);
-                    var temp_p = spline.Interp(temp);
-                    var temp_d = temp_p.Dist2(idx2_p);
-
-                    if (temp_d < dist) {
-                        dist = temp_d;
-                        idx1_p = temp_p;
-                        idx1_curr = temp;
-
-                        moved = true;
-                    }
-                }
-
-                if (idx1_c != idx1_s) {
-                    var temp = Math.max(idx1_curr - idx1_step, idx1_s);
-                    var temp_p = spline.Interp(temp);
-                    var temp_d = temp_p.Dist2(idx2_p);
-
-                    if (temp_d < dist) {
-                        dist = temp_d;
-                        idx1_p = temp_p;
-                        idx1_curr = temp;
-
-                        moved = true;
-                    }
-                }
-
-
-                if (idx2_curr != idx2_e) {
-                    var temp = Math.min(idx2_curr + idx2_step, idx2_e);
-                    var temp_p = spline.Interp(temp);
-                    var temp_d = temp_p.Dist2(idx1_p);
-
-                    if (temp_d < dist) {
-                        dist = temp_d;
-                        idx2_p = temp_p;
-                        idx2_curr = temp;
-
-                        moved = true;
-                    }
-                }
-
-                if (idx2_c != idx2_s) {
-                    var temp = Math.max(idx2_curr - idx2_step, idx2_s);
-                    var temp_p = spline.Interp(temp);
-                    var temp_d = temp_p.Dist2(idx1_p);
-
-                    if (temp_d < dist) {
-                        dist = temp_d;
-                        idx2_p = temp_p;
-                        idx2_curr = temp;
-
-                        moved = true;
-                    }
-                }
-
-                if (moved) {
-                    idx1_step /= 2;
-                    idx2_step /= 2;
-                }
-            }
-
-            return [idx1_c, idx2_c];
-        }
-
-        let overlay_ranges = [];
-
-        anno_points.forEach((el, idx) => {
-            if (el.over) {
-                let f = spline.Point2Param(idx - 0.5);
-                let t = spline.Point2Param(idx + 0.5);
-                overlay_ranges.push([f, t]);
-            }
-        });
-
-        knots.push({
-            Spline: spline,
-            OverlayRanges: overlay_ranges,
-            Drawer: loop.Drawer,
-            Step: loop.Step,
-            get EndParam() {
-                return this.Spline.EndParam;
-            },
-            Interp(x) {
-                let hx = x;
-
-                while(hx > this.EndParam)
-                {
-                    hx -= this.EndParam;
-                }
-                while(hx < 0)
-                {
-                    hx += this.EndParam;
-                }
-
-                return this.Spline.Interp(hx);
-            },
-            Open: loop.Open,
-            Klass: loop.Klass
-        });
+        new_loops.push(loop);
 
         loop = null;
 
@@ -267,6 +256,103 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
         loop = loops[found_idx];
         loops.splice(found_idx, 1)
     }
+
+    intersects.forEach(inter => {
+        if (inter.count > 1)
+        {
+            let params = find_intersection_params(inter.over_idx, inter.under_idx,
+                inter.over_loop.Spline, inter.under_loop.Spline);
+
+            inter.over_param = params[0];
+            inter.under_param = params[1];
+        }
+    });
+
+    new_loops.forEach(loop => {
+        let anno_points = [];
+
+        loop.Points.forEach((pnt, idx) => {
+            let inter = find_intersect(pnt);
+
+            if (inter.count > 1)
+            {
+                if (inter.over_loop === loop && inter.over_idx == idx) {
+                    anno_points.push({
+                        over: true,
+                        param: inter.over_param,
+                    });
+                } else {
+                    if (inter.under_loop != loop || inter.under_idx != idx)
+                        throw "badly constucted intersection?";
+
+                    anno_points.push({
+                        over: false,
+                        param: inter.under_param,
+                    });
+                }
+            }
+        });
+
+        if (loop.Open) {
+            anno_points.push({
+                over: false,
+                param: 0,
+            });
+            anno_points.push({
+                over: false,
+                param: loop.Spline.EndParam,
+            });
+        }
+
+        anno_points.sort((x, y) => x.param - y.param);
+
+        if (!loop.Open) {
+            // end with a repeat of the start entry, only wrapped round off the end of the param range
+            // so that averaging with it will work correctly
+            anno_points.push({
+                over: anno_points[0].over,
+                param: anno_points[0].param + loop.Spline.EndParam
+            });
+        }
+
+        let overlay_ranges = [];
+
+        anno_points.forEach((el, idx) => {
+            if (el.over) {
+                let prev = anno_points[idx - 1];
+                let next = anno_points[idx + 1];
+                let f = (el.param + prev.param) / 2;
+                let t = (el.param + next.param) / 2;
+                overlay_ranges.push([f, t]);
+            }
+        });
+
+        knots.push({
+            Spline: loop.Spline,
+            OverlayRanges: overlay_ranges,
+            Drawer: loop.Drawer,
+            Step: loop.Step,
+            get EndParam() {
+                return this.Spline.EndParam;
+            },
+            Interp(x) {
+                let hx = x;
+
+                while(hx > this.EndParam)
+                {
+                    hx -= this.EndParam;
+                }
+                while(hx < 0)
+                {
+                    hx += this.EndParam;
+                }
+
+                return this.Spline.Interp(hx);
+            },
+            Open: loop.Open,
+            Klass: loop.Klass
+        });
+    });
 
     return {
         Draw(insert_element) {

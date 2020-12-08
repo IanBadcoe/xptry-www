@@ -1,4 +1,6 @@
-$(document).ready(function(){
+$(document).ready(function() {
+    var start = new Date().getTime();
+
     let points = [];
 
     function push_point(vec, ang, rad) {
@@ -7,7 +9,7 @@ $(document).ready(function(){
         } else if (ang > Math.PI * 2) {
             ang -= Math.PI * 2;
         }
-        vec.push(new Coord(Math.sin(ang) * rad, Math.cos(ang) * rad - 100));
+        vec.push(new Coord(Math.sin(ang) * rad, Math.cos(ang) * rad));
     }
 
     const steps = 20;
@@ -62,4 +64,6 @@ $(document).ready(function(){
     );
 
     knot.Draw($(".test-line"));
+
+    console.log(new Date().getTime() - start + " ms");
 });
