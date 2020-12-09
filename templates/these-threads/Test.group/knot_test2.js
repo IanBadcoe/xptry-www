@@ -27,34 +27,19 @@ $(document).ready(function() {
         }]);
     }
 
-    // x is measured in line thicknesses
-    // y is 0 on the inside of the ring and 1 on the outside
-    let tie_tile = {
-        FSeqs: [
-            [ [1.25, 0], [1.5, 1], [0, 1.8], [0, 5] ],
-            [ [0.25, 0], [0.5, 1] ],
-            [ [-0.75, 0], [-0.5, 1] ],
-            [ [0.9, 1.8], [-1.0, 1.55] ],
-            [ [-0.7, 1.8], [1, 1.6] ],
-        ],
-        BSeqs: [
-            [ [-1.5, 1], [0.9, 1.8] ],
-        ]
-    };
-
-    let tie1 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 0.66,
+    let tie1 = MakeRadialTie(Ties.radial1, new Coord(0, 0), Math.PI * 0.66,
         92, 40, "strand1");
 
-    let tie2 = MakeRadialTie(tie_tile, [0, 0], Math.PI * 1.33,
+    let tie2 = MakeRadialTie(Ties.radial1, new Coord(0, 0), Math.PI * 1.33,
         92, 40, "strand2");
 
-    let tie3 = MakeRadialTie(tie_tile, [0, 0], Math.PI * -0.2,
+    let tie3 = MakeRadialTie(Ties.radial1, new Coord(0, 0), Math.PI * -0.2,
         92, 40, "strand3");
 
-    let base_plate = add_ring([0, 0], 112.5);
+    let base_plate = add_ring(new Coord(0, 0), 112.5);
 
-    let knot = MakeTemplateKnotRadial(knot_tile, [0, 0], 100, 125, 14, base_plate,
-        [ /* tie1, tie2, tie3 */ ], Drawers.home_knot);
+    let knot = MakeTemplateKnotRadial(knot_tile, new Coord(0, 0), 100, 125, 14, base_plate,
+        [ tie1, tie2, tie3 ], Drawers.home_knot);
 
     knot.Draw($(".test-line"));
 

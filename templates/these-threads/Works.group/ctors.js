@@ -3,22 +3,6 @@
 $(document).ready(function() {
     function home() {
         return function() {
-            // x is measured in line thicknesses
-            // y is 0 on the inside of the ring and 1 on the outside
-            let tie_tile = {
-                FSeqs: [
-                    new CoordArray([ [1.25, 0], [1.5, 1], [0, 1.8] ]),
-                    new CoordArray([ [0.25, 0], [0.5, 1] ]),
-                    new CoordArray([ [-0.75, 0], [-0.5, 1] ]),
-                    new CoordArray([ [0.9, 1.8], [-1.0, 1.55] ]),
-                    new CoordArray([ [-0.7, 1.8], [1, 1.6] ]),
-                ],
-                BSeqs: [
-                    new CoordArray([ [-1.5, 1], [0.9, 1.8] ]),
-                ],
-                CPoint: new Coord(0, 1.8)
-            };
-
             let torus_width = this.dims.X * 0.39;
 
             this.connections.forEach(connect => {
@@ -28,7 +12,7 @@ $(document).ready(function() {
 
                 connect.CalcStrandPoint = function(other_point, forward, drawer, final) {
                     if (final) {
-                        this.tie = MakeRadialTieFromTargetPoint(tie_tile,
+                        this.tie = MakeRadialTieFromTargetPoint(Ties.radial1,
                             node.centre,
                             other_point.Sub(node.centre),
                             torus_width * 0.695, torus_width * 0.3, connect.path.drawer,
@@ -37,7 +21,7 @@ $(document).ready(function() {
                         // recalculated by the above...
                         return connect.tie.CPoint;
                     } else {
-                        return GetRadialTieSPoint(tie_tile,
+                        return GetRadialTieSPoint(Ties.radial1,
                             node.centre,
                             other_point.Sub(node.centre),
                             torus_width * 0.695, torus_width * 0.3, connect.path.drawer);
@@ -294,7 +278,7 @@ $(document).ready(function() {
                             image_sets[image.type].push(image);
 
                             max_image_height = Math.max(max_image_height, ImageCache.Dims(image.file).Y);
-                        });                    
+                        });
                     }
                 );
 
@@ -315,7 +299,7 @@ $(document).ready(function() {
                         this._articles = data;
                     })
                 );
-                
+
                 Promise.all(promises)
                     .then(() => {
                         // we use three layers, each of less than the total height,
@@ -345,7 +329,7 @@ $(document).ready(function() {
                 let img_row = rand_from_array(anchor_image_set, rnd);
 
                 let dims = place_parallax_image(1.0, img_row, scale4height, a_bc, url_title + ":anchor:" + i, "c");
-                
+
                 if (rnd.quick() < 0.15) {
                     place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(dims.X / 2, 0)), url_title + ":anchor:" + i + ":f_right", "l");
                 }
@@ -372,9 +356,9 @@ $(document).ready(function() {
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
                     let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                     let catenary = {
-                        rect: DrawCatenaryStrandBetweenPoints(null, p1, p2, 1000, Drawers["wire"], true),
+                        rect: DrawCatenaryWithGapStrandBetweenPoints(null, p1, p2, 2000, Drawers["wire"], -300, true),
                         load: ret_fn => {
-                            let svg = DrawCatenaryStrandBetweenPoints(null, p1, p2, 1000, Drawers["wire"]).css({
+                            let svg = DrawCatenaryWithGapStrandBetweenPoints(null, p1, p2, 2000, Drawers["wire"], -300).css({
                                 "z-index": Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);

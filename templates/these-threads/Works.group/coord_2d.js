@@ -3,8 +3,7 @@ class Coord extends Array {
         super(2);
 
         if (Array.isArray(x)) {
-            this[0] = x[0];
-            this[1] = x[1];
+            $.extend(this, x);
         } else {
             this[0] = x || 0;
             this[1] = y || 0;

@@ -42,6 +42,11 @@ $(document).ready(function() {
     for(let i = 0; i < steps + 1; i++)
     {
         push_point(points, a, rad);
+
+        if (i == 1 || i == steps - 2) {
+            points[points.length - 1].force_under = true;
+        }
+
         a += step;
     }
 
@@ -53,6 +58,17 @@ $(document).ready(function() {
 
     points.push(new Coord(last[0], last[1] * 1.3));
 
+    let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
+        new Coord(0, 0),
+        new Coord(-1, -1),
+        rad - line_thick / 4 - 1, line_thick / 2, Drawers.wire,
+        "#bob");
+    let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
+        new Coord(0, 0),
+        new Coord(1, -1),
+        rad - line_thick / 4 - 1, line_thick / 2, Drawers.wire,
+        "#bob2");
+
     let knot = MakeAdvCKnot(
         [{
             Drawer: Drawers.cartouche1,
@@ -60,10 +76,14 @@ $(document).ready(function() {
             Points: new CoordArray(points),
             Open: true,
             Order: 3,
-        }]
+        }],
+        null, [ tie1, tie2 ]
     );
 
-    knot.Draw($(".test-line"));
+
+    let el = $(".test-line");
+
+    knot.Draw(el);
 
     console.log(new Date().getTime() - start + " ms");
 });

@@ -104,8 +104,6 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
         return [idx1_curr, idx2_curr];
     }
 
-    if (false) return;
-
     threshold = threshold || 0.01;
     let threshold2 = threshold * threshold;
 
@@ -139,7 +137,11 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                     over_loop: null,
                     under_loop: null,
                     over_idx: null,
-                    under_idx: null
+                    under_idx: null,
+                    // allows us to force the overlay draw to stop at a certain point
+                    // even if there is no intersection (count = 1) there
+                    // lets us not draw gaps around overlaid bits when they would get in the way of (for e.g.) decorator knots
+                    force_under: pnt.force_under
                 });
             }
         });
@@ -290,6 +292,11 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                         param: inter.under_param,
                     });
                 }
+            } else if (inter.force_under) {
+                anno_points.push({
+                    over: false,
+                    param: loop.Spline.Point2Param(idx),
+                });
             }
         });
 

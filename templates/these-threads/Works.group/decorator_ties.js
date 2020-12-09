@@ -191,12 +191,6 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
 // x = a Math.log(Math.sqrt((q * (a*a * qm1*qm1 + d*d * q))/(a*a * qm1*qm1)) + (d * q)/(a * qm1)))
 
 function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
-    // // we'll transform everything relative to P1, because I am a bit wary of very large numbers in the maths if ew get a long way from the origin
-    // let orig_p1 = p1;
-    // p2 = p2.Sub(p1);
-    // p1 = new Coord(0, 0);
-    // // we'll put that back when positioning the svg
-
     let d = p2.Y - p1.Y;
     let n = p2.X - p1.X;
 
@@ -205,7 +199,7 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
 
     // negating d in here and negating the catenary equation corrects for the Y axis being the wrong way up on-screen
     let x = a * Math.log(Math.sqrt((q * (a*a * qm1*qm1 + d*d * q)) / (a*a * qm1*qm1)) + (-d * q)/(a * qm1));
-    let catenary = x => -a * Math.cosh(x / a); 
+    let catenary = x => -a * Math.cosh(x / a);
 
     let x_offset = x - p2.X;
 
@@ -217,11 +211,6 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
     let xmin = Math.min(p1.X, p2.X);
     let xmax = Math.max(p1.X, p2.X);
 
-    ymin -= 10;
-    ymax += 10;
-    xmin -= 10;
-    xmax += 10;
-
     if (rect_only) {
         return new Rect(xmin, ymin, xmax, ymax);
     }
@@ -231,7 +220,7 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
     let steps = Math.ceil(n / 10);
 
     for(let i = 0; i <= steps; i++) {
-        let hx = p1.X + (n / steps) * i; 
+        let hx = p1.X + (n / steps) * i;
         let hy = y_offset + catenary(hx + x_offset);
         points.push(new Coord(hx, hy));
     }
@@ -246,6 +235,90 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
     });
 
     drawer.ForeDrawPolyline(svg, points, false);
+
+    return svg;
+}
+
+// this is as above, but leaves a space for something to be hung from the catenary at the low point:
+//                          -
+// -                      -
+//   ---              ---
+//       ----XXXX----
+//
+// looks very lame used like this, however, as the two half catenaries come in horizontal, implying the hung object has
+// zero weight, however:
+//
+// USE THIS WITH A NEGATIVE gap_width to achieve a (positive) gap but with the ends of the catenaries coming in more steeply
+// (this is achieved by calculating the catenaries as if they were going to overlap by the width (e.g. as if the width were negative)
+//  but only drawing those parts outside the gap (e.g. as if it were positive...))
+function DrawCatenaryWithGapStrandBetweenPoints(el, p1, p2, a, drawer, gap_width, rect_only) {
+    if (p1.X > p2.X) {
+        [p1, p2] = [p2, p1];
+    }
+
+    let d = p2.Y - p1.Y;
+    let n = p2.X - p1.X - gap_width;
+
+    let q = Math.exp(n/a);
+    let qm1 = q - 1;
+
+    // negating d in here and negating the catenary equation corrects for the Y axis being the wrong way up on-screen
+    let x = a * Math.log(Math.sqrt((q * (a*a * qm1*qm1 + d*d * q)) / (a*a * qm1*qm1)) + (-d * q)/(a * qm1));
+    let catenary = x => -a * Math.cosh(x / a);
+
+    // this is the amount required to make the number passed into catenary be x at p2
+    let x_offset = x - p2.X  + gap_width;
+
+    let y_offset = p2.Y - catenary(x);
+
+    // the low point is always at -a
+    let ymax = y_offset - a;
+    let ymin = Math.min(p1.Y, p2.Y);
+    let xmin = Math.min(p1.X, p2.X);
+    let xmax = Math.max(p1.X, p2.X);
+
+    if (rect_only) {
+        return new Rect(xmin, ymin, xmax, ymax);
+    }
+
+    let points1 = [];
+    let points2 = [];
+
+    let range1 = n - x;
+    let range2 = x;
+
+    let steps1 = Math.ceil(range1 / 10);
+    let steps2 = Math.ceil(range2 / 10);
+    let steps = steps1 + steps2;
+
+    if (gap_width < 0) {
+        steps1 = Math.ceil((range1 + gap_width) / 10);
+        steps2 = Math.ceil((range2 + gap_width) / 10);
+    }
+
+    for(let i = 0; i <= steps1; i++) {
+        let hx = p1.X + (n / steps) * i;
+        let hy = y_offset + catenary(hx + x_offset);
+        points1.push(new Coord(hx, hy));
+    }
+
+    for(let i = steps - steps2; i <= steps; i++) {
+        let hx = p1.X + (n / steps) * i;
+        let hy = y_offset + catenary(hx + x_offset);
+        points2.push(new Coord(hx + gap_width, hy));
+    }
+
+    let tl = new Coord(xmin, ymin);
+    let br = new Coord(xmax, ymax);
+    let centre = br.Add(tl).Div(2);
+    let dims = br.Sub(tl);
+
+    let svg = add_svg(el, centre, tl, dims, Zs.NodeContentL3).attr({
+        class: "absolute zero-spacing decor"
+    });
+
+    drawer.ForeDrawPolyline(svg, points1, false);
+    drawer.ForeDrawPolyline(svg, points2, false);
 
     return svg;
 }
