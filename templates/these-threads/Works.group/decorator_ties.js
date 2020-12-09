@@ -92,7 +92,6 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
-
         if (dest) {
             insert_element = add_svg_link(insert_element, dest);
         }

@@ -171,12 +171,19 @@ $(document).ready(() => {
             "knot"),
 
         cartouche1 : MakeKnotDrawer(
-            10, [0, 0, 0],
+            10, [64,64,64],
             2, [255,255,255],
             8, [128,96,96],
             0, null,
             "knot"),
-    
+
+        cartouche2 : MakeKnotDrawer(
+            20, [0, 0, 0],
+            2, [255,255,255],
+            18, [96,129,96],
+            6, [128,160,128],
+            "knot"),
+
         strand1 : MakePolylineDrawer(
             7, [128,64,128],
             1, [0,0,0],
