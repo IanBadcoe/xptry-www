@@ -278,7 +278,7 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 
             if (inter.count > 1)
             {
-                if (inter.over_loop === loop && inter.over_idx == idx) {
+                if (inter.over_loop === loop && inter.over_idx === idx) {
                     anno_points.push({
                         over: true,
                         param: inter.over_param,

@@ -44,3 +44,5 @@ function MakeTemplateKnotRadial(tile,
     );
 }
 
+function MakeCartouche(svg, centre, width, drawer, decorators) {
+}

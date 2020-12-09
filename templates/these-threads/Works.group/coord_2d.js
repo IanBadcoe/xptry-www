@@ -160,6 +160,14 @@ class Coord extends Array {
             this.X * sa + this.Y * ca);
     }
 
+    MirrorY() {
+        return new Coord(X, -Y);
+    }
+
+    MirrorX() {
+        return new Coord(-X, Y);
+    }
+
     static Zero = new Coord(0, 0);
 };
 

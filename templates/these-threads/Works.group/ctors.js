@@ -235,8 +235,6 @@ $(document).ready(function() {
         };
     }
 
-    function synth_pulley(centre, radius) {}
-
     function horz_thread (height, width_step, strip_offset_frac) {
         return function() {
             let num = this.num_articles || 0;
@@ -323,6 +321,9 @@ $(document).ready(function() {
             let prev_dims = null;
             let prev_height_offset = 0;
 
+            const cartouche_width = 300;
+            const half_width = cartouche_width / 2;
+
             for (let i = 0; i <= num_articles; i++) {
                 let a_bc = bl.Add(new Coord((i + 1) * width_step, 0));
 
@@ -356,9 +357,9 @@ $(document).ready(function() {
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
                     let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                     let catenary = {
-                        rect: DrawCatenaryWithGapStrandBetweenPoints(null, p1, p2, 2000, Drawers["wire"], -300, true),
+                        rect: DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -cartouche_width, true),
                         load: ret_fn => {
-                            let svg = DrawCatenaryWithGapStrandBetweenPoints(null, p1, p2, 2000, Drawers["wire"], -300).css({
+                            let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -cartouche_width).css({
                                 "z-index": Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
@@ -371,6 +372,41 @@ $(document).ready(function() {
                     };
 
                     PSM.GetDemandLoader(1.0).Register(catenary);
+
+                    let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -300, false, true);
+
+                    let cartouche_centre = cat_data.position.Add(cat_data.direction.Mult(half_width));
+                    let cartouche_half_size = new Coord(half_width, half_width * 1.2);
+
+                    let cartouche_drawer = Drawers["cartouche1"];
+                    let line_thick = cartouche_drawer.Width;
+
+                    let cartouche = {
+                        rect: new Rect(cartouche_centre.Sub(cartouche_half_size), cartouche_centre.Add(cartouche_half_size)),
+                        load: ret_fn => {
+                            let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
+                                new Coord(0, 0),
+                                cat_data.direction,
+                                half_width - line_thick / 4 - 1, line_thick / 2, Drawers.wire,
+                                url_title + ":tie1");
+                            let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
+                                new Coord(0, 0),
+                                cat_data.direction,
+                                half_width - line_thick / 4 - 1, line_thick / 2, Drawers.wire,
+                                url_title + ":tie2");
+
+                            let padded_half_size = cartouche_half_size.Mult(1.1);
+
+                            let svg = add_svg(null, cartouche_centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
+
+                            MakeCartouche(svg, new Coord(0, 0), half_width, cartouche_drawer, [ tie1, tie2 ]);
+
+                            ret_fn(svg);
+                        },
+                        url_title: url_title + ":cartouche:" + i
+                    };
+
+                    PSM.GetDemandLoader(1.0).Register(cartouche);
                 }
                 prev_row = img_row;
                 prev_tl = tl;

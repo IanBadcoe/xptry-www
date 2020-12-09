@@ -52,9 +52,9 @@ $(document).ready(() => {
 
     for(let i = -2000; i < 4000; i += 100) {
         for(let j = -2000; j < 4000; j += 100) {
-            dl1.Register(make_obj(i, j, i == 0 || j == 0));
-            dl2.Register(make_obj(i, j, i == 0 || j == 0));
-            dl3.Register(make_obj(i, j, i == 0 || j == 0));
+            dl1.Register(make_obj(i, j, i === 0 || j === 0));
+            dl2.Register(make_obj(i, j, i === 0 || j === 0));
+            dl3.Register(make_obj(i, j, i === 0 || j === 0));
         }
     }
 });

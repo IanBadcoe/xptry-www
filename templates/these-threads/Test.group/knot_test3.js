@@ -43,7 +43,7 @@ $(document).ready(function() {
     {
         push_point(points, a, rad);
 
-        if (i == 1 || i == steps - 2) {
+        if (i === 1 || i === steps - 2) {
             points[points.length - 1].force_under = true;
         }
 

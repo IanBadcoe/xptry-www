@@ -251,7 +251,10 @@ function DrawCatenaryStrandBetweenPoints(el, p1, p2, a, drawer, rect_only) {
 // USE THIS WITH A NEGATIVE gap_width to achieve a (positive) gap but with the ends of the catenaries coming in more steeply
 // (this is achieved by calculating the catenaries as if they were going to overlap by the width (e.g. as if the width were negative)
 //  but only drawing those parts outside the gap (e.g. as if it were positive...))
-function DrawCatenaryWithGapStrandBetweenPoints(el, p1, p2, a, drawer, gap_width, rect_only) {
+//
+// setting "end_data_only" (and not "rect_only") returns the position and direction of the catenary at the left hand end of the break
+// (used by cartouche placement to position the centre) -- the righthand end is a mirror image of this...
+function DrawCatenaryStrandBetweenPoints_WithGap(el, p1, p2, a, drawer, gap_width, rect_only, end_data_only) {
     if (p1.X > p2.X) {
         [p1, p2] = [p2, p1];
     }
@@ -300,6 +303,13 @@ function DrawCatenaryWithGapStrandBetweenPoints(el, p1, p2, a, drawer, gap_width
         let hx = p1.X + (n / steps) * i;
         let hy = y_offset + catenary(hx + x_offset);
         points1.push(new Coord(hx, hy));
+    }
+
+    if (end_data_only) {
+        return {
+            position: points1[points1.length - 1],
+            direction: points1[points1.length - 1].Sub(points1[points1.length - 2]).ToUnit()
+        };
     }
 
     for(let i = steps - steps2; i <= steps; i++) {
