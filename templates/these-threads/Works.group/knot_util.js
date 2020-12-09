@@ -45,10 +45,10 @@ function MakeTemplateKnotRadial(tile,
 }
 
 function MakeCartouche(svg, rad, drawer, decorators) {
-    const steps = 60;
+    const steps = 40;
     const intermediate_frac = 0.5;
     const intermediate_offset = 2;
-    const halves_offset = 0.9;
+    const halves_offset = 1.2;
 
     let line_thick = drawer.Width;
     let end_pos = Math.asin(line_thick * 3 / rad);
@@ -81,8 +81,10 @@ function MakeCartouche(svg, rad, drawer, decorators) {
 
     let points = [];
 
+    let red_rad = rad * Math.cos(end_pos);
+
     function push_point(vec, coord) {
-        let hc = new Coord(coord.X * line_thick * 3, coord.Y * line_thick + rad);
+        let hc = new Coord(coord.X * line_thick * 3, coord.Y * line_thick + red_rad);
         vec.push(hc);
     }
 
@@ -99,10 +101,12 @@ function MakeCartouche(svg, rad, drawer, decorators) {
         push_point(points, p);
     });
 
-    let a = end_pos * 2;
-    let step = (Math.PI - end_pos * 2) * 2 / steps;
+    // skip 5 steps either end as the half-knots supply the very end positions
+    // and use quite a low number of points, and we get a corner if the highly-sampled circle runs straight in
+    let step = (Math.PI - end_pos) * 2 / (steps + 4);
+    let a = end_pos + step * 2;
 
-    for(let i = 0; i < steps + 1; i++)
+    for(let i = 0; i <= steps; i++)
     {
         push_point_polar(points, a, rad);
 
