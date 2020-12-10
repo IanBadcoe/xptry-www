@@ -47,37 +47,26 @@ function MakeTemplateKnotRadial(tile,
 function MakeCartouche(svg, rad, drawer, decorators) {
     const steps = 40;
     const intermediate_frac = 0.5;
-    const intermediate_offset = 2;
-    const halves_offset = 1.2;
+    const intermediate_offset = 1.7;
+    const halves_offset = 0.7;
 
-    let line_thick = drawer.Width;
+    let line_thick = drawer.FullWidth;
     let end_pos = Math.asin(line_thick * 3 / rad);
 
 
-
+    // x is distance across the ends of the circle, measured -1 -> 0 -> 1 (left, centre, right)
+    // y is up down offset measured in line_thick
     const half_knot_points = new CoordArray([
         [1, 0],
-        [0, 0],
-        [-intermediate_frac, -intermediate_offset],
+        [0, +0.2],
+        [-intermediate_frac, -intermediate_offset+0.2],
         [-1, 0],
-        [-1, halves_offset],
-        [-intermediate_frac, intermediate_offset + halves_offset],
-        [0, halves_offset],
-        [1, halves_offset],
+        [-1, halves_offset+0.2],
+        [-intermediate_frac, intermediate_offset + halves_offset+0.2],
+        [0, halves_offset+0.2],
+        [1, halves_offset+0.2],
         [1, 3]
     ]);
-
-    // const half_knot_points = [
-    //     [end_pos, rad],
-    //     [0, rad],
-    //     [-end_pos * intermediate_frac, rad - intermediate_offset * line_thick],
-    //     [-end_pos, rad],
-    //     [-end_pos, rad + halves_offset * line_thick],
-    //     [-end_pos * intermediate_frac, rad + line_thick * (intermediate_offset + halves_offset)],
-    //     [0, rad + line_thick * halves_offset],
-    //     [end_pos, rad + line_thick * halves_offset],
-    //     [end_pos * intermediate_frac, rad + line_thick * 3]
-    // ]
 
     let points = [];
 

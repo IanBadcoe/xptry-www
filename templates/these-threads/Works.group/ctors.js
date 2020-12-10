@@ -321,8 +321,9 @@ $(document).ready(function() {
             let prev_dims = null;
             let prev_height_offset = 0;
 
-            const cartouche_width = 300;
-            const half_width = cartouche_width / 2;
+            const line_gap = 300;
+            const drawer = Drawers["cartouche2"];
+            const line_thick = drawer.Width;
 
             for (let i = 0; i <= num_articles; i++) {
                 let a_bc = bl.Add(new Coord((i + 1) * width_step, 0));
@@ -357,9 +358,9 @@ $(document).ready(function() {
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
                     let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                     let catenary = {
-                        rect: DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -cartouche_width, true),
+                        rect: DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -line_gap, true),
                         load: ret_fn => {
-                            let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -cartouche_width).css({
+                            let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -line_gap).css({
                                 "z-index": Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
@@ -373,33 +374,36 @@ $(document).ready(function() {
 
                     PSM.GetDemandLoader(1.0).Register(catenary);
 
-                    let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -300, false, true);
 
-                    let cartouche_centre = cat_data.position.Add(cat_data.direction.Mult(half_width));
-                    let cartouche_half_size = new Coord(half_width, half_width * 1.2);
+                    let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -line_gap, false, true);
 
-                    let cartouche_drawer = Drawers["cartouche1"];
-                    let line_thick = cartouche_drawer.Width;
+                    // the line to the cartouche centre is 150 in X and an amount in Y corresponding to the Y/X ratio of its direction
+                    let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
+                    let centre = cat_data.position.Add(cat_data.direction.Mult(overall_rad));
+                    // the connecting tie sticks out beyond the circle edge
+                    let circle_rad = overall_rad - line_thick * 1.25;
+
+                    let half_size = new Coord(line_gap / 2, line_gap / 2 * 1.2);
 
                     let cartouche = {
-                        rect: new Rect(cartouche_centre.Sub(cartouche_half_size), cartouche_centre.Add(cartouche_half_size)),
+                        rect: new Rect(centre.Sub(half_size), centre.Add(half_size)),
                         load: ret_fn => {
                             let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                 new Coord(0, 0),
-                                cat_data.direction,
-                                half_width - line_thick / 4 - 1, line_thick / 2, Drawers.wire,
+                                cat_data.direction.Inverse(),
+                                circle_rad - line_thick / 2, line_thick, Drawers.wire,
                                 url_title + ":tie1");
                             let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                 new Coord(0, 0),
-                                cat_data.direction,
-                                half_width - line_thick / 4 - 1, line_thick / 2, Drawers.wire,
+                                cat_data.direction.MirrorX().Inverse(),
+                                circle_rad - line_thick / 2, line_thick, Drawers.wire,
                                 url_title + ":tie2");
 
-                            let padded_half_size = cartouche_half_size.Mult(1.1);
+                            let padded_half_size = half_size.Mult(1.2);
 
-                            let svg = add_svg(null, cartouche_centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
+                            let svg = add_svg(null, centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
 
-                            MakeCartouche(svg, new Coord(0, 0), half_width, cartouche_drawer, [ tie1, tie2 ]);
+                            MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ]);
 
                             ret_fn(svg);
                         },

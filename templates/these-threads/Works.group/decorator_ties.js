@@ -289,17 +289,16 @@ function DrawCatenaryStrandBetweenPoints_WithGap(el, p1, p2, a, drawer, gap_widt
     let range1 = n - x;
     let range2 = x;
 
-    let steps1 = Math.ceil(range1 / 10);
-    let steps2 = Math.ceil(range2 / 10);
-    let steps = steps1 + steps2;
-
     if (gap_width < 0) {
-        steps1 = Math.ceil((range1 + gap_width) / 10);
-        steps2 = Math.ceil((range2 + gap_width) / 10);
+        range1 += gap_width;
+        range2 += gap_width;
     }
 
+    let steps1 = Math.ceil(range1 / 10);
+    let steps2 = Math.ceil(range2 / 10);
+
     for(let i = 0; i <= steps1; i++) {
-        let hx = p1.X + (n / steps) * i;
+        let hx = p1.X + (range1 / steps1) * i;
         let hy = y_offset + catenary(hx + x_offset);
         points1.push(new Coord(hx, hy));
     }
@@ -311,8 +310,8 @@ function DrawCatenaryStrandBetweenPoints_WithGap(el, p1, p2, a, drawer, gap_widt
         };
     }
 
-    for(let i = steps - steps2; i <= steps; i++) {
-        let hx = p1.X + (n / steps) * i;
+    for(let i = 0; i <= steps2; i++) {
+        let hx = p2.X - (range2 / steps2) * i - gap_width;
         let hy = y_offset + catenary(hx + x_offset);
         points2.push(new Coord(hx + gap_width, hy));
     }

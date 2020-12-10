@@ -16,6 +16,6 @@ window.Ties = {
         BSeqs: [
             new CoordArray([ [-0.75, 0], [-1.5, 1], [0, 1.65] ]),
         ],
-        CPoint: new Coord(0, 1.8)
+        CPoint: new Coord(0, 1.75)
     },
 };

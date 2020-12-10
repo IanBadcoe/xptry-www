@@ -8,7 +8,7 @@ $(document).ready(function() {
         new Coord(150, 150),
         new Coord(-150, -200), new Coord(300, 400));
 
-    let drawer = Drawers["cartouche1"];
+    let drawer = Drawers["cartouche2"];
     let line_thick = drawer.Width;
 
     let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,

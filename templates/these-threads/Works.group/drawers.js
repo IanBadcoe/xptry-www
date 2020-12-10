@@ -70,7 +70,8 @@ $(document).ready(() => {
                         close, 0, wrap, here_klass);
                 }
             },
-            Width: width
+            Width: width,
+            FullWidth: width + clearance
         };
     }
 
