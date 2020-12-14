@@ -14,6 +14,17 @@
       },
       {/parents:authors}
     ],
+    "charms" : [
+      {parents:charms backspace="8"}
+      {
+        "text" : {parents:charms:charm_text:json},
+        "image" : {parents:charms:charm_image:json},
+        "border" : {parents:charms:border},
+        "scale_image" : {parents:charms:scale_image},
+        "shrink_border" : {parents:charms:shrink_border}
+      },
+      {/parents:charms}
+    ],
     "status" : "{parents:status}"
   },
   {/parents}
