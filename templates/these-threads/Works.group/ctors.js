@@ -305,7 +305,11 @@ $(document).ready(function() {
                         let strip_height = height * (1 - strip_offset_frac * 2);
                         let scale4height = strip_height / max_image_height;
 
-                        make_anchors_and_thread(scale4height, image_sets["Anchor"], this.num_articles, this.rect.BL, this.url_title, rnd, image_sets["Furniture"]);
+                        make_anchors_and_thread(scale4height, image_sets["Anchor"],
+                            this.num_articles, this.rect.BL, this.url_title,
+                            rnd,
+                            image_sets["Furniture"],
+                            this._articles);
 
                         make_image_strip(1.07, image_sets["Building"], this.rect.BL.Add(new Coord(width_step, -height * strip_offset_frac)), this.rect.R, scale4height, this.url_title, rnd);
                     }
@@ -315,21 +319,28 @@ $(document).ready(function() {
             PSM.GetDemandLoader(1.0).Register(this);
         }
 
-        function make_anchors_and_thread(scale4height, anchor_image_set, num_articles, bl, url_title, rnd, furniture_image_set) {
+        function random_cartouche_drawer(rnd) {
+            let idx = Math.min(Math.floor(rnd.quick() * 3), 2);
+
+            return Drawers[["cartouche1", "cartouche2", "cartouche3"][idx]];
+        }
+
+        function make_anchors_and_thread(scale4height, anchor_image_set, num_articles, bl, url_title, rnd, furniture_image_set, articles) {
             let prev_row = null;
             let prev_tl = null;
             let prev_dims = null;
             let prev_height_offset = 0;
 
             const line_gap = 350;
-            const drawer = Drawers["cartouche2"];
-            const line_thick = drawer.Width;
-
             const catenary_stiffness = 2000;
             const dangle_max = 100;
             const dangle_min = 0;
 
+            const keys = Object.keys(articles);
+
             for (let i = 0; i <= num_articles; i++) {
+                let article = articles[keys[i]];
+
                 let a_bc = bl.Add(new Coord((i + 1) * width_step, 0));
 
                 let img_row = rand_from_array(anchor_image_set, rnd);
@@ -359,17 +370,22 @@ $(document).ready(function() {
                 let tl = a_bc.Add(new Coord(-dims.X / 2, -dims.Y));
 
                 if (prev_row) {
+                    const c_seed = rnd.quick();
+
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
                     let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                     let catenary = {
                         rect: DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap, true),
                         load: ret_fn => {
+                            // we capture the seed, so we can make a new identical RNG each tieme we invoke this
+                            let c_rnd = MakeRand(c_seed);
+
                             let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap).css({
                                 "z-index": Zs.NodeContentL4
                             });
-                            add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
+                            add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], c_rnd);
                             if (i === 1) {
-                                add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], rnd);
+                                add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], c_rnd);
                             }
                             ret_fn(svg);
                         },
@@ -381,6 +397,9 @@ $(document).ready(function() {
 
                     let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap, false, true);
 
+                    const drawer = random_cartouche_drawer(rnd);
+                    const line_thick = drawer.Width;
+
                     // the line to the cartouche centre is 150 in X and an amount in Y corresponding to the Y/X ratio of its direction
                     let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
                     let centre = cat_data.position.Add(cat_data.direction.Mult(overall_rad));
@@ -389,36 +408,42 @@ $(document).ready(function() {
 
                     let half_size = new Coord(line_gap / 2, line_gap / 2 * 1.5);
 
-                    let cartouche = {
-                        rect: new Rect(centre.Sub(half_size), centre.Add(half_size)),
-                        load: ret_fn => {
-                            // <-- the "-2" in the "circle_rad" params below is wrong for a perfect circle,
-                            // but I've reduced the number of points to make things fast which makes us a touch narrower where the catenary hits
-                            // without the -2 we are perfect if the # points is turned up enough
-                             let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
-                                new Coord(0, 0),
-                                cat_data.direction.Inverse(),
-                                circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
-                                url_title + ":tie1");
-                            let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
-                                new Coord(0, 0),
-                                cat_data.direction.MirrorX().Inverse(),
-                                circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
-                                url_title + ":tie2");
+                    {
+                        const a_seed = rnd.quick();
 
-                            let padded_half_size = half_size.Mult(1.2);
+                        let cartouche = {
+                            rect: new Rect(centre.Sub(half_size), centre.Add(half_size)),
+                            load: ret_fn => {
+                                let a_rnd = MakeRand(a_seed);
 
-                            let svg = add_svg(null, centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
+                                // <-- the "-2" in the "circle_rad" params below is wrong for a perfect circle,
+                                // but I've reduced the number of points to make things fast which makes us a touch narrower where the catenary hits
+                                // without the -2 we are perfect if the # points is turned up enough
+                                let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
+                                    new Coord(0, 0),
+                                    cat_data.direction.Inverse(),
+                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
+                                    url_title + ":tie1");
+                                let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
+                                    new Coord(0, 0),
+                                    cat_data.direction.MirrorX().Inverse(),
+                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
+                                    url_title + ":tie2");
 
-                            MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ],
-                                rnd.quick() * (dangle_max - dangle_min) + dangle_min, rnd.quick() * (dangle_max - dangle_min) + dangle_min);
+                                let padded_half_size = half_size.Mult(1.2);
 
-                            ret_fn(svg);
-                        },
-                        url_title: url_title + ":cartouche:" + i
-                    };
+                                let svg = add_svg(null, centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
 
-                    PSM.GetDemandLoader(1.0).Register(cartouche);
+                                MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ],
+                                    a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min);
+
+                                ret_fn(svg);
+                            },
+                            url_title: url_title + ":cartouche:" + i
+                        };
+
+                        PSM.GetDemandLoader(1.0).Register(cartouche);
+                    }
                 }
                 prev_row = img_row;
                 prev_tl = tl;

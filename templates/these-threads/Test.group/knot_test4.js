@@ -1,7 +1,6 @@
 $(document).ready(() => {
     PSM.Init(20, $(".scroll-container-container"), 1,
-        300, 100,
-        0.8);
+        300, 100);
 
     let OnResize = () => {
         // auto-scale the page, but continue to respect any zoom the user has already set
@@ -24,8 +23,8 @@ $(document).ready(() => {
         var start = new Date().getTime();
 
         let svg = add_svg(null,
-            new Coord(210, 250),
-            new Coord(-210, -250), new Coord(420, 500));
+            new Coord(210, 350),
+            new Coord(-210, -350), new Coord(420, 700));
 
         let drawer = Drawers["cartouche2"];
         let line_thick = drawer.Width;
