@@ -221,13 +221,17 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 
         try {
             // find a sequence that shares an intersect with what we already have
-            loops.forEach((loop, loop_idx) => {
+            for(let loop_idx = 0; loop_idx < loops.length; loop_idx++) {
+                let loop = loops[loop_idx];
+
                 // by toggling this at each intersection with unknown state,
                 // we can back-calculate to how we have to start in order to arrive with the
                 // correct next_over when we hit on with known state
                 let invert = false;
 
-                loop.Points.forEach((pnt, pnt_idx) => {
+                for(let pnt_idx = 0; pnt_idx < loop.Points.length; pnt_idx++) {
+                    let pnt = loop.Points[pnt_idx];
+
                     let inter = find_intersect(pnt);
 
                     if (inter.is_over !== null) {
@@ -236,12 +240,12 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                         // to send it the right way
                         next_over = inter.is_over === invert;
 
-                        throw "got one!"
+                        break;
                     } else if (inter.count > 1) {
                         invert = !invert;
                     }
-                });
-            });
+                }
+            }
         }
         catch (e) {
             if (e !== "got one!")
@@ -300,20 +304,23 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
             }
         });
 
-        if (loop.Open) {
-            anno_points.push({
-                over: false,
-                param: 0,
-            });
-            anno_points.push({
-                over: false,
-                param: loop.Spline.EndParam,
-            });
-        }
-
         anno_points.sort((x, y) => x.param - y.param);
 
-        if (!loop.Open) {
+        if (loop.Open) {
+            if (anno_points[0].param != 0) {
+                anno_points.splice(0, 0, {
+                    over: false,
+                    param: 0,
+                });
+            }
+
+            if (anno_points[anno_points.length - 1].param != loop.Spline.EndParam) {
+                anno_points.push({
+                    over: false,
+                    param: loop.Spline.EndParam,
+                });
+            }
+        } else {
             // end with a repeat of the start entry, only wrapped round off the end of the param range
             // so that averaging with it will work correctly
             anno_points.push({
@@ -363,9 +370,13 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 
     return {
         Draw(insert_element) {
+//            var start = new Date().getTime();
+
             if (decorators) {
                 decorators.forEach(dec => dec.BackDraw(insert_element));
             }
+
+//            console.log("xx-" + (new Date().getTime() - start) + " ms");
 
             if (base_plate) {
                 base_plate.Draw(insert_element);
@@ -390,6 +401,8 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                     !knot.Open, !knot.Open, knot.Klass);
             });
 
+//            console.log("yy-" + (new Date().getTime() - start) + " ms");
+
             knots.forEach(knot => {
                 knot.OverlayRanges.forEach(el => {
                     knot.Drawer.BackDrawKnot(insert_element,
@@ -401,9 +414,13 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                     });
             });
 
+//            console.log("zz-" + (new Date().getTime() - start) + " ms");
+
             if (decorators) {
                 decorators.forEach(dec => dec.ForeDraw(insert_element));
             }
+
+//            console.log("aa-" + (new Date().getTime() - start) + " ms");
         }
     };
 }

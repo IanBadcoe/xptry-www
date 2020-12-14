@@ -321,9 +321,13 @@ $(document).ready(function() {
             let prev_dims = null;
             let prev_height_offset = 0;
 
-            const line_gap = 300;
+            const line_gap = 350;
             const drawer = Drawers["cartouche2"];
             const line_thick = drawer.Width;
+
+            const catenary_stiffness = 2000;
+            const dangle_max = 100;
+            const dangle_min = 0;
 
             for (let i = 0; i <= num_articles; i++) {
                 let a_bc = bl.Add(new Coord((i + 1) * width_step, 0));
@@ -358,9 +362,9 @@ $(document).ready(function() {
                     let p1 = prev_tl.Add(new Coord((prev_row.spointx - prev_row.swidth / 2) * scale4height, prev_dims.Y - prev_row.spointy * scale4height + prev_height_offset));
                     let p2 = tl.Add(new Coord((img_row.spointx + img_row.swidth / 2) * scale4height, dims.Y - img_row.spointy * scale4height));
                     let catenary = {
-                        rect: DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -line_gap, true),
+                        rect: DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap, true),
                         load: ret_fn => {
-                            let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -line_gap).css({
+                            let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap).css({
                                 "z-index": Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], rnd);
@@ -375,7 +379,7 @@ $(document).ready(function() {
                     PSM.GetDemandLoader(1.0).Register(catenary);
 
 
-                    let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, 2000, Drawers["wire"], -line_gap, false, true);
+                    let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap, false, true);
 
                     // the line to the cartouche centre is 150 in X and an amount in Y corresponding to the Y/X ratio of its direction
                     let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
@@ -383,27 +387,31 @@ $(document).ready(function() {
                     // the connecting tie sticks out beyond the circle edge
                     let circle_rad = overall_rad - line_thick * 1.25;
 
-                    let half_size = new Coord(line_gap / 2, line_gap / 2 * 1.2);
+                    let half_size = new Coord(line_gap / 2, line_gap / 2 * 1.5);
 
                     let cartouche = {
                         rect: new Rect(centre.Sub(half_size), centre.Add(half_size)),
                         load: ret_fn => {
-                            let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
+                            // <-- the "-2" in the "circle_rad" params below is wrong for a perfect circle,
+                            // but I've reduced the number of points to make things fast which makes us a touch narrower where the catenary hits
+                            // without the -2 we are perfect if the # points is turned up enough
+                             let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                 new Coord(0, 0),
                                 cat_data.direction.Inverse(),
-                                circle_rad - line_thick / 2, line_thick, Drawers.wire,
+                                circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
                                 url_title + ":tie1");
                             let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                 new Coord(0, 0),
                                 cat_data.direction.MirrorX().Inverse(),
-                                circle_rad - line_thick / 2, line_thick, Drawers.wire,
+                                circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
                                 url_title + ":tie2");
 
                             let padded_half_size = half_size.Mult(1.2);
 
                             let svg = add_svg(null, centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
 
-                            MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ]);
+                            MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ],
+                                rnd.quick() * (dangle_max - dangle_min) + dangle_min, rnd.quick() * (dangle_max - dangle_min) + dangle_min);
 
                             ret_fn(svg);
                         },
