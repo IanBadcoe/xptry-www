@@ -434,6 +434,32 @@ $(document).ready(function() {
 
                                 let svg = add_svg(null, centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
 
+                                if (article.image.length) {
+                                    add_defs(svg).append(
+                                        add_pattern(null, {
+                                            id: "circle_image",
+                                            height: "100%",
+                                            width: "100%",
+                                            patternContentUnits: "objectBoundingBox"
+                                        }).append(add_image(null,
+                                            {
+                                                height: 1,
+                                                width: 1,
+                                                preserveAspectRatio: "xMidYMid slice",
+                                                "href": article.image[0]
+                                            }
+                                        ))
+                                    );
+
+                                    let circle = add_circle(svg, new Coord(0, 0), null, null, circle_rad - line_thick / 4)
+                                        .css({
+                                            stroke: "none"
+                                        })
+                                        .attr({
+                                            fill: "url(#circle_image)"
+                                        });
+                                }
+
                                 MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ],
                                     a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min);
 

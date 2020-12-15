@@ -18,46 +18,6 @@ function vmax(v) {
   return Math.max(vh(v), vw(v));
 }
 
-function apply_path(selector, path, offset)
-{
-    offset = offset || 0;
-
-    $(selector).each(function() {
-        let idx = parseFloat($(this).attr("path_p"));
-
-        idx += offset;
-        if (idx > path.EndParam)
-        {
-            idx = idx - path.EndParam;
-        }
-
-        $(this).attr("path_p", idx);
-
-        let p = path.Interp(idx);
-        $(this).css(
-            {
-                "transform" : "translate3d(" + p[0] + "vmin, " + p[1] + "vmin, " + p[2] + "vmin)"
-            }
-        );
-    });
-}
-
-function apply_path_indices(selector, path)
-{
-    $(selector).each(function() {
-        $(this).attr("path_p", Math.random() * path.EndParam);
-    });
-}
-
-function insert_clones(sel_ins, sel_ins_after, num) {
-    let ins_after = $(sel_ins_after);
-    let ins = $(sel_ins);
-
-    for(let i = 0; i < num; i++) {
-        ins_after.after(ins.clone());
-    }
-}
-
 function add_line(el, p1, p2, style, klass, offset, nudge_vec) {
     if (nudge_vec) {
         p1 = p1.Add(nudge_vec);
@@ -267,7 +227,7 @@ function add_svg(el, centre, coord_orig, coord_dims, klass, z) {
     {
         el.append(ne);
     }
-    
+
     return ne;
 }
 
@@ -295,6 +255,8 @@ function add_circle(el, coords, style, klass, width) {
     }
 
     el.append(circle);
+
+    return circle;
 }
 
 function add_defs(el) {
@@ -316,7 +278,23 @@ function add_pattern(el, attribs) {
         ne.attr(attribs);
     }
 
-    el.append(ne);
+    if (el) {
+        el.append(ne);
+    }
+
+    return ne;
+}
+
+function add_image(el, attribs) {
+    let ne = $(document.createElementNS('http://www.w3.org/2000/svg', 'image'));
+
+    if (attribs) {
+        ne.attr(attribs);
+    }
+
+    if (el) {
+        el.append(ne);
+    }
 
     return ne;
 }

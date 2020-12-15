@@ -4,7 +4,11 @@
   "{parents:url_title}" : {
     "url_title" : "{parents:url_title}",
     "title" : {parents:title:json},
-    "image" : {parents:article_image:json},
+    "image" : [
+      {parents:article_image backspace="8"}
+        {parents:article_image:file:json},
+      {/parents:article_image}
+    ],
     "body" : {parents:body_of_article:json},
     "authors" : [
       {parents:authors backspace="8"}

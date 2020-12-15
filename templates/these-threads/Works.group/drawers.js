@@ -173,19 +173,19 @@ $(document).ready(() => {
 
         cartouche1 : MakeKnotDrawer(
             15, [64,64,64],
-            2, [255,255,255],
+            0, null,
             13, [128,96,96],
             0, null,
             "knot"),
         cartouche2 : MakeKnotDrawer(
             20, [0, 0, 0],
-            2, [255,255,255],
+            0, null,
             18, [96,129,96],
             6, [128,160,128],
             "knot"),
         cartouche3 : MakeKnotDrawer(
             20, [0, 0, 0],
-            2, [255,255,255],
+            0, null,
             16, [128,129,64],
             4, [160,160,96],
             "knot"),
