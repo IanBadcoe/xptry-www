@@ -339,7 +339,8 @@ $(document).ready(function() {
             const keys = Object.keys(articles);
 
             for (let i = 0; i <= num_articles; i++) {
-                let article = articles[keys[i]];
+                // on pass zero we just draw the first hanger, on subsequent passes we fill in wire caternaries and catouches for articles
+                let article = articles[keys[i - 1]];
 
                 let a_bc = bl.Add(new Coord((i + 1) * width_step, 0));
 
@@ -423,12 +424,12 @@ $(document).ready(function() {
                                     new Coord(0, 0),
                                     cat_data.direction.Inverse(),
                                     circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
-                                    url_title + ":tie1");
+                                    article.url_title + ":tie1");
                                 let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                     new Coord(0, 0),
                                     cat_data.direction.MirrorX().Inverse(),
                                     circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
-                                    url_title + ":tie2");
+                                    article.url_title + ":tie2");
 
                                 let padded_half_size = half_size.Mult(1.2);
 
@@ -437,7 +438,7 @@ $(document).ready(function() {
                                 if (article.image.length) {
                                     add_defs(svg).append(
                                         add_pattern(null, {
-                                            id: "circle_image",
+                                            id: article.url_title + ":circle_image_pattern",
                                             height: "100%",
                                             width: "100%",
                                             patternContentUnits: "objectBoundingBox"
@@ -456,7 +457,7 @@ $(document).ready(function() {
                                             stroke: "none"
                                         })
                                         .attr({
-                                            fill: "url(#circle_image)"
+                                            fill: "url(#" + article.url_title + ":circle_image_pattern" + ")"
                                         });
                                 }
 
