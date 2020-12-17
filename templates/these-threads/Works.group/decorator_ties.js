@@ -117,7 +117,6 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         BackDraw(insert_element) {
             draw_tie(insert_element, false);
         },
-        Dest: dest,
         CPoint: transform_point_abs(tile.CPoint)
     };
 }
@@ -330,3 +329,5 @@ function DrawCatenaryStrandBetweenPoints_WithGap(el, p1, p2, a, drawer, gap_widt
 
     return svg;
 }
+
+//function MakeCircularImage(pos, rad, )

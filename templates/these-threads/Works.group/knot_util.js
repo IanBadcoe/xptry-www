@@ -44,7 +44,7 @@ function MakeTemplateKnotRadial(tile,
     );
 }
 
-function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle) {
+function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, image, url_title) {
     const steps = 15;
     const intermediate_frac = 0.5;
     const intermediate_offset_up = 1.8;
@@ -56,6 +56,31 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle) 
     let line_thick = drawer.FullWidth;
     let end_pos = Math.asin(line_thick * knot_width / rad);
 
+    if (image) {
+        add_defs(svg).append(
+            add_pattern(null, {
+                id: url_title + ":circle_image_pattern",
+                height: "100%",
+                width: "100%",
+                patternContentUnits: "objectBoundingBox"
+            }).append(add_image(null,
+                {
+                    height: 1,
+                    width: 1,
+                    preserveAspectRatio: "xMidYMid slice",
+                    "href": image
+                }
+            ))
+        );
+
+        let circle = add_circle(svg, new Coord(0, 0), null, null, rad - drawer.Width / 4)
+            .css({
+                stroke: "none"
+            })
+            .attr({
+                fill: "url(#" + url_title + ":circle_image_pattern" + ")"
+            });
+    }
 
     // x is distance across the ends of the circle, measured -1 -> 0 -> 1 (left, centre, right)
     // y is up down offset measured in line_thick
