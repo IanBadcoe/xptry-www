@@ -319,10 +319,24 @@ $(document).ready(function() {
             PSM.GetDemandLoader(1.0).Register(this);
         }
 
-        function random_cartouche_drawer(rnd) {
+        function random_cartouche_drawers(rnd) {
             let idx = Math.min(Math.floor(rnd.quick() * 3), 2);
 
-            return Drawers[["cartouche1", "cartouche2", "cartouche3"][idx]];
+            return [Drawers[["cartouche1", "cartouche2", "cartouche3"][idx]],
+                    Drawers[["cartouche_line1", "cartouche_line2", "cartouche_line3"][idx]]];
+        }
+
+        function add_author_images(article, rad, decorators) {
+            const angle_step = 30 * Math.PI / 180.0;
+            let angle = -angle_step * (article.authors.length + 1);
+
+            article.authors.forEach((author) => {
+                let pos = new Coord(Math.sin(angle) * rad, Math.cos(angle) * rad);
+                let d = MakeFramedCircle(pos, author.photo, rad / 2);
+                decorators.push(d);
+
+                angle += angle_step;
+            });
         }
 
         function make_anchors_and_thread(scale4height, anchor_image_set, num_articles, bl, url_title, rnd, furniture_image_set, articles) {
@@ -398,8 +412,8 @@ $(document).ready(function() {
 
                     let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap, false, true);
 
-                    const drawer = random_cartouche_drawer(rnd);
-                    const line_thick = drawer.Width;
+                    const drawers = random_cartouche_drawers(rnd);
+                    const line_thick = drawers[0].Width;
 
                     // the line to the cartouche centre is 150 in X and an amount in Y corresponding to the Y/X ratio of its direction
                     let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
@@ -431,7 +445,7 @@ $(document).ready(function() {
                                     circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
                                     article.url_title + ":tie2");
 
-                                let padded_half_size = half_size.Mult(1.2);
+                                let padded_half_size = half_size.Mult(1.5);
 
                                 let svg = add_svg(null, centre, padded_half_size.Inverse(), padded_half_size.Mult(2), null, Zs.NodeContentL4);
 
@@ -441,9 +455,13 @@ $(document).ready(function() {
                                     image = article.image[0];
                                 }
 
-                                MakeCartouche(svg, circle_rad, drawer, [ tie1, tie2 ],
+                                let decorators = [ tie1, tie2 ];
+
+                                add_author_images(article, circle_rad * 0.85, decorators)
+
+                                MakeCartouche(svg, circle_rad, drawers[0], decorators,
                                     a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min,
-                                    image, article.url_title);
+                                    image);
 
                                 ret_fn(svg);
                             },

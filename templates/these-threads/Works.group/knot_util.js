@@ -44,7 +44,7 @@ function MakeTemplateKnotRadial(tile,
     );
 }
 
-function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, image, url_title) {
+function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, image) {
     const steps = 15;
     const intermediate_frac = 0.5;
     const intermediate_offset_up = 1.8;
@@ -57,29 +57,7 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
     let end_pos = Math.asin(line_thick * knot_width / rad);
 
     if (image) {
-        add_defs(svg).append(
-            add_pattern(null, {
-                id: url_title + ":circle_image_pattern",
-                height: "100%",
-                width: "100%",
-                patternContentUnits: "objectBoundingBox"
-            }).append(add_image(null,
-                {
-                    height: 1,
-                    width: 1,
-                    preserveAspectRatio: "xMidYMid slice",
-                    "href": image
-                }
-            ))
-        );
-
-        let circle = add_circle(svg, new Coord(0, 0), null, null, rad - drawer.Width / 4)
-            .css({
-                stroke: "none"
-            })
-            .attr({
-                fill: "url(#" + url_title + ":circle_image_pattern" + ")"
-            });
+        MakeFramedCircle(new Coord(0, 0), image, rad - drawer.Width / 4).ForeDraw(svg);
     }
 
     // x is distance across the ends of the circle, measured -1 -> 0 -> 1 (left, centre, right)
@@ -167,4 +145,36 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
     );
 
     knot.Draw(svg);
+}
+
+function MakeFramedCircle(pos, image, rad) {
+    return {
+        ForeDraw: (svg) => {
+            var id = UniqueIdentifier();
+            add_defs(svg).append(
+                add_pattern(null, {
+                    id: id,
+                    height: "100%",
+                    width: "100%",
+                    patternContentUnits: "objectBoundingBox"
+                }).append(add_image(null,
+                    {
+                        height: 1,
+                        width: 1,
+                        preserveAspectRatio: "xMidYMid slice",
+                        "href": image
+                    }
+                ))
+            );
+
+            let circle = add_circle(svg, pos, null, null, rad)
+                .css({
+                    stroke: "none"
+                })
+                .attr({
+                    fill: "url(#" + id + ")"
+                });
+        },
+        BackDraw: () => {}
+    };
 }
