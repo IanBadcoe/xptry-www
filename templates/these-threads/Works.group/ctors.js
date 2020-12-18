@@ -332,7 +332,7 @@ $(document).ready(function() {
 
             article.authors.forEach((author) => {
                 let pos = new Coord(Math.sin(angle) * rad, Math.cos(angle) * rad);
-                let d = MakeFramedCircle(pos, author.photo, rad / 4, drawer, 1, true);
+                let d = MakeFramedCircle(pos, author.photo, rad / 4, drawer, 1);
                 decorators.push(d);
 
                 angle += angle_step;
@@ -351,7 +351,7 @@ $(document).ready(function() {
                                             //     so here we scale it back up to its original size (rather contradictory but leaves us
                                             //     able to overlap the frame if desired, might be easier not to put the image in a circle in this case?)
                 scale_frame /= scale_image;
-                let d = MakeFramedCircle(pos, charm.image, rad / 8 * scale_image, drawer, scale_frame, false);
+                let d = MakeFramedCircle(pos, charm.image, rad / 8 * scale_image, drawer, scale_frame, true);
                 decorators.push(d);
 
                 angle -= angle_step;

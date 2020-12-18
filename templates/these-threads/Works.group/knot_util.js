@@ -148,11 +148,11 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
 }
 
 // the image is a square, drawing in a circle, so there is come choice about how to handle that
-// for opaque_image = true, we size the image to fill the circle, so the corners are cut off
-// for opaque_image = false, we size the image to fit in the circle, so the corners just touch the circle
+// for transparent_image = false, we size the image to fill the circle, so the corners are cut off
+// for transparent_image = true, we size the image to fit in the circle, so the corners just touch the circle
 //   (but in this case we will generally enlarge the image circle over the frame circle, so that it still appears the right size but can spill out of the
 //    frame a little if required)
-function MakeFramedCircle(pos, image, rad, drawer, frame_scale, opaque_image) {
+function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_image, fill) {
     return {
         ForeDraw: (svg) => {
             var id = UniqueIdentifier();
@@ -164,11 +164,11 @@ function MakeFramedCircle(pos, image, rad, drawer, frame_scale, opaque_image) {
                     patternContentUnits: "objectBoundingBox"
                 }).append(add_image(null,
                     {
-                        x: opaque_image ? 0 : 0.146,
-                        y: opaque_image ? 0 : 0.146,
-                        height: opaque_image ? 1 : 0.707,
-                        width: opaque_image ? 1 : 0.707,
-                        preserveAspectRatio: "xMidYMid slice",
+                        x: !transparent_image ? 0 : 0.146,
+                        y: !transparent_image ? 0 : 0.146,
+                        height: !transparent_image ? 1 : 0.707,
+                        width: !transparent_image ? 1 : 0.707,
+                        preserveAspectRatio: transparent_image ? "xMidYMid meet" : "xMidYMid slice",
                         "href": image
                     }
                 ))
@@ -178,7 +178,7 @@ function MakeFramedCircle(pos, image, rad, drawer, frame_scale, opaque_image) {
 
             if (drawer) {
                 let h_rad = rad * frame_scale;
-                drawer.ForeDrawPolylineCircle(svg, pos, h_rad);
+                drawer.ForeDrawPolylineCircle(svg, pos, h_rad, null, "rgb(64,64,64)");
             }
 
             add_circle(svg, pos, null, null, rad)

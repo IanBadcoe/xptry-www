@@ -153,13 +153,19 @@ $(document).ready(() => {
                 }
                 add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass);
             },
-            ForeDrawPolylineCircle(insert_element, pos, radius, override_klass) {
+            // "fill" is not a property of the drawer, because none of the other usages are particularly guaranteed to be a closed shape
+            // but it can be an option here...
+            ForeDrawPolylineCircle(insert_element, pos, radius, override_klass, fill) {
                 let h_klass = override_klass || klass;
                 let h_radius = radius + this.Width / 2;
+                let h_style = { ...style };
+                if (fill) {
+                    h_style.fill = fill;
+                }
                 if (edgestyle) {
                     add_circle(insert_element, pos, edgestyle, h_klass, h_radius);
                 }
-                add_circle(insert_element, pos, style, h_klass, h_radius);
+                add_circle(insert_element, pos, h_style, h_klass, h_radius);
                 if (hilightstyle) {
                     add_circle(insert_element, pos, hilightstyle, h_klass, h_radius);
                 }
