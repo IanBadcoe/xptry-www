@@ -79,7 +79,6 @@ $(document).ready(() => {
     let MakePolylineDrawer = (width, colour, edgethick, edgecolour, hilightwidth, hilightcolour, hilightoffset, klass) => {
         let edgestyle = null;
         let hilightstyle = null;
-        hilightoffset = new Coord(hilightoffset || [-1, -2]);
 
         if (edgethick) {
             edgestyle = {
@@ -89,6 +88,7 @@ $(document).ready(() => {
         }
 
         if (hilightwidth) {
+            hilightoffset = new Coord(hilightoffset || [-1, -2]);
             hilightstyle = {
                 stroke: "rgb(" + hilightcolour[0] + "," + hilightcolour[1] + "," + hilightcolour[2] + ")",
                 "stroke-width": hilightwidth,
@@ -153,6 +153,24 @@ $(document).ready(() => {
                 }
                 add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass);
             },
+            ForeDrawPolylineCircle(insert_element, pos, radius, override_klass) {
+                let h_klass = override_klass || klass;
+                let h_radius = radius + this.Width / 2;
+                if (edgestyle) {
+                    add_circle(insert_element, pos, edgestyle, h_klass, h_radius);
+                }
+                add_circle(insert_element, pos, style, h_klass, h_radius);
+                if (hilightstyle) {
+                    add_circle(insert_element, pos, hilightstyle, h_klass, h_radius);
+                }
+            },
+            BackDrawPolylineCircle(insert_element, p1, p2, radius, clockwise, largepart) {
+                let h_radius = radius + this.Width / 2;
+                if (edgestyle) {
+                    add_circle(insert_element, pos, edgestyle, h_klass, h_radius);
+                }
+                add_circle(insert_element, pos, style, h_klass, h_radius);
+            },
             Width: width + edgethick
         };
     }
@@ -178,7 +196,7 @@ $(document).ready(() => {
             0, null,
             "knot"),
         cartouche_line1 : MakePolylineDrawer(
-            7, [160,128,128],
+            4, [160,128,128],
             1, [64,64,64],
             0, null, null,
             "strand"
@@ -190,7 +208,7 @@ $(document).ready(() => {
             6, [128,160,128],
             "knot"),
         cartouche_line2 : MakePolylineDrawer(
-            10, [128,160,128],
+            5, [128,160,128],
             1, [64,64,64],
             0, null, null,
             "strand"
@@ -202,7 +220,7 @@ $(document).ready(() => {
             4, [160,160,96],
             "knot"),
         cartouche_line3 : MakePolylineDrawer(
-            7, [160,160,128],
+            3, [160,160,128],
             1, [64,64,64],
             0, null, null,
             "strand"

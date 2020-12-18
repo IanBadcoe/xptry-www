@@ -329,5 +329,3 @@ function DrawCatenaryStrandBetweenPoints_WithGap(el, p1, p2, a, drawer, gap_widt
 
     return svg;
 }
-
-//function MakeCircularImage(pos, rad, )

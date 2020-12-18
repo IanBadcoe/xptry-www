@@ -326,13 +326,13 @@ $(document).ready(function() {
                     Drawers[["cartouche_line1", "cartouche_line2", "cartouche_line3"][idx]]];
         }
 
-        function add_author_images(article, rad, decorators) {
+        function add_author_images(article, rad, decorators, drawer) {
             const angle_step = 30 * Math.PI / 180.0;
-            let angle = -angle_step * (article.authors.length + 1);
+            let angle = -angle_step * (article.authors.length);
 
             article.authors.forEach((author) => {
                 let pos = new Coord(Math.sin(angle) * rad, Math.cos(angle) * rad);
-                let d = MakeFramedCircle(pos, author.photo, rad / 2);
+                let d = MakeFramedCircle(pos, author.photo, rad / 4, drawer);
                 decorators.push(d);
 
                 angle += angle_step;
@@ -457,7 +457,7 @@ $(document).ready(function() {
 
                                 let decorators = [ tie1, tie2 ];
 
-                                add_author_images(article, circle_rad * 0.85, decorators)
+                                add_author_images(article, circle_rad * 0.85, decorators, drawers[1])
 
                                 MakeCartouche(svg, circle_rad, drawers[0], decorators,
                                     a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min,

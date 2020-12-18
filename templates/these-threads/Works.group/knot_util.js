@@ -147,7 +147,7 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
     knot.Draw(svg);
 }
 
-function MakeFramedCircle(pos, image, rad) {
+function MakeFramedCircle(pos, image, rad, drawer, frame_scale) {
     return {
         ForeDraw: (svg) => {
             var id = UniqueIdentifier();
@@ -166,6 +166,13 @@ function MakeFramedCircle(pos, image, rad) {
                     }
                 ))
             );
+
+            frame_scale = frame_scale | 1.0;
+
+            if (drawer) {
+                let h_rad = rad * frame_scale;
+                drawer.ForeDrawPolylineCircle(svg, pos, h_rad);
+            }
 
             let circle = add_circle(svg, pos, null, null, rad)
                 .css({
