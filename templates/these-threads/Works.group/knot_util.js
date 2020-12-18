@@ -147,7 +147,12 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
     knot.Draw(svg);
 }
 
-function MakeFramedCircle(pos, image, rad, drawer, frame_scale) {
+// the image is a square, drawing in a circle, so there is come choice about how to handle that
+// for opaque_image = true, we size the image to fill the circle, so the corners are cut off
+// for opaque_image = false, we size the image to fit in the circle, so the corners just touch the circle
+//   (but in this case we will generally enlarge the image circle over the frame circle, so that it still appears the right size but can spill out of the
+//    frame a little if required)
+function MakeFramedCircle(pos, image, rad, drawer, frame_scale, opaque_image) {
     return {
         ForeDraw: (svg) => {
             var id = UniqueIdentifier();
@@ -159,22 +164,24 @@ function MakeFramedCircle(pos, image, rad, drawer, frame_scale) {
                     patternContentUnits: "objectBoundingBox"
                 }).append(add_image(null,
                     {
-                        height: 1,
-                        width: 1,
+                        x: opaque_image ? 0 : 0.146,
+                        y: opaque_image ? 0 : 0.146,
+                        height: opaque_image ? 1 : 0.707,
+                        width: opaque_image ? 1 : 0.707,
                         preserveAspectRatio: "xMidYMid slice",
                         "href": image
                     }
                 ))
             );
 
-            frame_scale = frame_scale | 1.0;
+            frame_scale = frame_scale || 1.0;
 
             if (drawer) {
                 let h_rad = rad * frame_scale;
                 drawer.ForeDrawPolylineCircle(svg, pos, h_rad);
             }
 
-            let circle = add_circle(svg, pos, null, null, rad)
+            add_circle(svg, pos, null, null, rad)
                 .css({
                     stroke: "none"
                 })

@@ -332,10 +332,29 @@ $(document).ready(function() {
 
             article.authors.forEach((author) => {
                 let pos = new Coord(Math.sin(angle) * rad, Math.cos(angle) * rad);
-                let d = MakeFramedCircle(pos, author.photo, rad / 4, drawer);
+                let d = MakeFramedCircle(pos, author.photo, rad / 4, drawer, 1, true);
                 decorators.push(d);
 
                 angle += angle_step;
+            });
+        }
+
+        function add_charms(article, rad, decorators, drawer) {
+            const angle_step = 18 * Math.PI / 180.0;
+            let angle = angle_step * (article.charms.length + 1);
+
+            article.charms.forEach((charm) => {
+                let pos = new Coord(Math.sin(angle) * rad, Math.cos(angle) * rad);
+                let scale_image = charm.scale_image || 1.0;
+                let scale_frame = charm.scale_frame || 1.0;
+                scale_image /= 0.707;       // <-- with "opaque_mode" false, we scale the image down to fit in the circle
+                                            //     so here we scale it back up to its original size (rather contradictory but leaves us
+                                            //     able to overlap the frame if desired, might be easier not to put the image in a circle in this case?)
+                scale_frame /= scale_image;
+                let d = MakeFramedCircle(pos, charm.image, rad / 8 * scale_image, drawer, scale_frame, false);
+                decorators.push(d);
+
+                angle -= angle_step;
             });
         }
 
@@ -457,7 +476,9 @@ $(document).ready(function() {
 
                                 let decorators = [ tie1, tie2 ];
 
-                                add_author_images(article, circle_rad * 0.85, decorators, drawers[1])
+                                add_author_images(article, circle_rad * 0.85, decorators, drawers[1]);
+
+                                add_charms(article, circle_rad * 0.95, decorators, drawers[1]);
 
                                 MakeCartouche(svg, circle_rad, drawers[0], decorators,
                                     a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min,

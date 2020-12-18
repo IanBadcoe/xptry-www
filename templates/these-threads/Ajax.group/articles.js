@@ -25,7 +25,7 @@
         "image" : {parents:charms:charm_image:json},
         "border" : {parents:charms:border},
         "scale_image" : {parents:charms:scale_image},
-        "shrink_border" : {parents:charms:shrink_border}
+        "scale_frame" : {parents:charms:scale_frame}
       },
       {/parents:charms}
     ],
