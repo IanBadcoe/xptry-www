@@ -1,6 +1,6 @@
 {
   {exp:channel:entries channel='thread' backspace='7' status='not closed'}
-  {parents field='thread' status='{segment_4}'}
+  {parents field='thread' status='{segment_4}' orderby="date"}
   "{parents:url_title}" : {
     "url_title" : "{parents:url_title}",
     "title" : {parents:title:json},
