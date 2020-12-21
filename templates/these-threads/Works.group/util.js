@@ -18,6 +18,10 @@ function vmax(v) {
   return Math.max(vh(v), vw(v));
 }
 
+function create_svg_element(type) {
+    return $(document.createElementNS('http://www.w3.org/2000/svg', type));
+}
+
 function add_line(el, p1, p2, style, klass, offset, nudge_vec) {
     if (nudge_vec) {
         p1 = p1.Add(nudge_vec);
@@ -29,7 +33,7 @@ function add_line(el, p1, p2, style, klass, offset, nudge_vec) {
         p2 = p2.Add(offset);
     }
 
-    let line = $(document.createElementNS('http://www.w3.org/2000/svg', 'line')).attr({
+    let line = create_svg_element('line').attr({
         x1: p1[0],
         y1: p1[1],
         x2: p2[0],
@@ -86,14 +90,14 @@ function add_polyline(el, start_p, end_p, divide, interpable, style,
 
     if (!closed)
     {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline')).attr({
+        line = create_svg_element('polyline').attr({
             points: coords,
             style: style
         });
     }
     else
     {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon')).attr({
+        line = create_svg_element('polygon').attr({
             points: coords,
             style: style
         });
@@ -113,11 +117,11 @@ function add_raw_polyline(el, coords, style, closed, klass, offset) {
 
     if (!closed)
     {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polyline'));
+        line = create_svg_element('polyline');
     }
     else
     {
-        line = $(document.createElementNS('http://www.w3.org/2000/svg', 'polygon'));
+        line = create_svg_element('polygon');
     }
 
     line.attr({
@@ -232,7 +236,7 @@ function add_svg(el, centre, coord_orig, coord_dims, klass, z) {
 }
 
 function add_circle(el, coords, style, klass, width) {
-    let circle  = $(document.createElementNS('http://www.w3.org/2000/svg', 'circle'));
+    let circle  = create_svg_element('circle');
 
     circle.attr({
         cx: coords[0],
@@ -263,7 +267,7 @@ function add_defs(el) {
     let already = el.children("defs");
 
     if (already.length === 0) {
-        already = $(document.createElementNS('http://www.w3.org/2000/svg', 'defs'))
+        already = create_svg_element('defs');
 
         el.prepend(already);
     }
@@ -272,7 +276,7 @@ function add_defs(el) {
 }
 
 function add_pattern(el, attribs) {
-    let ne = $(document.createElementNS('http://www.w3.org/2000/svg', 'pattern'));
+    let ne = create_svg_element('pattern');
 
     if (attribs) {
         ne.attr(attribs);
@@ -286,7 +290,7 @@ function add_pattern(el, attribs) {
 }
 
 function add_image(el, attribs) {
-    let ne = $(document.createElementNS('http://www.w3.org/2000/svg', 'image'));
+    let ne = create_svg_element('image');
 
     if (attribs) {
         ne.attr(attribs);
@@ -300,7 +304,7 @@ function add_image(el, attribs) {
 }
 
 function add_arc(el, p1, p2, radius, clockwise, largepart, style, klass, offset) {
-    let path_el = $(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+    let path_el = create_svg_element('path');
 
     if (offset) {
         p1 = p1.Add(offset);
