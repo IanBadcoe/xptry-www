@@ -12,7 +12,7 @@ $(document).ready(() => {
                 top: j,
                 width: 50,
                 height: 50,
-                "background-color": "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
+                "background-color" : "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
             });
 
         return d;
@@ -27,10 +27,10 @@ $(document).ready(() => {
                 top: j,
                 width: 50,
                 height: 50,
-                "background-color": "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
+                "background-color" : "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
             })
             .attr({
-                "onclick": "smart_nav('" + klass + "')"
+                "onclick" : "smart_nav('" + klass + "')"
             }).
             addClass(klass);
 

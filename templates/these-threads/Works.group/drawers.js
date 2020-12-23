@@ -11,27 +11,27 @@ $(document).ready(() => {
 
         let style = {
             stroke: "rgb(" + colour[0] + "," + colour[1] + "," + colour[2] + ")",
-            "stroke-width": width,
+            "stroke-width" : width,
         };
 
         if (clearance) {
             bstyle = {
                 stroke: "rgb(" + backcolour[0] + "," + backcolour[1] + "," + backcolour[2] + ")",
-                "stroke-width": width + clearance,
+                "stroke-width" : width + clearance,
             };
         }
 
         if (width2) {
             style2 = {
                 stroke: "rgb(" + colour2[0] + "," + colour2[1] + "," + colour2[2] + ")",
-                "stroke-width": width2,
+                "stroke-width" : width2,
             };
         }
 
         if (width3) {
             style3 = {
                 stroke: "rgb(" + colour3[0] + "," + colour3[1] + "," + colour3[2] + ")",
-                "stroke-width": width3,
+                "stroke-width" : width3,
             };
         }
 
@@ -83,7 +83,7 @@ $(document).ready(() => {
         if (edgethick) {
             edgestyle = {
                 stroke: "rgb(" + edgecolour[0] + "," + edgecolour[1] + "," + edgecolour[2] + ")",
-                "stroke-width": width + edgethick,
+                "stroke-width" : width + edgethick,
             };
         }
 
@@ -91,13 +91,13 @@ $(document).ready(() => {
             hilightoffset = new Coord(hilightoffset || [-1, -2]);
             hilightstyle = {
                 stroke: "rgb(" + hilightcolour[0] + "," + hilightcolour[1] + "," + hilightcolour[2] + ")",
-                "stroke-width": hilightwidth,
+                "stroke-width" : hilightwidth,
             };
         }
 
         let style = {
             stroke: "rgb(" + colour[0] + "," + colour[1] + "," + colour[2] + ")",
-            "stroke-width": width,
+            "stroke-width" : width,
         };
 
         return {

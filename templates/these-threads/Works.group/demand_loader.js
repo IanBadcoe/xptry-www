@@ -102,9 +102,9 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
         CreateElement(id) {
             let el = $();
             let idx = 0;
-            
+
             _data[id].load(ne => {
-                ne.attr("id", id + ":" + idx);
+                ne.attr("id", id + "-" + idx);
                 idx++;
                 el = el.add(ne);
             });

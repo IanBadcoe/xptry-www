@@ -169,7 +169,7 @@ function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_imag
                         height: !transparent_image ? 1 : 0.707,
                         width: !transparent_image ? 1 : 0.707,
                         preserveAspectRatio: transparent_image ? "xMidYMid meet" : "xMidYMid slice",
-                        "href": image
+                        "href" : image
                     }
                 ))
             );

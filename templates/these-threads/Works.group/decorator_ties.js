@@ -143,7 +143,7 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
         top: 0,
         width : length,
         height : drawer.Width + 2,
-        "transform-origin": "0 0",
+        "transform-origin" : "0 0",
         transform: "translate(" + p1.X + "px," + p1.Y + "px) "
             + "rotate(" + angle + "rad) "
             + "translate(" + -width_offset + "px," + -width_offset + "px)",

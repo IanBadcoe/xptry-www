@@ -13,8 +13,8 @@
     "authors" : [
       {parents:authors backspace="8"}
       {
-        "name": {parents:authors:title:json},
-        "photo": {parents:authors:author_photo:json}
+        "name" : {parents:authors:title:json},
+        "photo" : {parents:authors:author_photo:json}
       },
       {/parents:authors}
     ],

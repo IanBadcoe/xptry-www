@@ -419,6 +419,6 @@ $(document).ready(function() {
         }
     };
     function ajax_error(hdr, status, error) {
-        alert(status + ": " + error + "\n failed to load data from site, please try reloading...");
+        alert(status + " : " + error + "\n failed to load data from site, please try reloading...");
     }
 });

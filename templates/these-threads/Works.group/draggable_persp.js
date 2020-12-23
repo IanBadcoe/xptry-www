@@ -13,7 +13,7 @@ $(document).ready(() => {
     function refresh_secondary_targets(force) {
         if (!_main_target)
             return;
-            
+
         let pos = new Coord(
             parseFloat(_main_target.css("left")),
             parseFloat(_main_target.css("top"))
@@ -38,7 +38,7 @@ $(document).ready(() => {
 
     // function debug_print() {
     //     _all_targets.forEach(x => {
-    //         x.d_el.children(".coords").text("x:" + x.el.css("left") + ", y:" + x.el.css("top"));
+    //         x.d_el.children(".coords").text("x: " + x.el.css("left") + ", y: " + x.el.css("top"));
     //     });
     // }
 

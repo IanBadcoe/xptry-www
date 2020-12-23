@@ -220,7 +220,7 @@ function add_svg(el, centre, coord_orig, coord_dims, klass, z) {
         top: tl.Y,
         width: coord_dims.X,
         height: coord_dims.Y,
-        "z-index": z
+        "z-index" : z
     });
 
     if (klass) {

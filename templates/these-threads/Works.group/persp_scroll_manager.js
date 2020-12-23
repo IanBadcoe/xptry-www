@@ -33,7 +33,7 @@ $(document).ready(() => {
         },
         GetDemandLoader(dist) {
             let ret = _loaders[dist];
- 
+
             if (!ret)
             {
                 let el = DraggablePersp.Get(dist);
@@ -41,25 +41,25 @@ $(document).ready(() => {
                 function active_rect() {
                     let pos = el.position();
                     pos = new Coord(pos.left, pos.top);
-            
+
                     let dim = new Coord(innerWidth, innerHeight);
 
                     let rect = new Rect(pos.Inverse(),
                         pos.Inverse().Add(dim));
 
                     rect = rect.ExtendedBy(dim.Mult(-_test_scale / 2));
-                    
+
                     rect = DraggablePersp.TransformRect(dist, rect);
 
                     // let d_klass = ("debug-" + dist).replace(".", "-");
                     // let d_el = $("." + d_klass);
-                    // d_el.children(".region").text("left:" + rect.L + ", top:" + rect.T);
-            
+                    // d_el.children(".region").text("left: " + rect.L + ", top: " + rect.T);
+
                     return rect;
                 }
 
                 let dl_margin = /* _test_scale ? 0.0 : */ 0.5;
-            
+
                 ret = CreateDemandLoader(el, _cycle_ms, active_rect, dl_margin,
                     _fade_in_time_ms, _fade_out_time_ms);
 

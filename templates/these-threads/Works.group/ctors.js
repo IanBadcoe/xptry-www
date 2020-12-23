@@ -46,7 +46,7 @@ $(document).ready(function() {
                     top: (this.centre.Y - torus_width),
                     width: (torus_width * 2),
                     height: (torus_width * 2),
-                    "z-index": Zs.NodeContentL1
+                    "z-index" : Zs.NodeContentL1
                 }).addClass("absolute zero-spacing rotating");
 
                 ret_fn(torus_image);
@@ -95,7 +95,7 @@ $(document).ready(function() {
 
                 ne.css({
                     transform: "translate(" + hx + "px, " + hy + "px) scale(" + scale + ", " + scale * aspect + ")",
-                    "z-index": Zs.Decor
+                    "z-index" : Zs.Decor
                 });
 
                 return ne;
@@ -379,14 +379,14 @@ $(document).ready(function() {
 
                 let img_row = rand_from_array(anchor_image_set, rnd);
 
-                let dims = place_parallax_image(1.0, img_row, scale4height, a_bc, url_title + ":anchor:" + i, "c");
+                let dims = place_parallax_image(1.0, img_row, scale4height, a_bc, url_title + "-anchor-" + i, "c");
 
                 if (rnd.quick() < 0.15) {
-                    place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(dims.X / 2, 0)), url_title + ":anchor:" + i + ":f_right", "l");
+                    place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(dims.X / 2, 0)), url_title + "-anchor-" + i + "-f_right", "l");
                 }
 
                 if (rnd.quick() < 0.15) {
-                    place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(-dims.X / 2, 0)), url_title + ":anchor:" + i + ":f_left", "r");
+                    place_parallax_image(1.0, rand_from_array(furniture_image_set, rnd), scale4height, a_bc.Add(new Coord(-dims.X / 2, 0)), url_title + "-anchor-" + i + "-f_left", "r");
                 }
 
                 function add_wrap_rounds(svg, start_h, end_h, right, width, drawer, rnd) {
@@ -415,7 +415,7 @@ $(document).ready(function() {
                             let c_rnd = MakeRand(c_seed);
 
                             let svg = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap).css({
-                                "z-index": Zs.NodeContentL4
+                                "z-index" : Zs.NodeContentL4
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], c_rnd);
                             if (i === 1) {
@@ -423,7 +423,7 @@ $(document).ready(function() {
                             }
                             ret_fn(svg);
                         },
-                        url_title: url_title + ":catenary:" + i
+                        url_title: url_title + "-catenary-" + i
                     };
 
                     PSM.GetDemandLoader(1.0).Register(catenary);
@@ -484,7 +484,7 @@ $(document).ready(function() {
 
                                 ret_fn(svg);
                             },
-                            url_title: url_title + ":cartouche:" + i
+                            url_title: url_title + "-cartouche-" + i
                         };
 
                         PSM.GetDemandLoader(1.0).Register(cartouche);
@@ -513,7 +513,7 @@ $(document).ready(function() {
                 // it has to be the bottom, so we need to pre-scale that up to get it in the right place after scaling down (parallax puts X in the right place)
                 let pos = new Coord(curr_left, b * dist);
 
-                let dims = place_parallax_image(dist, img_row, scale4height, pos, url_title + ":building:" + i, "l", "street-p2");
+                let dims = place_parallax_image(dist, img_row, scale4height, pos, url_title + "-building-" + i, "l", "street-p2");
 
                 curr_left += dims.X;
 
@@ -558,7 +558,7 @@ function place_parallax_image(dist, img_row, scale, pos, here_title, posmode, kl
                     top: tl.Y,
                     height: dims.Y,
                     width: dims.X,
-                    "z-index": Zs.NodeContentL1
+                    "z-index" : Zs.NodeContentL1
                 })
                 .addClass("absolute zero-spacing");
 
