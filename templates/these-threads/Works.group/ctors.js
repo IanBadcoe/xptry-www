@@ -456,13 +456,11 @@ $(document).ready(function() {
                                 let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                     new Coord(0, 0),
                                     cat_data.direction.Inverse(),
-                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
-                                    article.url_title + ":tie1");
+                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire);
                                 let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                     new Coord(0, 0),
                                     cat_data.direction.MirrorX().Inverse(),
-                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
-                                    article.url_title + ":tie2");
+                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire);
 
                                 let padded_half_size = half_size.Mult(1.5);
 
