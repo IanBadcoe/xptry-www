@@ -6,6 +6,6 @@ $(document).ready(() => {
     var UIRnd = MakeRand("@@UniqueIdentifier@@");
 
     window.UniqueIdentifier = () => {
-        return "UID:" + Math.floor(UIRnd.quick() * 1000000);
+        return "UID-" + Math.floor(UIRnd.quick() * 1000000);
     }
 });

@@ -7,7 +7,7 @@ $(document).ready(() => {
                 top: j,
                 width: 90,
                 height: 90,
-                "background-color": "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
+                "background-color" : "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"
             });
 
         return d;
@@ -16,7 +16,7 @@ $(document).ready(() => {
     for(let i = -500; i < 1500; i += 100) {
         for(let j = -500; j < 1500; j += 100) {
             let obj = {
-                url_title: "xx" + i + ":" + j,
+                url_title: "xx" + i + "-" + j,
                 load(ret_fn) {
                     ret_fn(fn(i, j));
                 },

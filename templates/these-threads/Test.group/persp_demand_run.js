@@ -36,7 +36,7 @@ $(document).ready(() => {
                 top: j,
                 width: 50,
                 height: 50,
-                "background-color": colour
+                "background-color" : colour
             });
 
         return d;
