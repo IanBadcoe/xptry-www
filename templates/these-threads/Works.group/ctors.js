@@ -29,58 +29,8 @@ $(document).ready(function() {
                 }
             });
 
-            function tickable_tick(tick, cycle_ms, tickable) {
-                if (!tickable.next_change) {
-                    tickable.next_change = tick + Math.floor(2000 / cycle_ms);
-                } else if (tick >= tickable.next_change) {
-                    let delay = 100;
-
-                    switch(tickable.state) {
-                        case 0:
-                            delay = 200;
-                        case 2: case 4:
-                            tickable.el.css({
-                                stroke : "#FFFFFF"
-                            });
-
-                            break;
-
-                        case 1:
-                            delay = 400;
-                        case 3:
-                            tickable.el.css({
-                                stroke : "rgb(" + tickable.base_colour[0] + "," + tickable.base_colour[1] + "," + tickable.base_colour[2] + ")"
-                            });
-
-                            break;
-
-                        case 5:
-                            delay = tickable.rnd.quick() * 3000 + 3000;
-                            tickable.el.css({
-                                stroke : "rgb(" + tickable.base_colour[0] + "," + tickable.base_colour[1] + "," + tickable.base_colour[2] + ")"
-                            });
-
-                            break;
-                    }
-
-                    tickable.state = (tickable.state + 1) % 6;
-                    tickable.next_change = tick + Math.floor(delay / cycle_ms);
-                }
-            }
-
-            function make_tickable(element, connect) {
-                return {
-                    rnd : MakeRand(element.attr("id")),
-                    next_change : 0,
-                    state : 0,
-                    el : connect.tie.GetFlashElements(element),
-                    base_colour : connect.tie.FlashBaseColour,
-                    Tick(tick, cycle_ms) { return tickable_tick(tick, cycle_ms, this); }
-                };
-            }
-
             this.load = (ret_fn, tickable_fn) => {
-                let tickables = [];
+                let tickable_element_groups = [];
 
                 this.connections.forEach(connect => {
                     let svg = add_svg(null,
@@ -94,7 +44,7 @@ $(document).ready(function() {
 
                     ret_fn(svg);
 
-                    tickables.push(make_tickable(svg, connect));
+                    tickable_element_groups.push(connect.tie.GetFlashElements(svg));
                 });
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
@@ -119,9 +69,12 @@ $(document).ready(function() {
 
                     ret_fn(svg);
 
-                    tickables[idx].el = tickables[idx].el.add(connect.tie.GetFlashElements(svg));
+                    let elements = tickable_element_groups[idx].add(connect.tie.GetFlashElements(svg));
+                    const rseed = svg.attr("id");
+                    let base_colour = connect.tie.FlashBaseColour;
+                    let tickable = setup_link_flash(rseed, elements, base_colour);
 
-                    tickable_fn(tickables[idx]);
+                    tickable_fn(tickable);
                 });
             };
 
@@ -132,6 +85,30 @@ $(document).ready(function() {
 
             PSM.GetDemandLoader(1.0).Register(this);
         };
+
+        function setup_link_flash(rseed, elements, base_colour) {
+            let rnd = MakeRand(rseed);
+            let on = () => elements.css("stroke", "#FFFFFF");
+            let off = () => elements.css("stroke", "#000000");
+            let base_colour_string = "rgb(" + base_colour[0] + "," + base_colour[1] + "," + base_colour[2] + ")";
+            let reset = () => {
+                elements.css("stroke", base_colour_string);
+                return rnd.quick() * 7000 + 3000;
+            };
+
+            return new StateTicker(
+                2000 + rnd.quick() * 500,
+                [
+                    { fun: on, time: 300 },
+                    { fun: off, time: 400 },
+                    { fun: on, time: 130 },
+                    { fun: off, time: 130 },
+                    { fun: on, time: 130 },
+                    { fun: off, time: 130 }
+                ],
+                reset
+            );
+        }
     };
 
     function image_field(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
