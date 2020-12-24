@@ -90,6 +90,14 @@ svg.fill {
     display: block;
 }
 
+svg {
+    pointer-events: none;
+}
+
+a {
+    pointer-events: all;
+}
+
 .background {
     background-color: antiquewhite;
 }

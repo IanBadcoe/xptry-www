@@ -110,6 +110,8 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         }
     }
 
+    let flash_elems = null;
+
     return {
         ForeDraw(insert_element) {
             draw_tie(insert_element, true);
@@ -117,6 +119,10 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
         BackDraw(insert_element) {
             draw_tie(insert_element, false);
         },
+        GetFlashElements(insert_element) {
+            return drawer.GetEdgeElements(insert_element);
+        },
+        FlashBaseColour : drawer.EdgeColour,
         CPoint: transform_point_abs(tile.CPoint)
     };
 }

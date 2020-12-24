@@ -104,54 +104,54 @@ $(document).ready(() => {
             ForeDrawLine(insert_element, p1, p2, override_klass, hilight_rotate, nudge) {
                 let h_klass = override_klass || klass;
                 if (edgestyle) {
-                    add_line(insert_element, p1, p2, edgestyle, h_klass);
+                    add_line(insert_element, p1, p2, edgestyle, h_klass + " strand-edge");
                 }
-                add_line(insert_element, p1, p2, style, h_klass, null, nudge);
+                add_line(insert_element, p1, p2, style, h_klass + " strand-main", null, nudge);
                 if (hilightstyle) {
                     let h_ho = new Coord(hilight_rotate ? hilightoffset.Rotate(hilight_rotate) : hilightoffset);
-                    add_line(insert_element, p1, p2, hilightstyle, h_klass, h_ho, nudge.Mult(2));
+                    add_line(insert_element, p1, p2, hilightstyle, h_klass + " strand-hilight", h_ho, nudge.Mult(2));
                 }
             },
             BackDrawLine(insert_element, p1, p2) {
                 if (edgestyle) {
-                    add_line(insert_element, p1, p2, edgestyle, klass);
+                    add_line(insert_element, p1, p2, edgestyle, klass + " strand-edge");
                 }
-                add_line(insert_element, p1, p2, style, klass);
+                add_line(insert_element, p1, p2, style, klass + " strand-main");
             },
             ForeDrawPolyline(insert_element, points, close, override_klass, hilight_rotate) {
                 let h_klass = override_klass || klass;
                 if (edgestyle) {
-                    add_raw_polyline(insert_element, points, edgestyle, close, h_klass);
+                    add_raw_polyline(insert_element, points, edgestyle, close, h_klass + " strand-edge");
                 }
-                add_raw_polyline(insert_element, points, style, close, h_klass);
+                add_raw_polyline(insert_element, points, style, close, h_klass + " strand-main");
                 if (hilightstyle) {
                     let h_ho = hilight_rotate ? hilightoffset.Rotate(hilight_rotate) : hilightoffset;
-                    add_raw_polyline(insert_element, points, hilightstyle, close, h_klass, h_ho);
+                    add_raw_polyline(insert_element, points, hilightstyle, close, h_klass + " strand-hilight", h_ho);
                 }
             },
             BackDrawPolyline(insert_element, points, close) {
                 if (edgestyle) {
-                    add_raw_polyline(insert_element, points, edgestyle, close, klass);
+                    add_raw_polyline(insert_element, points, edgestyle, close, klass + " strand-edge");
                 }
-                add_raw_polyline(insert_element, points, style, close, klass);
+                add_raw_polyline(insert_element, points, style, close, klass + " strand-main");
             },
             ForeDrawPolylineArc(insert_element, p1, p2, radius, clockwise, largepart, override_klass) {
                 let h_klass = override_klass || klass;
                 let h_radius = radius + this.Width / 2;
                 if (edgestyle) {
-                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, h_klass);
+                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, h_klass + " strand-edge");
                 }
-                add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, h_klass);
+                add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, h_klass + " strand-main");
                 if (hilightstyle) {
-                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, hilightstyle, h_klass, hilightoffset);
+                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, hilightstyle, h_klass + " strand-hilight", hilightoffset);
                 }
             },
             BackDrawPolylineArc(insert_element, p1, p2, radius, clockwise, largepart) {
                 let h_radius = radius + this.Width / 2;
                 if (edgestyle) {
-                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass);
+                    add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass + " strand-edge");
                 }
-                add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass);
+                add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass + " strand-main");
             },
             // "fill" is not a property of the drawer, because none of the other usages are particularly guaranteed to be a closed shape
             // but it can be an option here...
@@ -163,20 +163,32 @@ $(document).ready(() => {
                     h_style.fill = fill;
                 }
                 if (edgestyle) {
-                    add_circle(insert_element, pos, edgestyle, h_klass, h_radius);
+                    add_circle(insert_element, pos, edgestyle, h_klass + " strand-edge", h_radius);
                 }
-                add_circle(insert_element, pos, h_style, h_klass, h_radius);
+                add_circle(insert_element, pos, h_style, h_klass + " strand-main", h_radius);
                 if (hilightstyle) {
-                    add_circle(insert_element, pos, hilightstyle, h_klass, h_radius);
+                    add_circle(insert_element, pos, hilightstyle, h_klass + " strand-hilight", h_radius);
                 }
             },
             BackDrawPolylineCircle(insert_element, p1, p2, radius, clockwise, largepart) {
                 let h_radius = radius + this.Width / 2;
                 if (edgestyle) {
-                    add_circle(insert_element, pos, edgestyle, h_klass, h_radius);
+                    add_circle(insert_element, pos, edgestyle, h_klass, h_radius + " strand-edge");
                 }
-                add_circle(insert_element, pos, style, h_klass, h_radius);
+                add_circle(insert_element, pos, style, h_klass + " strand-main", h_radius);
             },
+            GetEdgeElements(insert_element) {
+                return insert_element.find(".strand-edge");
+            },
+            GetMainElements(insert_element) {
+                return insert_element.find(".strand-main");
+            },
+            GetHilightElements(insert_element) {
+                return insert_element.find(".strand-hilight");
+            },
+            EdgeColour : edgecolour,
+            MainColour : colour,
+            HilightColour : hilightcolour,
             Width: width + edgethick
         };
     }

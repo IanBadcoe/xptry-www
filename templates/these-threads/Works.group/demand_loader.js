@@ -14,6 +14,7 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
     let _external_margin_fraction = 0.5;
     let _fade_in_time_step = 1 / (fade_in_time_ms / cycle_ms);
     let _fade_out_time_step = 1 / (fade_out_time_ms / cycle_ms);
+    let _tick = 0;
 
     if (external_margin_fraction !== null && external_margin_fraction !== undefined) {
         _external_margin_fraction = external_margin_fraction;
@@ -44,8 +45,6 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
             rect = rect.Mult(PSM.Scale);
 
             let add_queue = [];
-            let fade_in_queue = [];
-            let fade_out_queue = [];
             let remove_queue = [];
 
             let ext_rect = rect.ExtendedBy(rect.Dims().Mult(_external_margin_fraction));
@@ -91,6 +90,16 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
             add_queue.forEach(id => this.CreateElement(id));
 
             remove_queue.forEach(id => this.RemoveElement(id));
+
+            for(const key in _existing) {
+                const h_exist = _existing[key];
+
+                if (h_exist.tickables) {
+                    h_exist.tickables.forEach(tickable => tickable.Tick(_tick, _cycle_ms));
+                }
+            }
+
+            _tick++;
         },
         Remove(id) {
             this.RemoveElement(id);
@@ -102,18 +111,26 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
         CreateElement(id) {
             let el = $();
             let idx = 0;
+            let tickables = [];
 
-            _data[id].load(ne => {
+            function get_element(ne) {
                 ne.attr("id", id + "-" + idx);
                 idx++;
                 el = el.add(ne);
-            });
+            }
+
+            function get_tickable(t) {
+                tickables.push(t);
+            }
+
+            _data[id].load(get_element, get_tickable);
 
             _target_element.append(el);
             el.css("opacity", 0);
 
             _existing[id] = {
                 el : el,
+                tickables : tickables.length ? tickables : null,
                 opacity: 0
             };
         },

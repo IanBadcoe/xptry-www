@@ -29,17 +29,73 @@ $(document).ready(function() {
                 }
             });
 
-            this.load = ret_fn => {
-                let svg = add_svg(null,
-                    this.centre,
-                    this.dims.Div(2).Inverse(),
-                    this.dims,
-                    null,
-                    Zs.BehindNodeContent);
+            function tickable_tick(tick, cycle_ms, tickable) {
+                if (!tickable.next_change) {
+                    tickable.next_change = tick + Math.floor(2000 / cycle_ms);
+                } else if (tick >= tickable.next_change) {
+                    let delay = 100;
 
-                this.connections.forEach(connect => connect.tie.BackDraw(svg));
+                    switch(tickable.state) {
+                        case 0:
+                            delay = 200;
+                        case 2: case 4:
+                            tickable.el.css({
+                                stroke : "#FFFFFF"
+                            });
 
-                ret_fn(svg);
+                            break;
+
+                        case 1:
+                            delay = 400;
+                        case 3:
+                            tickable.el.css({
+                                stroke : "rgb(" + tickable.base_colour[0] + "," + tickable.base_colour[1] + "," + tickable.base_colour[2] + ")"
+                            });
+
+                            break;
+
+                        case 5:
+                            delay = tickable.rnd.quick() * 3000 + 3000;
+                            tickable.el.css({
+                                stroke : "rgb(" + tickable.base_colour[0] + "," + tickable.base_colour[1] + "," + tickable.base_colour[2] + ")"
+                            });
+
+                            break;
+                    }
+
+                    tickable.state = (tickable.state + 1) % 6;
+                    tickable.next_change = tick + Math.floor(delay / cycle_ms);
+                }
+            }
+
+            function make_tickable(element, connect) {
+                return {
+                    rnd : MakeRand(element.attr("id")),
+                    next_change : 0,
+                    state : 0,
+                    el : connect.tie.GetFlashElements(element),
+                    base_colour : connect.tie.FlashBaseColour,
+                    Tick(tick, cycle_ms) { return tickable_tick(tick, cycle_ms, this); }
+                };
+            }
+
+            this.load = (ret_fn, tickable_fn) => {
+                let tickables = [];
+
+                this.connections.forEach(connect => {
+                    let svg = add_svg(null,
+                        this.centre,
+                        this.dims.Div(2).Inverse(),
+                        this.dims,
+                        null,
+                        Zs.BehindNodeContent);
+
+                    connect.tie.BackDraw(svg);
+
+                    ret_fn(svg);
+
+                    tickables.push(make_tickable(svg, connect));
+                });
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
                     left: (this.centre.X - torus_width),
@@ -51,16 +107,22 @@ $(document).ready(function() {
 
                 ret_fn(torus_image);
 
-                svg = add_svg(null,
-                    this.centre,
-                    this.dims.Div(2).Inverse(),
-                    this.dims,
-                    null,
-                    Zs.InFrontOfNodeContent);
+                this.connections.forEach((connect, idx) => {
+                    let svg = add_svg(null,
+                        this.centre,
+                        this.dims.Div(2).Inverse(),
+                        this.dims,
+                        null,
+                        Zs.InFrontOfNodeContent);
 
-                this.connections.forEach(connect => connect.tie.ForeDraw(svg));
+                    connect.tie.ForeDraw(svg)
 
-                ret_fn(svg);
+                    ret_fn(svg);
+
+                    tickables[idx].el = tickables[idx].el.add(connect.tie.GetFlashElements(svg));
+
+                    tickable_fn(tickables[idx]);
+                });
             };
 
             this.rect = new Rect(
