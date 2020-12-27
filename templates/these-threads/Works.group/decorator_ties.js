@@ -92,6 +92,8 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
+        let el = $();
+
         if (dest) {
             insert_element = add_svg_link(insert_element, dest);
         }
@@ -99,28 +101,25 @@ function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, 
             tile.FSeqs.forEach(seq => {
                 let points = seq.map(pnt => transform_point(pnt));
 
-                drawer.ForeDrawPolyline(insert_element, points, false);
+                el = el.add(drawer.ForeDrawPolyline(insert_element, points, false));
             });
         } else {
             tile.BSeqs.forEach(seq => {
                 let points = seq.map(pnt => transform_point(pnt));
 
-                drawer.BackDrawPolyline(insert_element, points, false);
+                el = el.add(drawer.BackDrawPolyline(insert_element, points, false));
             });
         }
-    }
 
-    let flash_elems = null;
+        return el;
+    }
 
     return {
         ForeDraw(insert_element) {
-            draw_tie(insert_element, true);
+            return draw_tie(insert_element, true);
         },
         BackDraw(insert_element) {
-            draw_tie(insert_element, false);
-        },
-        GetFlashElements(insert_element) {
-            return drawer.GetEdgeElements(insert_element);
+            return draw_tie(insert_element, false);
         },
         FlashBaseColour : drawer.EdgeColour,
         CPoint: transform_point_abs(tile.CPoint)

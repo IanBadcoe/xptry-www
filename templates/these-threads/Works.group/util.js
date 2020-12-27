@@ -53,6 +53,8 @@ function add_line(el, p1, p2, style, klass, offset, nudge_vec) {
     }
 
     el.append(line);
+
+    return line;
 }
 
 // rather old version now...
@@ -141,6 +143,8 @@ function add_raw_polyline(el, coords, style, closed, klass, offset) {
     }
 
     el.append(line);
+
+    return line;
 }
 
 function add_polyline_scaled(el, start_p, end_p, p_step, interpable, style,

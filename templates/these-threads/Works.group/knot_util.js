@@ -152,7 +152,7 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
 // for transparent_image = true, we size the image to fit in the circle, so the corners just touch the circle
 //   (but in this case we will generally enlarge the image circle over the frame circle, so that it still appears the right size but can spill out of the
 //    frame a little if required)
-function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_image, fill) {
+function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_image) {
     return {
         ForeDraw: (svg) => {
             var id = UniqueIdentifier();

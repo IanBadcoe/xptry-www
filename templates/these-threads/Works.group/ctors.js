@@ -40,11 +40,10 @@ $(document).ready(function() {
                         null,
                         Zs.BehindNodeContent);
 
-                    connect.tie.BackDraw(svg);
+
+                    tickable_element_groups.push(connect.tie.BackDraw(svg));
 
                     ret_fn(svg);
-
-                    tickable_element_groups.push(connect.tie.GetFlashElements(svg));
                 });
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
@@ -65,14 +64,13 @@ $(document).ready(function() {
                         null,
                         Zs.InFrontOfNodeContent);
 
-                    connect.tie.ForeDraw(svg)
+                    let elements = tickable_element_groups[idx].add(connect.tie.ForeDraw(svg));
 
                     ret_fn(svg);
 
-                    let elements = tickable_element_groups[idx].add(connect.tie.GetFlashElements(svg));
                     const rseed = svg.attr("id");
                     let base_colour = connect.tie.FlashBaseColour;
-                    let tickable = setup_link_flash(rseed, elements, base_colour);
+                    let tickable = setup_link_flash(rseed, elements.filter(".strand-edge"), base_colour);
 
                     tickable_fn(tickable);
                 });
@@ -473,7 +471,7 @@ $(document).ready(function() {
                     const drawers = random_cartouche_drawers(rnd);
                     const line_thick = drawers[0].Width;
 
-                    // the line to the cartouche centre is 150 in X and an amount in Y corresponding to the Y/X ratio of its direction
+                    // the line to the cartouche centre is line_gap/2 in X and an amount in Y corresponding to the Y/X ratio of its direction
                     let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
                     let centre = cat_data.position.Add(cat_data.direction.Mult(overall_rad));
                     // the connecting tie sticks out beyond the circle edge
@@ -486,7 +484,7 @@ $(document).ready(function() {
 
                         let cartouche = {
                             rect: new Rect(centre.Sub(half_size), centre.Add(half_size)),
-                            load: ret_fn => {
+                            load: (ret_fn, tickable_fn) => {
                                 let a_rnd = MakeRand(a_seed);
 
                                 // <-- the "-2" in the "circle_rad" params below is wrong for a perfect circle,
