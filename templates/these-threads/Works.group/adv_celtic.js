@@ -369,11 +369,15 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
     });
 
     return {
-        Draw(insert_element) {
+        Draw(insert_element, tickable_fn) {
 //            var start = new Date().getTime();
+            let tickable_elements = []
 
             if (decorators) {
-                decorators.forEach(dec => dec.BackDraw(insert_element));
+                decorators.forEach(dec => {
+                    let els = dec.BackDraw(insert_element);
+                    tickable_elements.push(els);
+                });
             }
 
 //            console.log("xx-" + (new Date().getTime() - start) + " ms");
@@ -417,7 +421,13 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 //            console.log("zz-" + (new Date().getTime() - start) + " ms");
 
             if (decorators) {
-                decorators.forEach(dec => dec.ForeDraw(insert_element));
+                decorators.forEach((dec, idx) => {
+                    let els = tickable_elements[idx].add(dec.ForeDraw(insert_element));
+
+                    if (dec.Tickable && tickable_fn) {
+                        tickable_fn(dec.Tickable(els))
+                    }
+                });
             }
 
 //            console.log("aa-" + (new Date().getTime() - start) + " ms");

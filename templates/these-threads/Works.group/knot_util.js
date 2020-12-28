@@ -44,7 +44,7 @@ function MakeTemplateKnotRadial(tile,
     );
 }
 
-function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle) {
+function MakeCartouche(rad, drawer, decorators, left_dangle, right_dangle) {
     const steps = 15;
     const intermediate_frac = 0.5;
     const intermediate_offset_up = 1.8;
@@ -140,7 +140,7 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle) 
         null, decorators
     );
 
-    knot.Draw(svg);
+    return knot;
 }
 
 // the image is a square, drawing in a circle, so there is come choice about how to handle that
@@ -180,18 +180,22 @@ function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_imag
 
         frame_scale = frame_scale || 1.0;
 
+        let el = $();
+
         if (drawer) {
             let h_rad = rad * frame_scale;
-            drawer.ForeDrawPolylineCircle(svg, pos, h_rad, null, "rgb(64,64,64)");
+            el = el.add(drawer.ForeDrawPolylineCircle(svg, pos, h_rad, null, "rgb(64,64,64)"));
         }
 
         // not returning the pattern at the moment, but if any caller ever needs it, we could...
-        return add_circle(svg, pos, null, null, rad)
+        el = el.add(add_circle(svg, pos, null, null, rad)
             .css({
                 stroke: "none"
             })
             .attr({
                 fill: "url(#" + id + ")"
-            });
+            }));
+
+        return el;
     }
 }

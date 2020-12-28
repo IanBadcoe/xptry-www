@@ -1,6 +1,29 @@
 "use strict";
 
 $(document).ready(function() {
+    let setup_link_flash = function(rnd, elements, base_colour) {
+        let on = () => elements.css("stroke", "#FFFFFF");
+        let off = () => elements.css("stroke", "#000000");
+        let base_colour_string = "rgb(" + base_colour[0] + "," + base_colour[1] + "," + base_colour[2] + ")";
+        let reset = () => {
+            elements.css("stroke", base_colour_string);
+            return rnd.quick() * 7000 + 3000;
+        };
+
+        return new StateTicker(
+            2000 + rnd.quick() * 500,
+            [
+                { fun: on, time: 300 },
+                { fun: off, time: 400 },
+                { fun: on, time: 130 },
+                { fun: off, time: 130 },
+                { fun: on, time: 130 },
+                { fun: off, time: 130 }
+            ],
+            reset
+        );
+    }
+
     function home() {
         return function() {
             let torus_width = this.dims.X * 0.39;
@@ -62,8 +85,8 @@ $(document).ready(function() {
                     null,
                     Zs.InFrontOfNodeContent);
 
-                const rseed = this.url_title;
-                let flash_rnd = MakeRand(rseed);
+                const flash_rseed = this.url_title + "-flash";
+                let flash_rnd = MakeRand(flash_rseed);
 
                 this.connections.forEach((connect, idx) => {
                     let elements = tickable_element_groups[idx].add(connect.tie.ForeDraw(svg2));
@@ -84,29 +107,6 @@ $(document).ready(function() {
 
             PSM.GetDemandLoader(1.0).Register(this);
         };
-
-        function setup_link_flash(rnd, elements, base_colour) {
-            let on = () => elements.css("stroke", "#FFFFFF");
-            let off = () => elements.css("stroke", "#000000");
-            let base_colour_string = "rgb(" + base_colour[0] + "," + base_colour[1] + "," + base_colour[2] + ")";
-            let reset = () => {
-                elements.css("stroke", base_colour_string);
-                return rnd.quick() * 7000 + 3000;
-            };
-
-            return new StateTicker(
-                2000 + rnd.quick() * 500,
-                [
-                    { fun: on, time: 300 },
-                    { fun: off, time: 400 },
-                    { fun: on, time: 130 },
-                    { fun: off, time: 130 },
-                    { fun: on, time: 130 },
-                    { fun: off, time: 130 }
-                ],
-                reset
-            );
-        }
     };
 
     function image_field(density, min_scale, max_scale, front_edge_perspective_distance, aspect) {
@@ -363,15 +363,23 @@ $(document).ready(function() {
                     Drawers[["cartouche_line1", "cartouche_line2", "cartouche_line3"][idx]]];
         }
 
-        function add_author_images(article, rad, decorators, drawer) {
+        function add_author_images(article, rad, decorators, drawer, flash_rnd) {
             const angle_step = 30 * Math.PI / 180.0;
             let angle = -angle_step * (article.authors.length);
 
             article.authors.forEach((author) => {
                 let pos = new Coord(Math.sin(angle) * rad, Math.cos(angle) * rad);
                 let d = MakeFramedCircle(pos, author.photo, rad / 4, drawer, 1);
-                decorators.push(d);
 
+                let base_colour = drawer.EdgeColour;
+
+                let link_flash_cb = (elements) => {
+                    return setup_link_flash(flash_rnd, elements.filter(".strand-edge"), base_colour);
+                };
+
+                d.Tickable = link_flash_cb;
+
+                decorators.push(d);
                 angle += angle_step;
             });
         }
@@ -407,6 +415,9 @@ $(document).ready(function() {
             const dangle_min = 0;
 
             const keys = Object.keys(articles);
+
+            const flash_rseed = url_title + "-flash";
+            let flash_rnd = MakeRand(flash_rseed);
 
             for (let i = 0; i <= num_articles; i++) {
                 // on pass zero we just draw the first hanger, on subsequent passes we fill in wire caternaries and catouches for articles
@@ -511,7 +522,7 @@ $(document).ready(function() {
 
                                 let decorators = [ tie1, tie2 ];
 
-                                add_author_images(article, circle_rad * 0.85, decorators, drawers[1]);
+                                add_author_images(article, circle_rad * 0.85, decorators, drawers[1], flash_rnd);
 
                                 add_charms(article, circle_rad * 0.95, decorators, drawers[1]);
 
@@ -521,8 +532,10 @@ $(document).ready(function() {
                                     decorators.push(main_image);
                                 }
 
-                                MakeCartouche(svg, circle_rad, drawers[0], decorators,
+                                let knot = MakeCartouche(circle_rad, drawers[0], decorators,
                                     a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min);
+
+                                knot.Draw(svg, tickable_fn);
 
                                 ret_fn(svg);
                             },
