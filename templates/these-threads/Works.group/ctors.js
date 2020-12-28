@@ -515,9 +515,14 @@ $(document).ready(function() {
 
                                 add_charms(article, circle_rad * 0.95, decorators, drawers[1]);
 
+                                if (image) {
+                                    let main_image = MakeFramedCircle(new Coord(0, 0), image, circle_rad - drawers[0].Width / 4, null, 1.0, false, true);
+
+                                    decorators.push(main_image);
+                                }
+
                                 MakeCartouche(svg, circle_rad, drawers[0], decorators,
-                                    a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min,
-                                    image);
+                                    a_rnd.quick() * (dangle_max - dangle_min) + dangle_min, a_rnd.quick() * (dangle_max - dangle_min) + dangle_min);
 
                                 ret_fn(svg);
                             },

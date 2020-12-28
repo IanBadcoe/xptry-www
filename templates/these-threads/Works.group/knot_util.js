@@ -44,7 +44,7 @@ function MakeTemplateKnotRadial(tile,
     );
 }
 
-function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, image) {
+function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle) {
     const steps = 15;
     const intermediate_frac = 0.5;
     const intermediate_offset_up = 1.8;
@@ -55,10 +55,6 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
 
     let line_thick = drawer.FullWidth;
     let end_pos = Math.asin(line_thick * knot_width / rad);
-
-    if (image) {
-        MakeFramedCircle(new Coord(0, 0), image, rad - drawer.Width / 4).ForeDraw(svg);
-    }
 
     // x is distance across the ends of the circle, measured -1 -> 0 -> 1 (left, centre, right)
     // y is up down offset measured in line_thick
@@ -152,43 +148,50 @@ function MakeCartouche(svg, rad, drawer, decorators, left_dangle, right_dangle, 
 // for transparent_image = true, we size the image to fit in the circle, so the corners just touch the circle
 //   (but in this case we will generally enlarge the image circle over the frame circle, so that it still appears the right size but can spill out of the
 //    frame a little if required)
-function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_image) {
+function MakeFramedCircle(pos, image, rad, drawer, frame_scale, transparent_image, back_draw) {
     return {
         ForeDraw: (svg) => {
-            var id = UniqueIdentifier();
-            add_defs(svg).append(
-                add_pattern(null, {
-                    id: id,
-                    height: "100%",
-                    width: "100%",
-                    patternContentUnits: "objectBoundingBox"
-                }).append(add_image(null,
-                    {
-                        x: !transparent_image ? 0 : 0.146,
-                        y: !transparent_image ? 0 : 0.146,
-                        height: !transparent_image ? 1 : 0.707,
-                        width: !transparent_image ? 1 : 0.707,
-                        preserveAspectRatio: transparent_image ? "xMidYMid meet" : "xMidYMid slice",
-                        "href" : image
-                    }
-                ))
-            );
-
-            frame_scale = frame_scale || 1.0;
-
-            if (drawer) {
-                let h_rad = rad * frame_scale;
-                drawer.ForeDrawPolylineCircle(svg, pos, h_rad, null, "rgb(64,64,64)");
-            }
-
-            add_circle(svg, pos, null, null, rad)
-                .css({
-                    stroke: "none"
-                })
-                .attr({
-                    fill: "url(#" + id + ")"
-                });
+            return !back_draw ? draw_circle(svg) : $();
         },
-        BackDraw: () => {}
+        BackDraw: (svg) => {
+            return back_draw ? draw_circle(svg) : $();
+        }
     };
+
+    function draw_circle(svg) {
+        var id = UniqueIdentifier();
+        add_defs(svg).append(
+            add_pattern(null, {
+                id: id,
+                height: "100%",
+                width: "100%",
+                patternContentUnits: "objectBoundingBox"
+            }).append(add_image(null,
+                {
+                    x: !transparent_image ? 0 : 0.146,
+                    y: !transparent_image ? 0 : 0.146,
+                    height: !transparent_image ? 1 : 0.707,
+                    width: !transparent_image ? 1 : 0.707,
+                    preserveAspectRatio: transparent_image ? "xMidYMid meet" : "xMidYMid slice",
+                    "href": image
+                }
+            ))
+        );
+
+        frame_scale = frame_scale || 1.0;
+
+        if (drawer) {
+            let h_rad = rad * frame_scale;
+            drawer.ForeDrawPolylineCircle(svg, pos, h_rad, null, "rgb(64,64,64)");
+        }
+
+        // not returning the pattern at the moment, but if any caller ever needs it, we could...
+        return add_circle(svg, pos, null, null, rad)
+            .css({
+                stroke: "none"
+            })
+            .attr({
+                fill: "url(#" + id + ")"
+            });
+    }
 }
