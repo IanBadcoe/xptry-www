@@ -30,21 +30,20 @@ $(document).ready(function() {
             });
 
             this.load = (ret_fn, tickable_fn) => {
+                let svg = add_svg(null,
+                    this.centre,
+                    this.dims.Div(2).Inverse(),
+                    this.dims,
+                    null,
+                    Zs.BehindNodeContent);
+
                 let tickable_element_groups = [];
 
                 this.connections.forEach(connect => {
-                    let svg = add_svg(null,
-                        this.centre,
-                        this.dims.Div(2).Inverse(),
-                        this.dims,
-                        null,
-                        Zs.BehindNodeContent);
-
-
                     tickable_element_groups.push(connect.tie.BackDraw(svg));
-
-                    ret_fn(svg);
                 });
+
+                ret_fn(svg);
 
                 let torus_image = $("<img src='/upload/resources/infrastructure/Home_Knot.png'>").css({
                     left: (this.centre.X - torus_width),
@@ -56,24 +55,26 @@ $(document).ready(function() {
 
                 ret_fn(torus_image);
 
+                let svg2 = add_svg(null,
+                    this.centre,
+                    this.dims.Div(2).Inverse(),
+                    this.dims,
+                    null,
+                    Zs.InFrontOfNodeContent);
+
+                const rseed = this.url_title;
+                let flash_rnd = MakeRand(rseed);
+
                 this.connections.forEach((connect, idx) => {
-                    let svg = add_svg(null,
-                        this.centre,
-                        this.dims.Div(2).Inverse(),
-                        this.dims,
-                        null,
-                        Zs.InFrontOfNodeContent);
+                    let elements = tickable_element_groups[idx].add(connect.tie.ForeDraw(svg2));
 
-                    let elements = tickable_element_groups[idx].add(connect.tie.ForeDraw(svg));
-
-                    ret_fn(svg);
-
-                    const rseed = svg.attr("id");
                     let base_colour = connect.tie.FlashBaseColour;
-                    let tickable = setup_link_flash(rseed, elements.filter(".strand-edge"), base_colour);
+                    let tickable = setup_link_flash(flash_rnd, elements.filter(".strand-edge"), base_colour);
 
                     tickable_fn(tickable);
                 });
+
+                ret_fn(svg2);
             };
 
             this.rect = new Rect(
@@ -84,8 +85,7 @@ $(document).ready(function() {
             PSM.GetDemandLoader(1.0).Register(this);
         };
 
-        function setup_link_flash(rseed, elements, base_colour) {
-            let rnd = MakeRand(rseed);
+        function setup_link_flash(rnd, elements, base_colour) {
             let on = () => elements.css("stroke", "#FFFFFF");
             let off = () => elements.css("stroke", "#000000");
             let base_colour_string = "rgb(" + base_colour[0] + "," + base_colour[1] + "," + base_colour[2] + ")";
