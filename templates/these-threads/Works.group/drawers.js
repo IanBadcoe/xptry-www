@@ -171,9 +171,9 @@ $(document).ready(() => {
 
                 let h_radius = radius + this.Width / 2;
                 if (edgestyle) {
-                    ell.add(add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass + " strand-edge"));
+                    el.add(add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, edgestyle, klass + " strand-edge"));
                 }
-                ell.add(add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass + " strand-main"));
+                el.add(add_arc(insert_element, p1, p2, h_radius, clockwise, largepart, style, klass + " strand-main"));
 
                 return el;
             },
@@ -191,7 +191,7 @@ $(document).ready(() => {
                 if (edgestyle) {
                     el = el.add(add_circle(insert_element, pos, edgestyle, h_klass + " strand-edge", h_radius));
                 }
-                ell.add(add_circle(insert_element, pos, h_style, h_klass + " strand-main", h_radius));
+                el.add(add_circle(insert_element, pos, h_style, h_klass + " strand-main", h_radius));
                 if (hilightstyle) {
                     el = el.add(add_circle(insert_element, pos, hilightstyle, h_klass + " strand-hilight", h_radius));
                 }
