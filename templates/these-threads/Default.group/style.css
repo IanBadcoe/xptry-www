@@ -54,11 +54,11 @@ body, .outer {
     overflow: hidden;
 }
 
-div.hud-noclick {
+div.noclick {
     pointer-events: none;
 }
 
-div.hud-click {
+div.click {
     pointer-events: auto;
 }
 

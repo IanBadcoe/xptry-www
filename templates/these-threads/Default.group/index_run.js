@@ -19,6 +19,6 @@ $(document).ready(() => {
 
     SiteNav.Init("home-knot");
 
-    $(".hud-click").css("z-index", Zs.UI);
-    $(".hud-noclick").css("z-index", Zs.UI);
+    $(".click").css("z-index", Zs.UI);
+    $(".noclick").css("z-index", Zs.UI);
 });

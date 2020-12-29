@@ -45,7 +45,7 @@ $(document).ready(() => {
     let rect = active_rect();
     let dims = rect.Dims();
 
-    let hud = $(".hud-noclick");
+    let hud = $(".noclick");
 
     let div = $("<div></div>")
         .css({
