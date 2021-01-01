@@ -39,7 +39,7 @@ $(document).ready(function() {
                             node.centre,
                             other_point.Sub(node.centre),
                             torus_width * 0.695, torus_width * 0.3, connect.path.drawer,
-                            "#" + dest.url_title);
+                            "#thr=" + dest.url_title);
 
                         // recalculated by the above...
                         return connect.tie.CPoint;

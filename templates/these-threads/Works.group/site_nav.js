@@ -15,6 +15,52 @@ $(document).ready(function() {
         $("title").html(title);
     }
 
+    // we define a path as:
+    // thr=[thread name]&art=[article name]&[options]
+    //
+    // for the moment I think the thread-name is always there (but here will handle it not being, anyway)
+    // article-name is optional, and the only option is "open" which tells us to open the article when we get to it
+    //
+    // valid variations:
+    // thr=[thread name]&art=[article name]&open
+    // thr=[thread name]&open
+    //
+    // in the actual URL this is presented as:
+    // https://blah.blah/#thr=[thread name]&art=[article name]&open
+    //  so it is all the fragment really.  It might be better to use expression engine routes for this, but as they simply do not work in any
+    //  test I can think to make I'll have to skip that...
+    function parse_path(path) {
+        let thread = null;
+        let article = null;
+        let options = {};
+
+        var bits = path.split("&");
+
+        if (bits.length) {
+            if (bits[0].startsWith("thr=")) {
+                thread = bits[0].split("=")[1];
+            }
+
+            if (bits.length > 1) {
+                if (bits[1].startsWith("art=")) {
+                    article = bits[1].split("=")[1];
+                }
+
+                bits.slice(2).forEach(bit => {
+                    let bbits = bit.split("=");
+
+                    if (bbits.length = 1) {
+                        options[bbits[0]] = true;
+                    } else if (bbits.length = 2) {
+                        options[bbits[0]] = bbits[1];
+                    }
+                });
+            }
+        }
+
+        return [ thread, article, options ];
+    }
+
     function fix_ctor(obj) {
         let ctor_string = obj.ctor;
 
@@ -345,7 +391,9 @@ $(document).ready(function() {
         SmartNav(where, teleport) {
             where = where || this.DefaultLocation;
 
-            let dest_node = _threads[where] || _decors[where];
+            let [thread, article, options] = parse_path(where);
+
+            let dest_node = _threads[thread] || _decors[thread];
 
             if (!dest_node)
                 return;
@@ -396,9 +444,11 @@ $(document).ready(function() {
             let url = location.href;
             let sp = url.lastIndexOf("#");
 
+            let parsed = new URL(url);
+
             // if we don't have a location, set the home_id
             if (sp === -1) {
-                url = url + "#" + home_id
+                url = url + "#thr=" + home_id
                 sp = url.lastIndexOf("#");
             }
 
