@@ -103,6 +103,7 @@ $(document).ready(() => {
         return {
             ForeDrawLine(insert_element, p1, p2, override_klass, hilight_rotate, nudge) {
                 let el = $();
+                nudge = nudge || new Coord(0,0);
 
                 let h_klass = override_klass || klass;
                 if (edgestyle) {
@@ -287,9 +288,9 @@ $(document).ready(() => {
         ),
 
         wire : MakePolylineDrawer(
-            1, [0, 0, 0],
+            3, [0, 0, 0],
             0, [0,0,0],
-            0, [0,0,0], [0,0],
+            1, [255,255,255], [0,0],
             "strand"
         ),
         debugwire : MakePolylineDrawer(
