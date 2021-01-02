@@ -290,7 +290,7 @@ $(document).ready(() => {
         wire : MakePolylineDrawer(
             3, [0, 0, 0],
             0, [0,0,0],
-            1, [255,255,255], [0,0],
+            1, [196,196,196], [0,0],
             "strand"
         ),
         debugwire : MakePolylineDrawer(
