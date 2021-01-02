@@ -468,7 +468,7 @@ $(document).ready(function() {
                             });
                             add_wrap_rounds(svg, p2.Y, p2.Y + strand_height_offset, p2.X, img_row.swidth * scale4height, Drawers["wire"], c_rnd);
                             if (i === 1) {
-                                add_wrap_rounds(svg, p1.Y, p1.Y, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], c_rnd);
+                                add_wrap_rounds(svg, p1.Y, p1.Y + 7, p1.X + prev_row.swidth * scale4height, prev_row.swidth * scale4height, Drawers["wire"], c_rnd);
                             }
                             ret_fn(svg);
                         },
@@ -499,7 +499,7 @@ $(document).ready(function() {
                             load: (ret_fn, tickable_fn) => {
                                 let a_rnd = MakeRand(a_seed);
 
-                                let dest1 = i > 0 ? "#thr=" + this.url_title + "&art=" + (i - 1) : null;
+                                let dest1 = i > 1 ? "#thr=" + this.url_title + "&art=" + (i - 1) : null;
                                 let dest2 = i < num_articles ? "#thr=" + this.url_title + "&art=" + (i + 1) : null;
 
                                 // <-- the "-2" in the "circle_rad" params below is wrong for a perfect circle,
