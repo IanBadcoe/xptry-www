@@ -39,7 +39,7 @@ $(document).ready(function() {
                             node.centre,
                             other_point.Sub(node.centre),
                             torus_width * 0.695, torus_width * 0.3, connect.path.drawer,
-                            "#thr=" + dest.url_title);
+                            "#thr=" + dest.url_title + "&art=latest");
 
                         // recalculated by the above...
                         return connect.tie.CPoint;
@@ -274,15 +274,16 @@ $(document).ready(function() {
 
     function horz_thread (height, width_step, strip_offset_frac) {
         return function() {
+            this.get_approx_article_centre = function(idx) {
+                return this.rect.BL.Add(new Coord((idx + 0.5) * width_step, -height / 3));
+            }
+
             let num = this.num_articles || 0;
 
             let width = (num + 2) * width_step;
 
             let tl = new Coord(this.centre);
             tl.Y -= height / 2;
-
-            // let conn_h_step = height / (this.connections.length + 1);
-            // let curr_conn_h_offset = conn_h_step / 2;
 
             this.connections.forEach(connect => {
                 let node = this;
@@ -484,7 +485,7 @@ $(document).ready(function() {
 
                     // the line to the cartouche centre is line_gap/2 in X and an amount in Y corresponding to the Y/X ratio of its direction
                     let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
-                    let centre = cat_data.position.Add(cat_data.direction.Mult(overall_rad));
+                    const centre = cat_data.position.Add(cat_data.direction.Mult(overall_rad));
                     // the connecting tie sticks out beyond the circle edge
                     let circle_rad = overall_rad - line_thick * 1.25;
 

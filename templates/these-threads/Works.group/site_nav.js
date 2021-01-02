@@ -5,10 +5,24 @@ $(document).ready(function() {
     let _threads;
     let _paths;
 
-    function get_pos_to_centre_node(node) {
+    function get_pos_to_centre_node(node, article) {
         let inner_half_size = new Coord(innerWidth / 2, innerHeight / 2).Mult(PSM.Scale);
 
-        return inner_half_size.Sub(node.centre);
+        let pos = node.centre;
+
+        if (article) {
+            if (article == "latest") {
+                article = node.num_articles;
+            } else {
+                article = parseInt(article);
+            }
+
+            if (node.get_approx_article_centre) {
+                pos = node.get_approx_article_centre(article);
+            }
+        }
+
+        return inner_half_size.Sub(pos);
     }
 
     function fix_title(title) {
@@ -16,17 +30,17 @@ $(document).ready(function() {
     }
 
     // we define a path as:
-    // thr=[thread name]&art=[article name]&[options]
+    // thr=[thread name]&art=[article index]&[options]
     //
     // for the moment I think the thread-name is always there (but here will handle it not being, anyway)
-    // article-name is optional, and the only option is "open" which tells us to open the article when we get to it
+    // article-index is optional, and the only option is "open" which tells us to open the article when we get to it
     //
     // valid variations:
-    // thr=[thread name]&art=[article name]&open
+    // thr=[thread name]&art=[article index]&open
     // thr=[thread name]&open
     //
     // in the actual URL this is presented as:
-    // https://blah.blah/#thr=[thread name]&art=[article name]&open
+    // https://blah.blah/#thr=[thread name]&art=[article index]&open
     //  so it is all the fragment really.  It might be better to use expression engine routes for this, but as they simply do not work in any
     //  test I can think to make I'll have to skip that...
     function parse_path(path) {
@@ -331,7 +345,7 @@ $(document).ready(function() {
 
             this.SmartNav(where);
         },
-        SmartScroll(node, chain_from, first, last) {
+        SmartScroll(node, chain_from, first, last, article) {
             if (!node) {
                 return chain_from;
             }
@@ -347,7 +361,7 @@ $(document).ready(function() {
                     parseFloat(sc.css("top"))
                 );
 
-                let p = get_pos_to_centre_node(node);
+                let p = get_pos_to_centre_node(node, article);
 
                 let dp = old_pos.Sub(p);
                 let dist = dp.Length();
@@ -378,10 +392,10 @@ $(document).ready(function() {
                 ).promise();
             });
         },
-        Teleport(node) {
+        Teleport(node, article) {
             let sc = PSM.GetElement(1.0);
 
-            let p = get_pos_to_centre_node(node);
+            let p = get_pos_to_centre_node(node, article);
 
             sc.css({
                 left: p.X,
@@ -400,22 +414,22 @@ $(document).ready(function() {
 
             let steps = null;
 
-            if (this.CurrentNode) {
-                let path = _paths.find(x => x.from === this.CurrentNode && x.to === dest_node );
-
-                if (path) {
-                    steps = path.waypoints;
-                } else {
-                    // look for reverse of route
-                    path = _paths.find(x => x.to === this.CurrentNode && x.from === dest_node );
+            if (!teleport) {
+                if (this.CurrentNode) {
+                    let path = _paths.find(x => x.from === this.CurrentNode && x.to === dest_node );
 
                     if (path) {
-                        steps = path.waypoints.slice().reverse();
+                        steps = path.waypoints;
+                    } else {
+                        // look for reverse of route
+                        path = _paths.find(x => x.to === this.CurrentNode && x.from === dest_node );
+
+                        if (path) {
+                            steps = path.waypoints.slice().reverse();
+                        }
                     }
                 }
-            }
 
-            if (!teleport) {
                 let promise = null;
                 let first = true;
 
@@ -427,9 +441,9 @@ $(document).ready(function() {
                 }
 
                 fix_title(dest_node.title);
-                this.SmartScroll(dest_node, promise, first, true);
+                this.SmartScroll(dest_node, promise, first, true, article);
             } else {
-                this.Teleport(dest_node);
+                this.Teleport(dest_node, article);
             }
 
             this.CurrentNode = dest_node;
