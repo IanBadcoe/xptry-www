@@ -343,7 +343,7 @@ $(document).ready(function() {
                         let strip_height = height * (1 - strip_offset_frac * 2);
                         let scale4height = strip_height / max_image_height;
 
-                        make_anchors_and_thread(scale4height, image_sets["Anchor"],
+                        make_anchors_and_thread.call(this, scale4height, image_sets["Anchor"],
                             this.num_articles, this.rect.BL, this.url_title,
                             rnd,
                             image_sets["Furniture"],
@@ -499,17 +499,22 @@ $(document).ready(function() {
                             load: (ret_fn, tickable_fn) => {
                                 let a_rnd = MakeRand(a_seed);
 
+                                let dest1 = i > 0 ? "#thr=" + this.url_title + "&art=" + (i - 1) : null;
+                                let dest2 = i < num_articles ? "#thr=" + this.url_title + "&art=" + (i + 1) : null;
+
                                 // <-- the "-2" in the "circle_rad" params below is wrong for a perfect circle,
                                 // but I've reduced the number of points to make things fast which makes us a touch narrower where the catenary hits
                                 // without the -2 we are perfect if the # points is turned up enough
                                 let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                     new Coord(0, 0),
                                     cat_data.direction.Inverse(),
-                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire);
+                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
+                                    dest1);
                                 let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
                                     new Coord(0, 0),
                                     cat_data.direction.MirrorX().Inverse(),
-                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire);
+                                    circle_rad - line_thick / 2 - 2, line_thick, Drawers.wire,
+                                    dest2);
 
                                 let padded_half_size = half_size.Mult(1.5);
 
