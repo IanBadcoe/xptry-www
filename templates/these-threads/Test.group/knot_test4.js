@@ -19,28 +19,46 @@ $(document).ready(() => {
 
     let dl1 = PSM.GetDemandLoader(1.0);
 
-    function setup_cartouche() {
+    function setup_corner() {
         var start = new Date().getTime();
 
         let svg = add_svg(null,
             new Coord(300, 400),
-            new Coord(-250, -350), new Coord(500, 700));
+            new Coord(-300, -400), new Coord(600, 800));
 
-        let drawer = Drawers["cartouche2"];
-        let line_thick = drawer.Width;
+        let end = 60;
+        let inner = 30;
+        let outer1 = -30
+        let outer2 = -60
 
-        let tie1 = MakeRadialTieFromTargetPoint(Ties.radial1,
-            new Coord(0, 0),
-            new Coord(-1, -0.1),
-            195 - line_thick / 2 - 2, line_thick, Drawers.wire,
-            "#bob");
-        let tie2 = MakeRadialTieFromTargetPoint(Ties.radial1,
-            new Coord(0, 0),
-            new Coord(1, -0.1),
-            195 - line_thick / 2 - 2, line_thick, Drawers.wire,
-            "#bob2");
+        let knot = MakeCKnot(
+            [
+                {
+                    Drawer: Drawers["cartouche2"],
+                    Step: 5,
+                    Points: [ [0, 400], [0, end], [0, inner], [0, 0], [inner, 0], [end, 0], [400,0], ],
+                    Open: true,
+                    Order: 1
+                },
+                {
+                    Drawer: Drawers["cartouche3"],
+                    Step: 5,
+                    Points: [
+                        [outer2, inner], [outer1, inner], [0, inner], [inner, inner], [end, inner],
+                        [end, 0],
+                        [end, outer1], [inner, outer1],
+                        [outer1, outer1],
+                        [outer1, inner], [outer1, end],
+                        [0, end],
+                        [inner, end], [inner, inner], [inner, 0], [inner, outer1], [inner, outer2],
+                        [outer2, outer2],
+                    ],
+                    Open: false,
+                    Order: 2
+                },
+            ]
+        );
 
-        let knot = MakeCartouche(195, drawer, [tie1, tie2], 25, 25);
         knot.Draw(svg);
 
         console.log(new Date().getTime() - start + " ms");
@@ -50,7 +68,7 @@ $(document).ready(() => {
 
     dl1.Register({
         rect: new Rect(new Coord(0, 0), new Coord(420, 500)),
-        load: ret_fn => ret_fn(setup_cartouche()),
+        load: ret_fn => ret_fn(setup_corner()),
         url_title: "xx"
     });
 });
