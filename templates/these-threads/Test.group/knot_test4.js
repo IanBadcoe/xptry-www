@@ -30,6 +30,7 @@ $(document).ready(() => {
         let inner = 30;
         let outer1 = -30
         let outer2 = -60
+        let wide = -90
 
         let knot = MakeCKnot(
             [
@@ -38,7 +39,7 @@ $(document).ready(() => {
                     Step: 5,
                     Points: [ [0, 400], [0, end], [0, inner], [0, 0], [inner, 0], [end, 0], [400,0], ],
                     Open: true,
-                    Order: 1
+                    Order: 2
                 },
                 {
                     Drawer: Drawers["cartouche3"],
@@ -51,10 +52,10 @@ $(document).ready(() => {
                         [outer1, inner], [outer1, end],
                         [0, end],
                         [inner, end], [inner, inner], [inner, 0], [inner, outer1], [inner, outer2],
-                        [outer2, outer2],
+                        [outer2, outer2], [wide, outer2], [wide, wide], [outer2, wide], [outer2, outer2], 
                     ],
                     Open: false,
-                    Order: 2
+                    Order: 3
                 },
             ]
         );
