@@ -55,7 +55,7 @@ $(document).ready(() => {
                     // let d_el = $("." + d_klass);
                     // d_el.children(".region").text("left: " + rect.L + ", top: " + rect.T);
 
-                    return rect;
+                    return rect.Mult(_scale);
                 }
 
                 let dl_margin = /* _test_scale ? 0.0 : */ 0.5;
@@ -76,6 +76,12 @@ $(document).ready(() => {
         },
         SetScale(val) {
             _scale = val;
+        },
+        GetPos() {
+            return DraggablePersp.GetPos();
+        },
+        SetPos(pos) {
+            DraggablePersp.SetPos(pos);
         }
     }
 });

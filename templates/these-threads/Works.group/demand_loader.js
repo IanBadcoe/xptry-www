@@ -42,8 +42,6 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
             _force_processing = true;
         },
         Update(rect) {
-            rect = rect.Mult(PSM.Scale);
-
             let add_queue = [];
             let remove_queue = [];
 

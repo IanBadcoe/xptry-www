@@ -55,6 +55,17 @@ $(document).ready(() => {
         return false;
     }
 
+    function set_pos(main_pos) {
+        _main_target.css({
+            left: main_pos.X,
+            top: main_pos.Y
+        });
+
+        refresh_secondary_targets();
+
+        $(".hack").toggle();
+    }
+
     function mousemove(e) {
         if (_md) {
             let move = new Coord(e.pageX, e.pageY).Sub(_click_pos);
@@ -63,14 +74,7 @@ $(document).ready(() => {
             {
                 let main_pos = _start_pos.Add(move.Mult(PSM.Scale));
 
-                _main_target.css({
-                    left: main_pos.X,
-                    top: main_pos.Y
-                });
-
-                refresh_secondary_targets();
-
-                $(".hack").toggle();
+                set_pos(main_pos);
             }
 
             return false;
@@ -153,6 +157,16 @@ $(document).ready(() => {
         // takes a rect on the _main_target plane and converts it to one on the given dist plane
         TransformRect(dist, rect) {
             return new Rect(rect.TL.Mult(dist), rect.BR.Mult(dist));
+        },
+        SetPos(pos) {
+            set_pos(pos);
+        },
+        GetPos() {
+            let pos = new Coord(
+                parseFloat(_main_target.css("left")),
+                parseFloat(_main_target.css("top"))
+            );
+            return pos;
         }
     };
 });
