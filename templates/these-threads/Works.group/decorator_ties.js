@@ -11,6 +11,8 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
+        let el = $();
+
         let rad_dir = new Coord(Math.sin(_ang), -Math.cos(_ang));
         let tang_dir = rad_dir.Rot90();
 
@@ -26,23 +28,25 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
             _tile.FSeqs.forEach(seq => {
                 let points = seq.map(pnt => transform_point(pnt));
 
-                _drawer.ForeDrawPolyline(insert_element, points, false);
+                el = el.add(_drawer.ForeDrawPolyline(insert_element, points, false));
             });
         } else {
             _tile.BSeqs.forEach(seq => {
                 let points = seq.map(pnt => transform_point(pnt));
 
-                _drawer.BackDrawPolyline(insert_element, points, false);
+                el = el.add(_drawer.BackDrawPolyline(insert_element, points, false));
             });
         }
+
+        return el;
     }
 
     return {
         ForeDraw(insert_element) {
-            draw_tie(insert_element, true);
+            return draw_tie(insert_element, true);
         },
         BackDraw(insert_element) {
-            draw_tie(insert_element, false);
+            return draw_tie(insert_element, false);
         }
     };
 }
