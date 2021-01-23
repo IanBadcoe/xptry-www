@@ -113,17 +113,17 @@ window.CreateDemandLoader = function(target_element, cycle_ms, rect_fun, externa
             let idx = 0;
             let tickables = [];
 
-            function get_element(ne) {
+            function return_element(ne) {
                 ne.attr("id", id + "-" + idx);
                 idx++;
                 el = el.add(ne);
             }
 
-            function get_tickable(t) {
+            function return_tickable(t) {
                 tickables.push(t);
             }
 
-            _data[id].load(get_element, get_tickable);
+            _data[id].load(return_element, return_tickable);
 
             _target_element.append(el);
             el.css("opacity", 0);

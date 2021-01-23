@@ -94,7 +94,7 @@ $(document).ready(function() {
                     let base_colour = connect.tie.FlashBaseColour;
                     let tickable = setup_link_flash(flash_rnd, elements.filter(".strand-edge"), base_colour);
 
-                    if (tickable_fn) {
+                    if (tickable_fn && tickable) {
                         tickable_fn(tickable);
                     }
                 });
