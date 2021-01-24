@@ -31,6 +31,7 @@ $(document).ready(() => {
         let outer1 = -30
         let outer2 = -60
         let wide = -90
+        let squeeze_corner = 1;
 
         let knot = MakeCKnot(
             [
@@ -52,7 +53,7 @@ $(document).ready(() => {
                         [outer1, inner], [outer1, end],
                         [0, end],
                         [inner, end], [inner, inner], [inner, 0], [inner, outer1], [inner, outer2],
-                        [outer2, outer2], [wide, outer2], [wide, wide], [outer2, wide], [outer2, outer2], 
+                        [outer2 * squeeze_corner, outer2 * squeeze_corner], // [wide, outer2], [wide, wide], [outer2, wide], [outer2 * squeeze_corner, outer2 * squeeze_corner],
                     ],
                     Open: false,
                     Order: 3
