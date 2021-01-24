@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * This function allow you to modify a JS Promise by adding some status properties.
  * Based on: http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
@@ -17,12 +19,12 @@ function MakeQuerablePromise(promise) {
         function(v) {
             isFulfilled = true;
             isPending = false;
-            return v; 
-        }, 
+            return v;
+        },
         function(e) {
             isRejected = true;
             isPending = false;
-            throw e; 
+            throw e;
         }
     );
 

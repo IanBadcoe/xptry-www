@@ -1,3 +1,5 @@
+"use strict";
+
 class Rect {
     constructor(a, b, c, d) {
         if (arguments.length === 2) {

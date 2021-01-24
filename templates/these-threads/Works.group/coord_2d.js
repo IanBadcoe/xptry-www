@@ -1,3 +1,5 @@
+"use strict";
+
 class Coord extends Array {
     constructor(x, y) {
         super(2);
