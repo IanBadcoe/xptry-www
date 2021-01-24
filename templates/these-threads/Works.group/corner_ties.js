@@ -1,46 +1,28 @@
 "use strict";
 
 (function() {
-    function make_orig_lines_data(orig_lines, target_corner) {
-        let targ = orig_lines[target_corner];
+    function edges_intersect(e1, e2) {
+        let s1 = e1.to.Sub(e1.from);
+        let s2 = e2.to.Sub(e2.from);
 
-        let orig_lines_edges = CornerTileUtil.MakeEdgeData(orig_lines);
+        let s = (-s1.Y * (e1.from.X - e2.from.X) + s1.X * (e1.from.Y - e2.from.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
+        let t = ( s2.X * (e1.from.Y - e2.from.Y) - s2.Y * (e1.from.X - e2.from.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
 
-        orig_lines_edges.forEach(edge => {
-            if (edge.from.Equal(targ) || edge.to.Equal(targ)) {
-                let delta = edge.from.Sub(edge.to);
-                if (delta.X === 0 && delta.Y != 0) {
-                    edge.label = "vert";
-                } else if (delta.Y === 0 && delta.X != 0) {
-                    edge.label = "horz"
-                } else {
-                    throw "bad edge";
-                }
-            }
-        });
+        if (s > 0 && s < 1 && t > 0 && t < 1)
+        {
+            return new Coord(e1.from.X + (t * s1.X), e1.from.Y + (t * s1.Y));
+        }
 
-        return orig_lines_edges;
+        return null;
     }
 
-    function edge_contains_x(edge, x) {
-        return (x > edge.from.X && x < edge.to.X)
-            || (x > edge.to.X && x < edge.from.X);
-    }
-
-    function edge_contains_y(edge, y) {
-        return (edge.from.Y < y) === (edge.to.Y > y);
-    }
-
-    function split_edge(edges, edge, ord_val, ord_idx) {
+    function split_edge(edges, edge, new_point) {
         let edge_idx = edges.findIndex(x => x === edge);
-
-        let new_point = new Coord(edge.to);
-        new_point[ord_idx] = ord_val;
 
         let new_edge = {
             from: new_point,
             to: edge.to,
-            label: edge.label
+            label: edge.label,
         }
 
         edge.to = new_point;
@@ -50,7 +32,17 @@
         return new_edge;
     }
 
-    window.CornerTileUtil = {
+    function extract_points(edges, open) {
+        let points = edges.map(e => e.from);
+
+        if (open) {
+            points.push(edges[edges.length - 1].to);
+        }
+
+        return points;
+    }
+
+    window.CornerTieUtil = {
         // builds a corner decor tie such as:
         //
         //     +-----+
@@ -63,76 +55,42 @@
         //         |
         //         |
         //
-        // point_data is an array of mixed types:
-        // [ [x1, y1], "edge_label", [x2, y2], [x3, y3] ]
-        // in this usage, edges labelled vsplit, or hsplit get split by the incoming
-        // horizontal or vertical lines
-        //
-        // orig_lines is an array of coords:
-        // [ [x1, y1], [x2, y2] ... [xn, yn] ]
-        // and target_corner is the index of the entry within that which we are decorating
-        // orig lines gets modified with injected verts for its new intersections with the corner's lines
-        // it is assumed that only the lines before and after the target corner need this
+        // point_data and orig_lines are objects containing loop data similat to what MakeCKnot takes
+        // and will be modified to accommodate the pesence of each other in the same knot:
+        // e.g. such as:
+        // {
+        //     Drawer: Drawers["cartouche2"],
+        //     Step: 5,
+        //     Points: [ [0, 400], [0, 0], [400,0], ],
+        //     Open: true,
+        //     Order: 2
+        // },
+        MakeCornerTie(corner_loop, other_loops) {
+            let tie_data = this.MakeEdgeData(corner_loop.Points, !corner_loop.Open);
+            let other_data = other_loops.map(x => this.MakeEdgeData(x.Points, !x.Open));
 
-        MakeCornerTie(point_data, orig_lines, target_corner, line_thick) {
-            let tie_data = this.MakeEdgeData(point_data, true);
-            let orig_data = make_orig_lines_data(orig_lines, target_corner);
+            other_data.forEach(other => {
+                for(let i = 0; i < other.length; i++) {
+                    let other_edge = other[i];
 
-            let h_orig = orig_data.filter(x => x.label === "horz");
-            let v_orig = orig_data.filter(x => x.label === "vert");
-            let v_orig_x = v_orig[0].from.X;
-            let h_orig_y = h_orig[0].from.Y;
+                    for(let j = 0; j < tie_data.length; j++) {
+                        let tie_edge = tie_data[j];
 
+                        const intersection_pt = edges_intersect(other_edge, tie_edge);
+                        if (intersection_pt != null) {
+                            split_edge(other, other_edge, intersection_pt);
 
-            // v_splits are the HORIZONTAL lines in tie_data that could get split by v_orig
-            // and vice-versa
-            let v_splits = [];
-            let h_splits = [];
-
-            tie_data.forEach(edge => {
-                if (edge.label === "vsplit") {
-                    v_splits.push(edge);
-                } else if (edge.label === "hsplit") {
-                    h_splits.push(edge);
-                }
-            });
-
-            let tie_xs = [];
-            let tie_ys = [];
-
-            v_splits.forEach(edge => {
-                if (edge_contains_x(edge, v_orig_x)) {
-                    tie_ys.push(edge.from.Y);
-                    split_edge(tie_data, edge, v_orig_x, 0);
-                }
-            });
-
-            h_splits.forEach(edge => {
-                if (edge_contains_y(edge, h_orig_y)) {
-                    tie_xs.push(edge.from.X);
-                    split_edge(tie_data, edge, h_orig_y, 1)
-                }
-            });
-
-            tie_xs.forEach(x => {
-                for(let i = 0; i < h_orig.length; i++) {
-                    let edge = h_orig[i];
-
-                    if (edge_contains_x(edge, x)) {
-                        h_orig.push(split_edge(orig_data, edge, x, 0));
+                            split_edge(tie_data, tie_edge, intersection_pt);
+                        }
                     }
                 }
             });
 
-            tie_ys.forEach(y => {
-                for(let i = 0; i < v_orig.length; i++) {
-                    let edge = v_orig[i];
+            corner_loop.Points = extract_points(tie_data, corner_loop.Open);
 
-                    if (edge_contains_y(edge, y)) {
-                        v_orig.push(split_edge(orig_data, edge, y, 1));
-                    }
-                }
-            });
+            for(let i = 0; i < other_data.length; i++) {
+                other_loops[i].Points = extract_points(other_data[i], other_loops[i].Open);
+            }
         },
 
         // creates structured edge data from an array as described as "point_data" for MakeCornerTile
@@ -146,7 +104,7 @@
                 }
             }
 
-            let curr_pt = data[0];
+            let curr_pt = new Coord(data[0]);
             let first_pt = curr_pt;
             data.splice(0, 1);
 
@@ -158,24 +116,18 @@
             function store_edge(pt1, pt2, label) {
                 let is_v = pt1.X - pt2.X == 0;
                 let is_h = pt1.Y - pt2.Y == 0;
-                if (!is_h && !is_v) {
-                    // although all we need for full generality is a better line-intersect routine, I think
-                    throw "only orthogonal lines supported as yet";
-                } else if (is_h && is_v) {
+                if (is_h && is_v) {
                     throw "degenerate line";
                 }
 
                 let edge = {
                     from: pt1,
                     to: pt2,
-                    label: label,
-                    horz: is_h
+                    label: label
                 };
 
                 edges.push(edge);
             }
-
-            curr_pt = new Coord(curr_pt);
 
             while (data.length) {
                 let next_pt = data[0];

@@ -26,38 +26,60 @@ $(document).ready(() => {
             new Coord(300, 400),
             new Coord(-300, -400), new Coord(600, 800));
 
-        let end = 60;
-        let inner = 30;
-        let outer1 = -30
-        let outer2 = -60
-        let wide = -90
-        let squeeze_corner = 1;
+        let other_loop1 =
+        {
+            Drawer: Drawers["cartouche2"],
+            Step: 5,
+            Points: [ [0, 400], [0, 50], [400, 50], ],
+            Open: true,
+            Order: 2
+        }
+
+        let other_loop2 =
+        {
+            Drawer: Drawers["cartouche2"],
+            Step: 5,
+            Points: [ [50, 400], [50, 0], [400, 0], ],
+            Open: true,
+            Order: 2
+        };
+
+        let other_loop3 =
+        {
+            Drawer: Drawers["cartouche1"],
+            Step: 5,
+            Points: [ [25, 400], [25, 25], [400, 25], ],
+            Open: true,
+            Order: 2
+        };
+
+        let corner_loop =
+        {
+            Drawer: Drawers["cartouche3"],
+            Step: 5,
+            Points:
+                [
+                    [ -30, -30 ],
+                    [100, -50], [100, 75], [125, 75], [125, -25], [150, -25],
+                    [150, 150],
+                    [-25, 150], [-25, 125], [75, 125], [75, 100], [-50, 100]
+                ],
+            Open: false,
+            Order: 3
+        };
+
+
+        CornerTieUtil.MakeCornerTie(other_loop1, [ other_loop2 ]);
+        CornerTieUtil.MakeCornerTie(other_loop3, [ other_loop1, other_loop2 ]);
+
+        CornerTieUtil.MakeCornerTie(corner_loop, [ other_loop1, other_loop2, other_loop3 ]);
 
         let knot = MakeCKnot(
             [
-                {
-                    Drawer: Drawers["cartouche2"],
-                    Step: 5,
-                    Points: [ [0, 400], [0, end], [0, inner], [0, 0], [inner, 0], [end, 0], [400,0], ],
-                    Open: true,
-                    Order: 2
-                },
-                {
-                    Drawer: Drawers["cartouche3"],
-                    Step: 5,
-                    Points: [
-                        [outer2, inner], [outer1, inner], [0, inner], [inner, inner], [end, inner],
-                        [end, 0],
-                        [end, outer1], [inner, outer1],
-                        [outer1, outer1],
-                        [outer1, inner], [outer1, end],
-                        [0, end],
-                        [inner, end], [inner, inner], [inner, 0], [inner, outer1], [inner, outer2],
-                        [outer2 * squeeze_corner, outer2 * squeeze_corner], // [wide, outer2], [wide, wide], [outer2, wide], [outer2 * squeeze_corner, outer2 * squeeze_corner],
-                    ],
-                    Open: false,
-                    Order: 3
-                },
+                other_loop1,
+                other_loop2,
+                other_loop3,
+                corner_loop
             ]
         );
 
