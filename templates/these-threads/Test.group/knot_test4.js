@@ -26,11 +26,19 @@ $(document).ready(() => {
             new Coord(300, 400),
             new Coord(-300, -400), new Coord(600, 800));
 
+        let other_loop0 =
+        {
+            Drawer: Drawers["cartouche2"],
+            Step: 5,
+            Points: [ [0, 400], [0, 0], [400, 0], ],
+            Open: true,
+            Order: 2
+        }
         let other_loop1 =
         {
             Drawer: Drawers["cartouche2"],
             Step: 5,
-            Points: [ [0, 400], [0, 50], [400, 50], ],
+            Points: [ [0, 400], [0, 49], [400, 49], ],
             Open: true,
             Order: 2
         }
@@ -46,7 +54,7 @@ $(document).ready(() => {
 
         let other_loop3 =
         {
-            Drawer: Drawers["cartouche1"],
+            Drawer: Drawers["cartouche4"],
             Step: 5,
             Points: [ [25, 400], [25, 25], [400, 25], ],
             Open: true,
@@ -60,9 +68,9 @@ $(document).ready(() => {
             Points:
                 [
                     [100, 75], [100, -25], [125, -25], [125, 75], [150, 75], [150, -25], [175, -25], [175, 100], [125, 100],
-                    [100, 100],
+//                    [100, 100],
                     [75, 100], [-25, 100], [-25, 125], [75, 125], [75, 150], [-25, 150], [-25, 175], [100, 175], [100, 125],
-                    [100, 100],
+//                    [100, 100],
                 ],
             Open: false,
             Order: 3
@@ -82,20 +90,41 @@ $(document).ready(() => {
         //     Order: 3
         // };
 
+        // let test_loop =
+        // {
+        //     Drawer: Drawers["cartouche3"],
+        //     Step: 5,
+        //     Points:
+        //         [ [0, 0], [10, 0], [10, 20], [20, 20], [20, 10], [0, 10] ],
+        //     Open: false,
+        //     Order: 3
+        // };
 
-        CornerTieUtil.MakeCornerTie(other_loop1, [ other_loop2 ]);
-        CornerTieUtil.MakeCornerTie(other_loop3, [ other_loop1, other_loop2 ]);
+        let kb = new KnotBuilder;
 
-        CornerTieUtil.MakeCornerTie(corner_loop, [ other_loop1, other_loop2, other_loop3 ]);
+        kb.AddLoop(corner_loop);
+        kb.AddLoop(other_loop0);
+        kb.AddLoop(other_loop1, true, false, new Coord(50, 0));
+        kb.AddLoop(other_loop2, false, true, new Coord(0, 50));
+        kb.AddLoop(other_loop3);
 
-        let knot = MakeCKnot(
-            [
-                other_loop1,
-                other_loop2,
-                other_loop3,
-                corner_loop
-            ]
-        );
+        let loops = kb.Build();
+
+        let knot = MakeCKnot(loops);
+
+        // CornerTieUtil.MakeCornerTie(other_loop1, [ other_loop2 ]);
+        // CornerTieUtil.MakeCornerTie(other_loop3, [ other_loop1, other_loop2 ]);
+
+        // CornerTieUtil.MakeCornerTie(corner_loop, [ other_loop1, other_loop2, other_loop3 ]);
+
+        // let knot = MakeCKnot(
+        //     [
+        //         other_loop1,
+        //         other_loop2,
+        //         other_loop3,
+        //         corner_loop
+        //     ]
+        // );
 
         knot.Draw(svg);
 
