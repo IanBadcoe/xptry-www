@@ -279,7 +279,13 @@ $(document).ready(() => {
             0, null, null,
             "strand"
         ),
-        
+        cartouche_thin : MakeKnotDrawer(
+            10, [64,64,64],
+            0, null,
+            6, [128,64,64],
+            1, [160,96,96],
+            "knot"),
+
         strand1 : MakePolylineDrawer(
             7, [128,64,128],
             1, [0,0,0],

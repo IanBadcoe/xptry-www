@@ -23,31 +23,71 @@ $(document).ready(() => {
         var start = new Date().getTime();
 
         let svg = add_svg(null,
-            new Coord(300, 400),
-            new Coord(-300, -400), new Coord(600, 800));
+            new Coord(400, 400),
+            new Coord(-400, -400), new Coord(800, 800));
 
         let other_loop1 =
         {
             Drawer: Drawers["cartouche2"],
             Step: 5,
-            Points: [ [0, 0], [100, 0], [100, 200], [200, 200], [200, 100], [100, 100], [0, 100] ],
-            Open: false,
-            Order: 1
+            Points: [ [0, 400], [0, 49], [400, 49], ],
+            Open: true,
+            Order: 2
         }
 
-        // let other_loop2 =
-        // {
-        //     Drawer: Drawers["cartouche3"],
-        //     Step: 5,
-        //     Points: [ [50, 150], [50, 50], [150, 50], [150, 150], ],
-        //     Open: false,
-        //     Order: 1
-        // };
+        let other_loop2 =
+        {
+            Drawer: Drawers["cartouche2"],
+            Step: 5,
+            Points: [ [50, 400], [50, 0], [400, 0], ],
+            Open: true,
+            Order: 2
+        };
+
+        let other_loop3 =
+        {
+            Drawer: Drawers["cartouche4"],
+            Step: 5,
+            Points: [ [25, 400], [25, 25], [400, 25], ],
+            Open: true,
+            Order: 2
+        };
+
+        let corner_loop =
+        {
+            Drawer: Drawers["cartouche3"],
+            Step: 5,
+            Points:
+                [
+                    [100, 75], [100, -25], "splice", [125, -25], [125, 75], [150, 75], [150, -25], [175, -25], [175, 100], [125, 100],
+//                    [100, 100],
+                    [75, 100], [-25, 100], "splice", [-25, 125], [75, 125], [75, 150], [-25, 150], [-25, 175], [100, 175], [100, 125],
+//                    [100, 100],
+                ],
+            Open: false,
+            Order: 3
+        };
 
         let kb = new KnotBuilder;
 
         kb.AddLoop(other_loop1);
-//        kb.AddLoop(other_loop2);
+        kb.AddLoop(other_loop2);
+        kb.AddLoop(other_loop3);
+        kb.AddLoop(other_loop1, false, true, new Coord(0, -120));
+        kb.AddLoop(other_loop2, false, true, new Coord(0, -120));
+        kb.AddLoop(other_loop3, false, true, new Coord(0, -120));
+        kb.AddLoop(other_loop1, true, true, new Coord(-120, -120));
+        kb.AddLoop(other_loop2, true, true, new Coord(-120, -120));
+        kb.AddLoop(other_loop3, true, true, new Coord(-120, -120));
+        kb.AddLoop(other_loop1, true, false, new Coord(-120, 0));
+        kb.AddLoop(other_loop2, true, false, new Coord(-120, 0));
+        kb.AddLoop(other_loop3, true, false, new Coord(-120, 0));
+        kb.AddLoop(corner_loop);
+        kb.Splice(corner_loop, "splice", false, true, new Coord(0, -120));
+        kb.Splice(corner_loop, "splice", true, true, new Coord(-120, -120));
+        kb.Splice(corner_loop, "splice", true, false, new Coord(-120, 0));
+        // kb.Splice(corner_loop, "xxx", false, false, new Coord(12.5, 12.5));
+        kb.InternalSplice("splice", 80);
 
         let loops = kb.Build();
 
