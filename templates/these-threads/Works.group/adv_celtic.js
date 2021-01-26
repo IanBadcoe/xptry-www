@@ -35,7 +35,7 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
             var idx1_prev = idx1_curr;
             var idx2_prev = idx2_curr;
 
-            if (idx1_prev != idx1_e) {
+            if (idx1_prev !== idx1_e) {
                 var temp = Math.min(idx1_prev + idx1_step, idx1_e);
                 var temp_p = spline1.Interp(temp);
                 var temp_d2 = temp_p.Dist2(idx2_p);
@@ -51,7 +51,7 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
 
             // checking moved means we will only try one way on the first pass, even if both ways are an improvement
             // but we cannot handle any case with >1 solution reliably anyway
-            if (!moved && idx1_prev != idx1_s) {
+            if (!moved && idx1_prev !== idx1_s) {
                 var temp = Math.max(idx1_prev - idx1_step, idx1_s);
                 var temp_p = spline1.Interp(temp);
                 var temp_d2 = temp_p.Dist2(idx2_p);
@@ -66,7 +66,7 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
             }
 
             // see comment above about checking "moved"
-            if (!moved && idx2_prev != idx2_e) {
+            if (!moved && idx2_prev !== idx2_e) {
                 var temp = Math.min(idx2_prev + idx2_step, idx2_e);
                 var temp_p = spline2.Interp(temp);
                 var temp_d2 = temp_p.Dist2(idx1_p);
@@ -81,7 +81,7 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
             }
 
             // see comment above about checking "moved"
-            if (!moved && idx2_prev != idx2_s) {
+            if (!moved && idx2_prev !== idx2_s) {
                 var temp = Math.max(idx2_prev - idx2_step, idx2_s);
                 var temp_p = spline2.Interp(temp);
                 var temp_d2 = temp_p.Dist2(idx1_p);
@@ -288,7 +288,7 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
                         param: inter.over_param,
                     });
                 } else {
-                    if (inter.under_loop != loop || inter.under_idx != idx)
+                    if (inter.under_loop !== loop || inter.under_idx !== idx)
                         throw "badly constucted intersection?";
 
                     anno_points.push({
@@ -307,14 +307,14 @@ function MakeAdvCKnot(loops, base_plate, decorators, threshold) {
         anno_points.sort((x, y) => x.param - y.param);
 
         if (loop.Open) {
-            if (anno_points[0].param != 0) {
+            if (anno_points[0].param !== 0) {
                 anno_points.splice(0, 0, {
                     over: false,
                     param: 0,
                 });
             }
 
-            if (anno_points[anno_points.length - 1].param != loop.Spline.EndParam) {
+            if (anno_points[anno_points.length - 1].param !== loop.Spline.EndParam) {
                 anno_points.push({
                     over: false,
                     param: loop.Spline.EndParam,
