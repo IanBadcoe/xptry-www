@@ -97,11 +97,13 @@ class KnotBuilder {
             for(let j = i + 1; j < edges.length; j++) {
                 let edge2 = edges[j];
 
-                const intersection_pt = this.EdgeInntersection(edge1, edge2);
-                if (intersection_pt != null) {
-                    this.SplitEdge(edges, edge1, intersection_pt);
+                const intersection_data = this.EdgeIntersectionParams(edge1, edge2);
+                if (intersection_data.e1p > 0 && intersection_data.e1p < 1) {
+                    this.SplitEdge(edges, edge1, intersection_data.point);
+                }
 
-                    this.SplitEdge(edges, edge2, intersection_pt);
+                if (intersection_data.e2p > 0 && intersection_data.e2p < 1) {
+                    this.SplitEdge(edges, edge2, intersection_data.point);
 
                     // the collection has had one item added behind j and one ahead of it, so we need to move it on one
                     // i is behind both the additions
@@ -124,29 +126,48 @@ class KnotBuilder {
             for(let j = 0; j < edges2.length; j++) {
                 let edge2 = edges2[j];
 
-                const intersection_pt = this.EdgeInntersection(edge1, edge2);
-                if (intersection_pt != null) {
-                    this.SplitEdge(edges1, edge1, intersection_pt);
+                const intersection_data = this.EdgeIntersectionParams(edge1, edge2);
+                if (intersection_data.e1p > 0 && intersection_data.e1p < 1) {
+                    this.SplitEdge(edges1, edge1, intersection_data.point);
+                }
 
-                    this.SplitEdge(edges2, edge2, intersection_pt);
+                if (intersection_data.e2p > 0 && intersection_data.e2p < 1) {
+                    this.SplitEdge(edges2, edge2, intersection_data.point);
                 }
             }
         }
     }
 
-    EdgeInntersection(e1, e2) {
-        let s1 = e1.to.Sub(e1.from);
-        let s2 = e2.to.Sub(e2.from);
+    EdgeIntersectionPoint(e1, e2) {
+        let d1 = e1.to.Sub(e1.from);
+        let d2 = e2.to.Sub(e2.from);
 
-        let s = (-s1.Y * (e1.from.X - e2.from.X) + s1.X * (e1.from.Y - e2.from.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
-        let t = ( s2.X * (e1.from.Y - e2.from.Y) - s2.Y * (e1.from.X - e2.from.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
+        let i2 = (-d1.Y * (e1.from.X - e2.from.X) + d1.X * (e1.from.Y - e2.from.Y)) / (-d2.X * d1.Y + d1.X * d2.Y);
+        let i1 = ( d2.X * (e1.from.Y - e2.from.Y) - d2.Y * (e1.from.X - e2.from.X)) / (-d2.X * d1.Y + d1.X * d2.Y);
 
-        if (s > 0 && s < 1 && t > 0 && t < 1)
+        if (i2 > 0 && i2 < 1 && i1 > 0 && i1 < 1)
         {
-            return new Coord(e1.from.X + (t * s1.X), e1.from.Y + (t * s1.Y));
+            return e1.from.Add(d1.Mult(i1));
         }
 
         return null;
+    }
+
+    // allows the caller to use a more nuanced definition of "intersecting"
+    EdgeIntersectionParams(e1, e2) {
+        let d1 = e1.to.Sub(e1.from);
+        let d2 = e2.to.Sub(e2.from);
+
+        let i2 = (-d1.Y * (e1.from.X - e2.from.X) + d1.X * (e1.from.Y - e2.from.Y)) / (-d2.X * d1.Y + d1.X * d2.Y);
+        let i1 = ( d2.X * (e1.from.Y - e2.from.Y) - d2.Y * (e1.from.X - e2.from.X)) / (-d2.X * d1.Y + d1.X * d2.Y);
+
+        return {
+            e1p: i1,
+            e2p: i2,
+            d1: d1,
+            d2: d2,
+            point: e1.from.Add(d1.Mult(i1))
+        }
     }
 
     SplitEdge(edges, edge, new_point) {

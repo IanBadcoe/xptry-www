@@ -26,55 +26,47 @@ $(document).ready(() => {
             new Coord(300, 400),
             new Coord(-300, -400), new Coord(600, 800));
 
-        let other_loop0 =
-        {
-            Drawer: Drawers["cartouche2"],
-            Step: 5,
-            Points: [ [0, 400], [0, 0], [400, 0], ],
-            Open: true,
-            Order: 2
-        }
         let other_loop1 =
         {
             Drawer: Drawers["cartouche2"],
             Step: 5,
-            Points: [ [0, 400], [0, 49], [400, 49], ],
-            Open: true,
-            Order: 2
+            Points: [ [0, 0], [100, 0], [100, 200], [200, 200], [200, 100], [100, 100], [0, 100] ],
+            Open: false,
+            Order: 1
         }
 
-        let other_loop2 =
-        {
-            Drawer: Drawers["cartouche2"],
-            Step: 5,
-            Points: [ [50, 400], [50, 0], [400, 0], ],
-            Open: true,
-            Order: 2
-        };
+        // let other_loop2 =
+        // {
+        //     Drawer: Drawers["cartouche3"],
+        //     Step: 5,
+        //     Points: [ [50, 150], [50, 50], [150, 50], [150, 150], ],
+        //     Open: false,
+        //     Order: 1
+        // };
 
-        let other_loop3 =
-        {
-            Drawer: Drawers["cartouche4"],
-            Step: 5,
-            Points: [ [25, 400], [25, 25], [400, 25], ],
-            Open: true,
-            Order: 2
-        };
+        let kb = new KnotBuilder;
 
-        let corner_loop =
-        {
-            Drawer: Drawers["cartouche3"],
-            Step: 5,
-            Points:
-                [
-                    [100, 75], [100, -25], [125, -25], [125, 75], [150, 75], [150, -25], [175, -25], [175, 100], [125, 100],
-//                    [100, 100],
-                    [75, 100], [-25, 100], [-25, 125], [75, 125], [75, 150], [-25, 150], [-25, 175], [100, 175], [100, 125],
-//                    [100, 100],
-                ],
-            Open: false,
-            Order: 3
-        };
+        kb.AddLoop(other_loop1);
+//        kb.AddLoop(other_loop2);
+
+        let loops = kb.Build();
+
+        let knot = MakeCKnot(loops);
+
+        knot.Draw(svg);
+
+        console.log(new Date().getTime() - start + " ms");
+
+        return svg;
+    }
+
+    dl1.Register({
+        rect: new Rect(new Coord(0, 0), new Coord(420, 500)),
+        load: ret_fn => ret_fn(setup_corner()),
+        url_title: "xx"
+    });
+});
+
         // let corner_loop =
         // {
         //     Drawer: Drawers["cartouche3"],
@@ -100,42 +92,60 @@ $(document).ready(() => {
         //     Order: 3
         // };
 
-        let kb = new KnotBuilder;
+//         let other_loop0 =
+//         {
+//             Drawer: Drawers["cartouche2"],
+//             Step: 5,
+//             Points: [ [0, 400], [0, 0], [400, 0], ],
+//             Open: true,
+//             Order: 2
+//         }
+//         let other_loop1 =
+//         {
+//             Drawer: Drawers["cartouche2"],
+//             Step: 5,
+//             Points: [ [0, 400], [0, 49], [400, 49], ],
+//             Open: true,
+//             Order: 2
+//         }
 
-        kb.AddLoop(corner_loop);
-        kb.AddLoop(other_loop0);
-        kb.AddLoop(other_loop1, true, false, new Coord(50, 0));
-        kb.AddLoop(other_loop2, false, true, new Coord(0, 50));
-        kb.AddLoop(other_loop3);
+//         let other_loop2 =
+//         {
+//             Drawer: Drawers["cartouche2"],
+//             Step: 5,
+//             Points: [ [50, 400], [50, 0], [400, 0], ],
+//             Open: true,
+//             Order: 2
+//         };
 
-        let loops = kb.Build();
+//         let other_loop3 =
+//         {
+//             Drawer: Drawers["cartouche4"],
+//             Step: 5,
+//             Points: [ [25, 400], [25, 25], [400, 25], ],
+//             Open: true,
+//             Order: 2
+//         };
 
-        let knot = MakeCKnot(loops);
+//         let corner_loop =
+//         {
+//             Drawer: Drawers["cartouche3"],
+//             Step: 5,
+//             Points:
+//                 [
+//                     [100, 75], [100, -25], [125, -25], [125, 75], [150, 75], [150, -25], [175, -25], [175, 100], [125, 100],
+// //                    [100, 100],
+//                     [75, 100], [-25, 100], [-25, 125], [75, 125], [75, 150], [-25, 150], [-25, 175], [100, 175], [100, 125],
+// //                    [100, 100],
+//                 ],
+//             Open: false,
+//             Order: 3
+//         };
 
-        // CornerTieUtil.MakeCornerTie(other_loop1, [ other_loop2 ]);
-        // CornerTieUtil.MakeCornerTie(other_loop3, [ other_loop1, other_loop2 ]);
+//         let kb = new KnotBuilder;
 
-        // CornerTieUtil.MakeCornerTie(corner_loop, [ other_loop1, other_loop2, other_loop3 ]);
-
-        // let knot = MakeCKnot(
-        //     [
-        //         other_loop1,
-        //         other_loop2,
-        //         other_loop3,
-        //         corner_loop
-        //     ]
-        // );
-
-        knot.Draw(svg);
-
-        console.log(new Date().getTime() - start + " ms");
-
-        return svg;
-    }
-
-    dl1.Register({
-        rect: new Rect(new Coord(0, 0), new Coord(420, 500)),
-        load: ret_fn => ret_fn(setup_corner()),
-        url_title: "xx"
-    });
-});
+//         kb.AddLoop(corner_loop);
+//         kb.AddLoop(other_loop0);
+//         kb.AddLoop(other_loop1, true, false, new Coord(50, 0));
+//         kb.AddLoop(other_loop2, false, true, new Coord(0, 50));
+//         kb.AddLoop(other_loop3);
