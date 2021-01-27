@@ -9,8 +9,6 @@ class KnotBuilder {
     AddLoop(loop, mirror_x, mirror_y, translation) {
         let lloop = this.ConvertLoop(loop, mirror_x, mirror_y, translation);
 
-        this.IntersectLoop(lloop.Edges);
-
         this.loops.push(lloop);
     }
 
@@ -92,12 +90,6 @@ class KnotBuilder {
         return edges;
     }
 
-    IntersectLoop(edges) {
-        this.SelfIntersectEdges(edges);
-
-        this.loops.forEach(existing => this.IntersectEdges(edges, existing.Edges));
-    }
-
     SelfIntersectEdges(edges) {
         // although these loops can add to the collections they are looping over, they can only
         // add in the space ahead of the current edge
@@ -128,32 +120,6 @@ class KnotBuilder {
                     // i is behind both the additions
                     j++;
                 }
-            }
-        }
-    }
-
-    // for checking one, newly-added edge in an otherwise known good edge array
-    SelfIntersectEdge(edges, edge1) {
-        for(let j = 0; j < edges.length; j++) {
-            let edge2 = edges[j];
-
-            if (edge1 === edge2)
-                continue;
-
-            const intersection_data = this.EdgeIntersectionParams(edge1, edge2);
-
-            if (intersection_data.e1p < 0 || intersection_data.e1p > 1
-                || intersection_data.e2p < 0 || intersection_data.e2p > 1)
-                continue;
-
-            // one or both of these might add a new edge behind us in the collection,
-            // but the worst that will do is make is look at an edge or two twice
-            if (intersection_data.e1p > 0 && intersection_data.e1p < 1) {
-                this.SplitEdge(edges, edge1, intersection_data.point);
-            }
-
-            if (intersection_data.e2p > 0 && intersection_data.e2p < 1) {
-                this.SplitEdge(edges, edge2, intersection_data.point);
             }
         }
     }
@@ -247,6 +213,14 @@ class KnotBuilder {
     }
 
     Build() {
+        this.loops.forEach(loop => this.SelfIntersectEdges(loop.Edges));
+
+        for(let i = 0; i < this.loops.length - 1; i++) {
+            for(let j = i + 1; j < this.loops.length; j++) {
+                this.IntersectEdges(this.loops[i].Edges, this.loops[j].Edges);
+            }
+        }
+
         let ret = this.loops.map(x => {
             let nl = Object.assign({}, x)
             nl.Points = this.ExtractPoints(x.Edges, x.Open);
@@ -315,8 +289,6 @@ class KnotBuilder {
             // loop1 when we splice everything together at the end...
         }
 
-        this.IntersectLoop(loop1.Edges);
-
         let edges1 = loop1.Edges.filter(x => x.label == label);
         let edges2 = loop2.Edges.filter(x => x.label == label);
 
@@ -357,12 +329,6 @@ class KnotBuilder {
             this.ReverseEdges(loop1.Edges);
         }
 
-        // if there are remaining labelled edges that once were one, remerge them
-        // this is safe as (a) we are moving/reinserting this edge in a bit, and
-        // (b) nothing below here makes assumptions about what edges are in the loops
-        this.MergeAnyAdjacentEdges(loop1.Edges, edges1, edge1);
-        this.MergeAnyAdjacentEdges(loop2.Edges, edges2, edge2);
-
         edge1.label = null;
         edge2.label = null;
 
@@ -387,15 +353,10 @@ class KnotBuilder {
         let l2end = loop2.Edges.slice(where2 + 1);
 
         loop2.Edges = [ ...l1start, ...l2end, ...l2start, ...l1end, ];
-
-        // we may just have generated new intersections
-        this.loops.forEach(loop => this.SelfIntersectEdge(loop.Edges, edge1));
-        this.loops.forEach(loop => this.SelfIntersectEdge(loop.Edges, edge2));
     }
 
     // takes (typically) the output of multiple splices (the last entry in loops)
     // and merges any remaining spliceable edges
-    // (provided they are not from the same original loop)
     InternalSplice(label, threshold) {
         threshold = threshold || 1000000;
 
@@ -446,12 +407,6 @@ class KnotBuilder {
             return false;
         }
 
-        // if there are remaining labelled edges that once were one, remerge them
-        // this is safe as (a) we are moving/reinserting this edge in a bit, and
-        // (b) nothing below here makes assumptions about what edges are in the loops
-        this.MergeAnyAdjacentEdges(loop.Edges, edges, edge1);
-        this.MergeAnyAdjacentEdges(loop.Edges, edges, edge2);
-
         edge1.label = null;
         edge2.label = null;
 
@@ -461,9 +416,6 @@ class KnotBuilder {
 
         // swap the two edges destinations
         [edge1.to, edge2.to] = [edge2.to, edge1.to];
-
-        this.SelfIntersectEdge(loop.Edges, edge1);
-        this.SelfIntersectEdge(loop.Edges, edge2);
 
         // we have two loops of edges now, but jammed into one Edge array
         // in the original loop now do the harder part pulling that apart
@@ -486,49 +438,10 @@ class KnotBuilder {
         // recurse looking for more splices
         this.InternalSplice(label, threshold);
 
-        this.IntersectLoop(new_loop.Edges);
         this.loops.push(new_loop);
 
         // recurse looking for more splices on other half
         this.InternalSplice(label, threshold);
-    }
-
-    MergeAnyAdjacentEdges(all_edges, considered_edges, seed_edge) {
-        let se_dir = seed_edge.to.Sub(seed_edge.from).ToUnit();
-
-        function remove_item(arry, item) {
-            let where = arry.findIndex(x => x === item);
-            arry.splice(where, 1);
-        }
-
-        let any_found;
-
-        do {
-            any_found = false;
-
-            for(let i = 0; i < considered_edges.length; i++) {
-                let edge = considered_edges[i];
-                if (edge !== seed_edge) {
-                    if (edge.to === seed_edge.from) {
-                        if (edge.to.Sub(edge.from).ToUnit().Equal(se_dir)) {
-                            seed_edge.from = edge.from;
-                            remove_item(all_edges, edge);
-                            any_found = true;
-                            break;
-                        }
-                    }
-
-                    if (edge.from === seed_edge.to) {
-                        if (edge.to.Sub(edge.from).ToUnit().Equal(se_dir)) {
-                            seed_edge.to = edge.to;
-                            remove_item(all_edges, edge);
-                            any_found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        } while (any_found);
     }
 
     ReverseEdges(edges) {
