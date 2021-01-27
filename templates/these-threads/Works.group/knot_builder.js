@@ -10,12 +10,15 @@ class KnotBuilder {
         let lloop = this.ConvertLoop(loop, mirror_x, mirror_y, translation);
 
         this.loops.push(lloop);
+
+        return lloop;
     }
 
     ConvertLoop(loop, mirror_x, mirror_y, translation) {
         this.loop_add_count++;
 
-        // the combination of these three should sever any link to the original
+        // the combination of making a new object, creating new edges, and trasking the points should
+        // sever any connection to external data
         let lloop = Object.assign({}, loop);
         lloop.Points = [ ... lloop.Points ];
         lloop.Edges = this.MakeEdgeData(lloop.Points, !lloop.Open, mirror_x, mirror_y, translation);
@@ -213,6 +216,10 @@ class KnotBuilder {
     }
 
     Build() {
+        return MakeCKnot(this.BuildLoops());
+    }
+
+    BuildLoops() {
         this.loops.forEach(loop => this.SelfIntersectEdges(loop.Edges));
 
         for(let i = 0; i < this.loops.length - 1; i++) {
@@ -229,7 +236,15 @@ class KnotBuilder {
             return nl;
         });
 
+        // we have trashed the loops for further splice operations
+        // if we want to build and carry on adding/splicing then we can easily chance this by cloning the loop data above
+        this.loops = null;
+
         return ret;
+    }
+
+    BuildKnot() {
+        return MakeCKnot(this.BuildLoops());
     }
 
     // for the moment splices provided loop into the last added loop we already have, if we need finer control
@@ -241,6 +256,8 @@ class KnotBuilder {
     // - remove the label
     // - reverse one loop if that will give shorter new connections
     // - reconnect the edges to each-other's "to"..
+    //
+    // splice_all means we continue to connect any further valid splices after connecting the first
     //
     // e.g.
     //      +<---+
@@ -278,10 +295,21 @@ class KnotBuilder {
     //      |    |
     //      +--->+
     //
-    // no threshold here, because the idea is we do this when we know there is at least one valid splice
-    Splice(loop, label, mirror_x, mirror_y, translation) {
-        let loop1 = this.ConvertLoop(loop, mirror_x, mirror_y, translation);
-        let loop2 = this.loops[this.loops.length - 1];
+    // returns true if it finds a threshold within threshold
+    // (if threshold is not given we try to calculate from SpliceHaldThreshold on each loop)
+    //
+    // if successful loop2 no-longer exists after this operation
+    Splice(loop1, loop2, label, threshold, splice_all) {
+        if (threshold === null || threshold === undefined) {
+            threshold = loop1.SpliceHalfThreshold + loop2.SpliceHalfThreshold;
+        }
+
+        let loop_index1 = this.loops.findIndex(x => x === loop1);
+        let loop_index2 = this.loops.findIndex(x => x === loop2);
+
+        if (loop_index1 === -1 || loop_index2 === -1) {
+            throw "not my loop, add it first";
+        }
 
         if (loop1.Open || loop2.Open) {
             throw "open loop splices not supported"
@@ -293,7 +321,7 @@ class KnotBuilder {
         let edges2 = loop2.Edges.filter(x => x.label == label);
 
         if (edges1.length == 0 || edges2.length == 0) {
-            throw "no candidate edges in one or both loops";
+            return false;
         }
 
         let edge1 = null;
@@ -301,29 +329,40 @@ class KnotBuilder {
         let min_dist = null;
         let needs_reverse = false;
 
+        // we are summing 2 disances
+        threshold = threshold * threshold * 2;
+
         edges1.forEach(e1 => {
             edges2.forEach(e2 => {
                 let dist = Math.min(e1.to.Dist2(e2.from) + e1.from.Dist2(e2.to));
 
-                if (min_dist === null || dist < min_dist) {
-                    edge1 = e1;
-                    edge2 = e2;
+                if (dist <= threshold) {
+                    if (min_dist === null || dist < min_dist) {
+                        edge1 = e1;
+                        edge2 = e2;
 
-                    needs_reverse = false;
-                    min_dist = dist;
+                        needs_reverse = false;
+                        min_dist = dist;
+                    }
                 }
 
                 dist = Math.min(e1.from.Dist2(e2.from) + e1.to.Dist2(e2.to));
 
-                if (min_dist === null || dist < min_dist) {
-                    edge1 = e1;
-                    edge2 = e2;
+                if (dist <= threshold) {
+                    if (min_dist === null || dist < min_dist) {
+                        edge1 = e1;
+                        edge2 = e2;
 
-                    needs_reverse = true;
-                    min_dist = dist;
+                        needs_reverse = true;
+                        min_dist = dist;
+                    }
                 }
             });
         });
+
+        if (!edge1) {
+            return false;
+        }
 
         if (needs_reverse) {
             this.ReverseEdges(loop1.Edges);
@@ -352,15 +391,30 @@ class KnotBuilder {
         let l1end = loop1.Edges.slice(where1 + 1);
         let l2end = loop2.Edges.slice(where2 + 1);
 
-        loop2.Edges = [ ...l1start, ...l2end, ...l2start, ...l1end, ];
+        loop1.Edges = [ ...l1start, ...l2end, ...l2start, ...l1end, ];
+
+        this.loops.splice(loop_index2, 1);
+
+        if (splice_all) {
+            this.InternalSplice(loop1, label, threshold);
+        }
+
+        return true;
     }
 
     // takes (typically) the output of multiple splices (the last entry in loops)
     // and merges any remaining spliceable edges
-    InternalSplice(label, threshold) {
-        threshold = threshold || 1000000;
+    InternalSplice(loop, label, threshold) {
+        if (threshold === null || threshold === undefined) {
+            // this may or may-not be suitable if the loop is a merged loop
+            threshold = loop.SpliceHalfThreshold * 2;
+        }
 
-        let loop = this.loops[this.loops.length - 1];
+        let loop_index = this.loops.findIndex(x => x === loop);
+
+        if (loop_index === -1) {
+            throw "not my loop, add it first";
+        }
 
         if (loop.Open) {
             throw "open loop splices not supported"
@@ -435,17 +489,19 @@ class KnotBuilder {
 
         new_loop.Edges = [ ...l1start, ...l1end ];
 
-        // recurse looking for more splices
-        this.InternalSplice(label, threshold);
-
         this.loops.push(new_loop);
 
-        // recurse looking for more splices on other half
-        this.InternalSplice(label, threshold);
+        // recurse looking for more splices
+        this.InternalSplice(loop, label, threshold);
+        this.InternalSplice(new_loop, label, threshold);
     }
 
     ReverseEdges(edges) {
         edges.reverse();
         edges.forEach(edge => [edge.from, edge.to] = [edge.to, edge.from]);
+    }
+
+    GetLoopsOfType(type) {
+        return this.loops.filter(x => x.Type === type);
     }
 }

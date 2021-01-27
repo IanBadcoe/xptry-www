@@ -279,12 +279,6 @@ $(document).ready(() => {
             0, null, null,
             "strand"
         ),
-        cartouche_thin : MakeKnotDrawer(
-            10, [64,64,64],
-            0, null,
-            6, [128,64,64],
-            1, [160,96,96],
-            "knot"),
 
         strand1 : MakePolylineDrawer(
             7, [128,64,128],
@@ -317,5 +311,24 @@ $(document).ready(() => {
             0, [0,0,0], [0,0],
             "strand"
         ),
-    };
+
+        frame1 : MakeKnotDrawer(
+            10, [64,64,64],
+            0, null,
+            6, [128,128,32],
+            2, [160,160,64],
+            "knot"),
+        frame2 : MakeKnotDrawer(
+            10, [64,64,64],
+            0, null,
+            8, [128,32,32],
+            2, [160,64,64],
+            "knot"),
+        frame3 : MakeKnotDrawer(
+            10, [64,64,64],
+            0, null,
+            8, [32,128,32],
+            2, [64,160,64],
+            "knot"),
+            };
 });

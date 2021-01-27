@@ -82,16 +82,17 @@ $(document).ready(() => {
         kb.AddLoop(other_loop1, true, false, new Coord(-120, 0));
         kb.AddLoop(other_loop2, true, false, new Coord(-120, 0));
         kb.AddLoop(other_loop3, true, false, new Coord(-120, 0));
-        kb.AddLoop(corner_loop);
-        kb.Splice(corner_loop, "splice", false, true, new Coord(0, -120));
-        kb.Splice(corner_loop, "splice", true, true, new Coord(-120, -120));
-        kb.Splice(corner_loop, "splice", true, false, new Coord(-120, 0));
-        // kb.Splice(corner_loop, "xxx", false, false, new Coord(12.5, 12.5));
-        kb.InternalSplice("splice", 80);
+        let cl1 = kb.AddLoop(corner_loop);
+        let cl2 = kb.AddLoop(corner_loop, false, true, new Coord(0, -120));
+        let cl3 = kb.AddLoop(corner_loop, true, true, new Coord(-120, -120));
+        let cl4 = kb.AddLoop(corner_loop, true, false, new Coord(-120, 0));
 
-        let loops = kb.Build();
+        kb.Splice(cl1, cl2, "splice", 80,);
+        kb.Splice(cl1, cl3, "splice", 80);
+        kb.Splice(cl1, cl4, "splice", 80);
+        kb.InternalSplice(cl1, "splice", 80);
 
-        let knot = MakeCKnot(loops);
+        let knot = kb.BuildKnot();
 
         knot.Draw(svg);
 
