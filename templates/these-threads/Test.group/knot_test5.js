@@ -28,15 +28,20 @@ $(document).ready(() => {
 
         let kb = new KnotBuilder;
 
-        const frame1 = Frames.SingleExtLoop(new Coord(600, 300), Drawers["frame3"], 15);
-        const frame2 = Frames.SingleExtLoop(new Coord(600, 300), Drawers["frame3"], 15, new Coord(0, 345));
+        const frame1 = Frames.DoubleCross(new Coord(600, 300), Drawers["frame3"], 15);
+        const frame2 = Frames.DoubleCross(new Coord(600, 300), Drawers["frame3"], 15, new Coord(0, 360));
         Frames.AddFrameToBuilder(kb, frame1, 2);
         Frames.AddFrameToBuilder(kb, frame2, 2);
-        const corner1 = Corners.Square(frame1, Drawers["frame2"]);
-        const corner2 = Corners.Square(frame2, Drawers["frame1"]);
-        Corners.AddCornersToBuilder(kb, corner1, frame1, 2);
-        Corners.AddCornersToBuilder(kb, corner2, frame2, 2);
+
+        const corner = Corners.Square(frame1, Drawers["frame2"]);
+        Corners.AddCornersToBuilder(kb, corner, frame1, 2);
+        Corners.AddCornersToBuilder(kb, corner, frame2, 2);
         Corners.SpliceCorners(kb);
+
+        const middle = Middles.Square(frame2, Drawers["frame1"]);
+        Middles.AddMiddlesToBuilder(kb, middle, frame1, 2);
+        Middles.AddMiddlesToBuilder(kb, middle, frame2, 2);
+        Middles.SpliceMiddles(kb);
 
         let knot = kb.BuildKnot();
 
