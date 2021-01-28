@@ -6,28 +6,28 @@ class KnotBuilder {
         this.loop_add_count = 0;
     }
 
-    AddLoop(loop, mirror_x, mirror_y, translation) {
-        let lloop = this.ConvertLoop(loop, mirror_x, mirror_y, translation);
+    AddLoop(loop, mirror_x, mirror_y, translation, rotate) {
+        let lloop = this.ConvertLoop(loop, mirror_x, mirror_y, translation, rotate);
 
         this.loops.push(lloop);
 
         return lloop;
     }
 
-    ConvertLoop(loop, mirror_x, mirror_y, translation) {
+    ConvertLoop(loop, mirror_x, mirror_y, translation, rotate) {
         this.loop_add_count++;
 
         // the combination of making a new object, creating new edges, and trasking the points should
         // sever any connection to external data
         let lloop = Object.assign({}, loop);
         lloop.Points = [ ... lloop.Points ];
-        lloop.Edges = this.MakeEdgeData(lloop.Points, !lloop.Open, mirror_x, mirror_y, translation);
+        lloop.Edges = this.MakeEdgeData(lloop.Points, !lloop.Open, mirror_x, mirror_y, translation, rotate);
         delete lloop.Points;
         return lloop;
     }
 
     // creates structured edge data from an array as described as "point_data" for MakeCornerTile
-    MakeEdgeData(data, closed, mirror_x, mirror_y, translation) {
+    MakeEdgeData(data, closed, mirror_x, mirror_y, translation, rotate) {
         translation = translation || new Coord(0, 0);
 
         function check_point(pt) {
@@ -42,6 +42,17 @@ class KnotBuilder {
             let point = new Coord(arry);
             if (mirror_x) point = point.MirrorX();
             if (mirror_y) point = point.MirrorY();
+            switch(rotate) {
+            case 1:
+                point = point.Rot90();
+                break;
+            case 2:
+                point = point.Inverse();
+                break;
+            case 3:
+                point = point.Rot270();
+                break;
+            }
             return point.Add(translation);
         }
 
