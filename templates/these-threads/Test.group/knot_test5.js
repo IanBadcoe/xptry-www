@@ -29,7 +29,7 @@ $(document).ready(() => {
         let kb = new KnotBuilder;
 
         const frame1 = Frames.Double(new Coord(600, 300), Drawers["frame3"], 15);
-        const frame2 = Frames.Double(new Coord(600, 300), Drawers["frame3"], 15, new Coord(0, 350));
+        const frame2 = Frames.Double(new Coord(600, 300), Drawers["frame3"], 15, new Coord(0, 315));
         Frames.AddFrameToBuilder(kb, frame1, 2);
         Frames.AddFrameToBuilder(kb, frame2, 2);
         const corner1 = Corners.Square(frame1.Cadence, frame1.Thick, Drawers["frame2"]);

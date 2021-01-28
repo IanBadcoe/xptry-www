@@ -280,25 +280,19 @@ class KnotBuilder {
     // reconnect:
     //      +<---+
     //      |    |
-    //      +===>+
-    //
-    //      +<===+
-    //      |    |
-    //      +--->+
-    //
-    // final:
-    //      +<---+
-    //      |    |
     //      +    +
     //      |    |
     //      +    +
     //      |    |
     //      +--->+
     //
-    // returns true if it finds a threshold within threshold
+    // returns true if it finds a splice
     // (if threshold is not given we try to calculate from SpliceHaldThreshold on each loop)
     //
     // if successful loop2 no-longer exists after this operation
+    //
+    // after the splice any degenerate edges and ones that just run backwards over their predecessor
+    // are removed
     Splice(loop1, loop2, label, threshold, splice_all) {
         if (threshold === null || threshold === undefined) {
             threshold = loop1.SpliceHalfThreshold + loop2.SpliceHalfThreshold;
@@ -394,6 +388,9 @@ class KnotBuilder {
         loop1.Edges = [ ...l1start, ...l2end, ...l2start, ...l1end, ];
 
         this.loops.splice(loop_index2, 1);
+
+        // if either new edge is degenerate, or runs back over its precedessor, remove it
+        this.TidyContradictoryEdges(loop1.Edges);
 
         if (splice_all) {
             this.InternalSplice(loop1, label, threshold);
@@ -491,9 +488,61 @@ class KnotBuilder {
 
         this.loops.push(new_loop);
 
+        // if either new edge is degenerate, or runs back over its precedessor, remove it
+        this.TidyContradictoryEdges(loop.Edges);
+        this.TidyContradictoryEdges(new_loop.Edges);
+
         // recurse looking for more splices
         this.InternalSplice(loop, label, threshold);
         this.InternalSplice(new_loop, label, threshold);
+    }
+
+    // removes edge by removing it's "from" vertex
+    // (there is a choice as to which of the removed edges two vertices remains after removing an edge)
+    RemoveEdge(edges, edge) {
+        let where = edges.findIndex(x => x === edge);
+        if (where === -1) throw "no such edge";
+
+        let prev = where - 1;
+        if (prev === -1) prev = edges.length - 1;
+
+        const prev_edge = edges[prev];
+        prev_edge.to = edge.to;
+        // if we had a label, try to preserve it
+        prev_edge.label = prev_edge.label || edge.label;
+
+        edges.splice(where, 1);
+    }
+
+    TidyContradictoryEdges(edges) {
+        for(let i = 0; i < edges.length;) {
+            let edge = edges[i];
+
+            if (edge.to.Dist2(edge.from) < 1) {
+                this.RemoveEdge(edges, edge);
+                continue;
+            }
+
+            i++;
+        }
+
+        let prev_edge = edges[edges.length - 1];
+        let prev_dir = prev_edge.to.Sub(prev_edge.from).ToUnit();
+
+        for(let i = 0; i < edges.length;) {
+            let edge = edges[i];
+            let dir = edge.to.Sub(edge.from).ToUnit();
+            if (dir.Equal(prev_dir.Inverse())) {
+                // because this removes the "from" vertex and that lies between prev_edge and edge
+                // this is the right operation, removing the "to" vertext would be wrong...
+                this.RemoveEdge(edges, edge);
+                continue;
+            }
+
+            prev_edge = edge;
+            prev_dir = dir;
+            i++;
+        }
     }
 
     ReverseEdges(edges) {
