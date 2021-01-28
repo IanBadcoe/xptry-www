@@ -17,6 +17,45 @@ $(document).ready(() => {
             });
         },
 
+        SpliceSubset(builder, subset_type) {
+            let found;
+
+            do {
+                found = false;
+
+                let loops = builder.GetLoopsOfType(subset_type);
+
+                for(let i = 0; i < loops.length - 1; i++) {
+                    let loop1 = loops[i];
+                    for(let j = i + 1; j < loops.length; j++) {
+                        let loop2 = loops[j];
+
+                        if (builder.Splice(loop1, loop2, "x-splice", null)) {
+                            found = true;
+                            break;
+                        }
+
+                        if (builder.Splice(loop1, loop2, "y-splice", null)) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found) {
+                        break;
+                    }
+                }
+            } while (found);
+
+            builder.GetLoopsOfType(subset_type).forEach(loop => {
+                builder.InternalSplice(loop, "y-splice");
+            })
+
+            builder.GetLoopsOfType(subset_type).forEach(loop => {
+                builder.InternalSplice(loop, "x-splice");
+            })
+        },
+
         Single(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
@@ -41,7 +80,7 @@ $(document).ready(() => {
                 Drawer: drawer,
                 Cadence: cadence,
                 CornerBox: new Rect(0, 0, cadence, cadence),
-                MidBox: new Rect(0, 0, 0, 0),
+                MidBox: new Rect(0, 0, 0, cadence),
                 Pos: pos
             };
         },
@@ -148,43 +187,13 @@ $(document).ready(() => {
                 SpliceHalfThreshold: corner.SpliceHalfThreshold
             }, false, true, new Coord(0, frame.Size.Y).Add(frame.Pos));
         },
-        SpliceCorners(builder) {
-            let found;
-
-            do {
-                found = false;
-
-                let loops = builder.GetLoopsOfType("Corner");
-
-                for(let i = 0; i < loops.length - 1; i++) {
-                    let loop1 = loops[i];
-                    for(let j = i + 1; j < loops.length; j++) {
-                        let loop2 = loops[j];
-
-                        if (builder.Splice(loop1, loop2, "x-splice", null, true)) {
-                            found = true;
-                            break;
-                        }
-
-                        if (builder.Splice(loop1, loop2, "y-splice", null, true)) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (found) {
-                        break;
-                    }
-                }
-            } while (found);
-        },
         Square(frame, drawer) {
             const cadence = frame.Cadence;
             const box = frame.CornerBox.ExtendedBy(cadence);
             return {
                 Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
                 Drawer: drawer,
-                SpliceHalfThreshold: cadence
+                SpliceHalfThreshold: cadence * 0.9
             }
         },
     };
@@ -231,43 +240,13 @@ $(document).ready(() => {
                 SpliceHalfThreshold: middle.SpliceHalfThreshold
             }, false, false, new Coord(frame.Size.X, y_mid).Add(frame.Pos), 3);
         },
-        SpliceMiddles(builder) {
-            let found;
-
-            do {
-                found = false;
-
-                let loops = builder.GetLoopsOfType("Middle");
-
-                for(let i = 0; i < loops.length - 1; i++) {
-                    let loop1 = loops[i];
-                    for(let j = i + 1; j < loops.length; j++) {
-                        let loop2 = loops[j];
-
-                        if (builder.Splice(loop1, loop2, "x-splice", null, true)) {
-                            found = true;
-                            break;
-                        }
-
-                        if (builder.Splice(loop1, loop2, "y-splice", null, true)) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (found) {
-                        break;
-                    }
-                }
-            } while (found);
-        },
         Square(frame, drawer) {
             const cadence = frame.Cadence;
             const box = frame.MidBox.ExtendedBy(cadence);
             return {
                 Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
                 Drawer: drawer,
-                SpliceHalfThreshold: cadence
+                SpliceHalfThreshold: cadence * 0.9
             }
         },
     };

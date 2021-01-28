@@ -28,20 +28,28 @@ $(document).ready(() => {
 
         let kb = new KnotBuilder;
 
-        const frame1 = Frames.DoubleCross(new Coord(600, 300), Drawers["frame3"], 15);
-        const frame2 = Frames.DoubleCross(new Coord(600, 300), Drawers["frame3"], 15, new Coord(0, 360));
+        const frame1 = Frames.Double(new Coord(300, 300), Drawers["frame3"], 15);
+        const frame2 = Frames.Double(new Coord(300, 300), Drawers["frame3"], 15, new Coord(0, 345));
+        const frame3 = Frames.Double(new Coord(300, 300), Drawers["frame3"], 15, new Coord(345, 0));
+        const frame4 = Frames.Double(new Coord(300, 300), Drawers["frame3"], 15, new Coord(345, 345));
         Frames.AddFrameToBuilder(kb, frame1, 2);
         Frames.AddFrameToBuilder(kb, frame2, 2);
+        Frames.AddFrameToBuilder(kb, frame3, 2);
+        Frames.AddFrameToBuilder(kb, frame4, 2);
 
         const corner = Corners.Square(frame1, Drawers["frame2"]);
-        Corners.AddCornersToBuilder(kb, corner, frame1, 2);
-        Corners.AddCornersToBuilder(kb, corner, frame2, 2);
-        Corners.SpliceCorners(kb);
+        Corners.AddCornersToBuilder(kb, corner, frame1, 3);
+        Corners.AddCornersToBuilder(kb, corner, frame2, 3);
+        Corners.AddCornersToBuilder(kb, corner, frame3, 3);
+        Corners.AddCornersToBuilder(kb, corner, frame4, 3);
+        Frames.SpliceSubset(kb, "Corner");
 
         const middle = Middles.Square(frame2, Drawers["frame1"]);
-        Middles.AddMiddlesToBuilder(kb, middle, frame1, 2);
-        Middles.AddMiddlesToBuilder(kb, middle, frame2, 2);
-        Middles.SpliceMiddles(kb);
+        Middles.AddMiddlesToBuilder(kb, middle, frame1, 1);
+        Middles.AddMiddlesToBuilder(kb, middle, frame2, 1);
+        Middles.AddMiddlesToBuilder(kb, middle, frame3, 1);
+        Middles.AddMiddlesToBuilder(kb, middle, frame4, 1);
+        Frames.SpliceSubset(kb, "Middle");
 
         let knot = kb.BuildKnot();
 

@@ -22,6 +22,12 @@ class KnotBuilder {
         let lloop = Object.assign({}, loop);
         lloop.Points = [ ... lloop.Points ];
         lloop.Edges = this.MakeEdgeData(lloop.Points, !lloop.Open, mirror_x, mirror_y, translation, rotate);
+        lloop.LocationData = {
+            MirrorX: !!mirror_x,
+            MirrorY: !!mirror_y,
+            Translation: translation,
+            Rotate: rotate
+        };
         delete lloop.Points;
         return lloop;
     }
@@ -492,20 +498,28 @@ class KnotBuilder {
         let l2start = loop.Edges.slice(where1 + 1, where2 + 1);
         let l1end = loop.Edges.slice(0, where1 + 1);
 
-        let new_loop = Object.assign({}, loop);
-        loop.Edges = [ ...l2start ];
+        // if either the existing loop, or the new one, has < 3 edges,
+        // scrap it...
+        if (l2start.length > 2) {
+            loop.Edges = [ ...l2start ];
 
-        new_loop.Edges = [ ...l1start, ...l1end ];
+            // if either new edge is degenerate, or runs back over its precedessor, remove it
+            this.TidyContradictoryEdges(loop.Edges);
 
-        this.loops.push(new_loop);
+            // recurse looking for more splices
+            this.InternalSplice(loop, label, threshold);
+        } else {
+            this.loops.splice(loop_index, 1);
+        }
 
-        // if either new edge is degenerate, or runs back over its precedessor, remove it
-        this.TidyContradictoryEdges(loop.Edges);
-        this.TidyContradictoryEdges(new_loop.Edges);
-
-        // recurse looking for more splices
-        this.InternalSplice(loop, label, threshold);
-        this.InternalSplice(new_loop, label, threshold);
+        if (l2start.length + l1end.length > 2) {
+            let new_loop = Object.assign({}, loop);
+            new_loop.Edges = [ ...l1start, ...l1end ];
+            this.loops.push(new_loop);
+            // if either new edge is degenerate, or runs back over its precedessor, remove it
+            this.TidyContradictoryEdges(new_loop.Edges);
+            this.InternalSplice(new_loop, label, threshold);
+        }
     }
 
     // removes edge by removing it's "from" vertex
