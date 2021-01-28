@@ -17,7 +17,7 @@ $(document).ready(() => {
             });
         },
 
-        Simple(size, drawer, cadence, pos) {
+        Single(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
             return {
@@ -25,7 +25,7 @@ $(document).ready(() => {
                 Size: size,
                 Drawer: drawer,
                 Cadence: cadence,
-                Thick: new Coord(0, 0),
+                CornerBox: new Rect(0, 0, 0, 0),
                 Pos: pos
             };
         },
@@ -39,10 +39,35 @@ $(document).ready(() => {
                 Size: size,
                 Drawer: drawer,
                 Cadence: cadence,
-                Thick: new Coord(cadence, cadence),
+                CornerBox: new Rect(0, 0, cadence, cadence),
                 Pos: pos
-            }
-        }
+            };
+        },
+
+        SingleExtLoop(size, drawer, cadence, pos) {
+            pos = pos || new Coord(0, 0);
+
+            let xlo = -cadence;
+            let xli = 0;
+            let xhi = size.X;
+            let xho = size.X + cadence;
+            let ylo = -cadence;
+            let yli = 0;
+            let yhi = size.Y;
+            let yho = size.Y + cadence;
+
+            return {
+                Loops: [ [ [xlo, yli], [xho, yli], [xho, ylo],
+                           [xhi, ylo], [xhi, yho], [xho, yho],
+                           [xho, yhi], [xlo, yhi], [xlo, yho],
+                           [xli, yho], [xli, ylo], [xlo, ylo] ] ],
+                Size: size,
+                Drawer: drawer,
+                Cadence: cadence,
+                CornerBox: new Rect(-cadence, -cadence, 0, 0),
+                Pos: pos
+            };
+        },
     };
 
     window.Corners = {
@@ -117,9 +142,9 @@ $(document).ready(() => {
         },
         Square(frame, drawer) {
             const cadence = frame.Cadence;
-            const thick = frame.Thick;
+            const box = frame.CornerBox.ExtendedBy(cadence);
             return {
-                Loop: [ [ -cadence, -cadence], "x-splice", [thick.X + cadence, -cadence], [thick.X + cadence, thick.Y + cadence], [-cadence, thick.Y + cadence], "y-splice" ],
+                Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
                 Drawer: drawer,
                 SpliceHalfThreshold: cadence
             }
