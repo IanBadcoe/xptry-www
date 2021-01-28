@@ -115,7 +115,9 @@ $(document).ready(() => {
                 }
             } while (found);
         },
-        Square(cadence, thick, drawer) {
+        Square(frame, drawer) {
+            const cadence = frame.Cadence;
+            const thick = frame.Thick;
             return {
                 Loop: [ [ -cadence, -cadence], "x-splice", [thick.X + cadence, -cadence], [thick.X + cadence, thick.Y + cadence], [-cadence, thick.Y + cadence], "y-splice" ],
                 Drawer: drawer,
