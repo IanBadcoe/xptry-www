@@ -345,7 +345,7 @@ class KnotBuilder {
 
         edges1.forEach(e1 => {
             edges2.forEach(e2 => {
-                let dist = Math.min(e1.to.Dist2(e2.from) + e1.from.Dist2(e2.to));
+                let dist = e1.to.Dist2(e2.from) + e1.from.Dist2(e2.to);
 
                 if (dist <= threshold) {
                     if (min_dist === null || dist < min_dist) {
@@ -357,7 +357,7 @@ class KnotBuilder {
                     }
                 }
 
-                dist = Math.min(e1.from.Dist2(e2.from) + e1.to.Dist2(e2.to));
+                dist = e1.from.Dist2(e2.from) + e1.to.Dist2(e2.to);
 
                 if (dist <= threshold) {
                     if (min_dist === null || dist < min_dist) {
@@ -457,7 +457,7 @@ class KnotBuilder {
                 if (e2.orig_loop === e1.orig_loop)
                     continue;
 
-                let dist = Math.min(e1.to.Dist2(e2.from) + e1.from.Dist2(e2.to));
+                let dist = e1.to.Dist2(e2.from) + e1.from.Dist2(e2.to);
 
                 if (dist > comb_thres)
                     continue;
