@@ -66,10 +66,11 @@ $(document).ready(() => {
                 Cadence: cadence,
                 CornerBox: new Rect(0, 0, 0, 0),
                 MidBox: new Rect(0, 0, 0, 0),
-                Pos: pos
+                Pos: pos,
+                EdgeInner: 0,
+                EdgeOuter: 0
             };
         },
-
         Double(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
@@ -81,10 +82,11 @@ $(document).ready(() => {
                 Cadence: cadence,
                 CornerBox: new Rect(0, 0, cadence, cadence),
                 MidBox: new Rect(0, 0, 0, cadence),
-                Pos: pos
+                Pos: pos,
+                EdgeInner: cadence,
+                EdgeOuter: 0
             };
         },
-
         SingleExtLoop(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
@@ -107,10 +109,11 @@ $(document).ready(() => {
                 Cadence: cadence,
                 CornerBox: new Rect(-cadence, -cadence, 0, 0),
                 MidBox: new Rect(0, 0, 0, 0),
-                Pos: pos
+                Pos: pos,
+                EdgeInner: 0,
+                EdgeOuter: 0
             };
         },
-
         DoubleCross(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
@@ -142,7 +145,9 @@ $(document).ready(() => {
                 Cadence: cadence,
                 CornerBox: new Rect(0, 0, cadence, cadence),
                 MidBox: new Rect(-cadence / 2, 0, cadence / 2, cadence),
-                Pos: pos
+                Pos: pos,
+                EdgeInner: cadence,
+                EdgeOuter: 0
             };
         },
     };
@@ -201,6 +206,25 @@ $(document).ready(() => {
                 };
             };
         },
+        ZigZagCrossOver(drawer, tighten) {
+            return frame => {
+                const cadence = frame.Cadence;
+                tighten = tighten || 1
+                const box = frame.CornerBox.ExtendedBy(cadence * tighten);
+                const wi = frame.EdgeInner + cadence * tighten;
+                // for the moment assuming that box is square...
+                // can calculate more numbers if it ever is not
+                const wo = -frame.EdgeOuter - cadence * tighten;
+                const iae = Math.min(box.B, wi) + cadence * tighten;
+
+                return {
+                    Loop: [ [iae, wo], "x-splice", [iae + cadence, wo], [iae + cadence, wi], [iae + cadence * 2, wi], [iae + cadence * 2, wo], "x-splice", [iae + cadence * 3, wo], [iae + cadence * 3, iae],
+                            [wo, iae], "y-splice", [wo, iae + cadence], [wi, iae + cadence], [wi, iae + cadence * 2], [wo, iae + cadence * 2], "y-splice", [wo, iae + cadence * 3], [iae, iae + cadence * 3], ],
+                    Drawer: drawer,
+                    SpliceHalfThreshold: cadence * 0.9
+                };
+            };
+        }
     };
 
     window.Middles = {
