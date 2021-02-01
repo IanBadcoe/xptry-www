@@ -7,7 +7,7 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
     let _rad = rad;
     let _width = width;
     let _drawer = Drawers[drawer];
-    let _thick = _drawer.Width;
+    let _thick = _drawer.FullWidth;
 
     // zero y is the inside edge of the ring, 1 the outside edge, higher is right outside
     function draw_tie(insert_element, front) {
@@ -52,7 +52,7 @@ function MakeRadialTie(tile, centre, ang, rad, width, drawer) {
 }
 
 function GetRadialTieSPoint(tile, centre, offset, rad, width, drawer) {
-    let thick = drawer.Width;
+    let thick = drawer.FullWidth;
 
     let dist = offset.Length();
 
@@ -71,7 +71,7 @@ function GetRadialTieSPoint(tile, centre, offset, rad, width, drawer) {
 }
 
 function MakeRadialTieFromTargetPoint(tile, centre, offset, rad, width, drawer, dest) {
-    let thick = drawer.Width;
+    let thick = drawer.FullWidth;
 
     let dist = offset.Length();
 
@@ -135,23 +135,23 @@ function DrawStrandBetweenPoints(el, p1, p2, drawer) {
     let dist = dp.Length();
 
     // we make this svg slightly longer than it need be, in case we ever want to go back to rounded end-caps
-    let length = dist + drawer.Width + 2;
+    let length = dist + drawer.FullWidth + 2;
 
     let angle = Math.atan2(dp.Y, dp.X);
 
-    let width_offset = drawer.Width / 2 + 1;
+    let width_offset = drawer.FullWidth / 2 + 1;
 
     let svg = add_svg(
         el,
         new Coord(length / 2, width_offset),
         new Coord(-width_offset, -width_offset),
-        new Coord(length, drawer.Width + 2)).attr({
+        new Coord(length, drawer.FullWidth + 2)).attr({
         class: "absolute zero-spacing decor"
     }).css({
         left: 0,
         top: 0,
         width : length,
-        height : drawer.Width + 2,
+        height : drawer.FullWidth + 2,
         "transform-origin" : "0 0",
         transform: "translate(" + p1.X + "px," + p1.Y + "px) "
             + "rotate(" + angle + "rad) "

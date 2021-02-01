@@ -28,7 +28,7 @@ $(document).ready(() => {
 
         let other_loop1 =
         {
-            Drawer: Drawers["cartouche2"],
+            Drawer: Drawers["cartouche1"],
             Step: 5,
             Points: [ [0, 400], [0, 49], [400, 49], ],
             Open: true,

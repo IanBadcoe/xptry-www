@@ -213,7 +213,7 @@ $(document).ready(function() {
                 // won't need this when we've converted more to coords...
                 let vA = this.centre.Sub(other_point);
                 let A = vA.Length();
-                let h_radius = radius + drawer.Width / 2;
+                let h_radius = radius + drawer.FullWidth / 2;
                 let r2 = h_radius * h_radius;
                 let b = r2 / A;
 
@@ -240,7 +240,7 @@ $(document).ready(function() {
             };
 
             let pulley_data = this;
-            let half_rad = radius + this.drawer.Width + 1;
+            let half_rad = radius + this.drawer.FullWidth + 1;
             let half_size = new Coord(half_rad, half_rad);
 
             this.load = ret_fn => {
@@ -360,10 +360,10 @@ $(document).ready(function() {
         }
 
         function random_cartouche_drawers(rnd) {
-            let idx = Math.min(Math.floor(rnd.quick() * 3), 2);
+            let idx = Math.floor(rnd.quick() * 4);
 
-            return [Drawers[["cartouche1", "cartouche2", "cartouche3"][idx]],
-                    Drawers[["cartouche_line1", "cartouche_line2", "cartouche_line3"][idx]]];
+            return [Drawers[["cartouche1", "cartouche2", "cartouche3", "cartouche4"][idx]],
+                    Drawers[["cartouche_line1", "cartouche_line2", "cartouche_line3", "cartouche_line4"][idx]]];
         }
 
         function add_author_images(article, rad, decorators, drawer, flash_rnd) {
@@ -483,7 +483,7 @@ $(document).ready(function() {
                     let cat_data = DrawCatenaryStrandBetweenPoints_WithGap(null, p1, p2, catenary_stiffness, Drawers["wire"], -line_gap, false, true);
 
                     const drawers = random_cartouche_drawers(rnd);
-                    const line_thick = drawers[0].Width;
+                    const line_thick = drawers[0].FullWidth;
 
                     // the line to the cartouche centre is line_gap/2 in X and an amount in Y corresponding to the Y/X ratio of its direction
                     let overall_rad = new Coord(line_gap / 2, line_gap / 2 * cat_data.direction.Y / cat_data.direction.X).Length();
@@ -535,7 +535,7 @@ $(document).ready(function() {
                                 add_charms(article, circle_rad * 0.95, decorators, drawers[1]);
 
                                 if (image) {
-                                    let main_image = MakeFramedCircle(new Coord(0, 0), image, circle_rad - drawers[0].Width / 4, null, 1.0, false, true);
+                                    let main_image = MakeFramedCircle(new Coord(0, 0), image, circle_rad - drawers[0].FullWidth / 4, null, 1.0, false, true);
 
                                     decorators.push(main_image);
                                 }
