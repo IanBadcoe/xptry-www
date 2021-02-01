@@ -181,7 +181,56 @@ $(document).ready(() => {
                 EdgeInner: 0,
                 EdgeOuter: 0
             };
-        }
+        },
+        TripleCross(size, drawer, cadence, pos) {
+            pos = pos || new Coord(0, 0);
+
+            const xlo = 0;
+            const xli = cadence;
+            const xlii = cadence * 2;
+            const xml = (size.X - cadence) / 2;
+            const xmh = (size.X + cadence) / 2;
+            const xmll = (size.X - cadence) / 2 - cadence;
+            const xmhh = (size.X + cadence) / 2 + cadence;
+            const xho = size.X;
+            const xhi = size.X - cadence;
+            const xhii = size.X - cadence * 2;
+
+            const ylo = 0;
+            const yli = cadence;
+            const ylii = cadence * 2;
+            const yml = (size.Y - cadence) / 2;
+            const ymh = (size.Y + cadence) / 2;
+            const ymll = (size.Y - cadence) / 2 - cadence;
+            const ymhh = (size.Y + cadence) / 2 + cadence;
+            const yho = size.Y;
+            const yhi = size.Y - cadence;
+            const yhii = size.Y - cadence * 2;
+
+            return {
+                Loops: [ [ [xlo, ylo], [xmll, ylo], [xmh, ylii],
+                           [xhii, ylii], [xhii, yml], [xho, ymhh],
+                           [xho, yho], [xmhh, yho], [xml, yhii],
+                           [xlii, yhii], [xlii, ymh], [xlo, ymll] ],
+                         [ [xlii, ylii], [xml, ylii], [xmhh, ylo],
+                           [xho, ylo], [xho, ymll], [xhii, ymh],
+                           [xhii, yhii], [xmh, yhii], [xmll, yho],
+                           [xlo, yho], [xlo, ymhh], [xlii, yml] ],
+                         [ [xli, yli], [xmll, yli], [xml, ylo], [xmh, ylo], [xmhh, yli],
+                           [xhi, yli], [xhi, ymll], [xho, yml], [xho, ymh], [xhi, ymhh],
+                           [xhi, yhi], [xmhh, yhi], [xmh, yho], [xml, yho], [xmll, yhi],
+                           [xli, yhi], [xli, ymhh], [xlo, ymh], [xlo, yml], [xli, ymll], ],
+                      ],
+                Size: size,
+                Drawer: drawer,
+                Cadence: cadence,
+                CornerBox: new Rect(0, 0, cadence * 2, cadence * 2),
+                MidBox: new Rect(-cadence  * 3 / 2, 0, cadence * 3 / 2, cadence * 2),
+                Pos: pos,
+                EdgeInner: cadence * 2,
+                EdgeOuter: 0
+            };
+        },
     };
 
     window.Corners = {
