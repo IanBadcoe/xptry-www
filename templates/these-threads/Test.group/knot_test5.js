@@ -33,13 +33,13 @@ $(document).ready(() => {
         const frame1 = Frames.Single(new Coord(300, 300), Drawers["frame3"], 15);
         const frame2 = Frames.Double(new Coord(300, 300), Drawers["frame3"], 15, new Coord(0, sep));
         const frame3 = Frames.SingleExtLoop(new Coord(300, 300), Drawers["frame3"], 15, new Coord(sep, 0));
-        const frame4 = Frames.DoubleCross(new Coord(300, 300), Drawers["frame3"], 15, new Coord(sep, sep));
+        const frame4 = Frames.SingleKnotCorners(new Coord(300, 300), Drawers["frame3"], 15, new Coord(sep, sep));
         Frames.AddFrameToBuilder(kb, frame1, 3);
         Frames.AddFrameToBuilder(kb, frame2, 3);
         Frames.AddFrameToBuilder(kb, frame3, 3);
         Frames.AddFrameToBuilder(kb, frame4, 3);
 
-        const corner = Corners.ZigZagCrossOver(Drawers["frame2"], 1);
+        const corner = Corners.ZigZagCrossOver(Drawers["frame2"], 0.7);
         Corners.AddCornersToBuilder(kb, corner, frame1, 3);
         Corners.AddCornersToBuilder(kb, corner, frame2, 3);
         Corners.AddCornersToBuilder(kb, corner, frame3, 3);

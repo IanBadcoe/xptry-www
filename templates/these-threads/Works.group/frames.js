@@ -90,14 +90,14 @@ $(document).ready(() => {
         SingleExtLoop(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
-            let xlo = -cadence;
-            let xli = 0;
-            let xhi = size.X;
-            let xho = size.X + cadence;
-            let ylo = -cadence;
-            let yli = 0;
-            let yhi = size.Y;
-            let yho = size.Y + cadence;
+            const xlo = -cadence;
+            const xli = 0;
+            const xhi = size.X;
+            const xho = size.X + cadence;
+            const ylo = -cadence;
+            const yli = 0;
+            const yhi = size.Y;
+            const yho = size.Y + cadence;
 
             return {
                 Loops: [ [ [xlo, yli], [xho, yli], [xho, ylo],
@@ -117,19 +117,19 @@ $(document).ready(() => {
         DoubleCross(size, drawer, cadence, pos) {
             pos = pos || new Coord(0, 0);
 
-            let xlo = 0;
-            let xli = cadence;
-            let xml = (size.X - cadence) / 2;
-            let xmh = (size.X + cadence) / 2;
-            let xho = size.X;
-            let xhi = size.X - cadence;
+            const xlo = 0;
+            const xli = cadence;
+            const xml = (size.X - cadence) / 2;
+            const xmh = (size.X + cadence) / 2;
+            const xho = size.X;
+            const xhi = size.X - cadence;
 
-            let ylo = 0;
-            let yli = cadence;
-            let yml = (size.Y - cadence) / 2;
-            let ymh = (size.Y + cadence) / 2;
-            let yho = size.Y;
-            let yhi = size.Y - cadence;
+            const ylo = 0;
+            const yli = cadence;
+            const yml = (size.Y - cadence) / 2;
+            const ymh = (size.Y + cadence) / 2;
+            const yho = size.Y;
+            const yhi = size.Y - cadence;
 
             return {
                 Loops: [ [ [xlo, ylo], [xml, ylo], [xmh, yli],
@@ -150,6 +150,38 @@ $(document).ready(() => {
                 EdgeOuter: 0
             };
         },
+        SingleKnotCorners(size, drawer, cadence, pos) {
+            pos = pos || new Coord(0, 0);
+
+            const xl = 0;
+            const xli = cadence;
+            const xlo = -cadence;
+            const xh = size.X;
+            const xhi = xh - cadence;
+            const xho = xh + cadence;
+
+            const yl = 0;
+            const yli = cadence;
+            const ylo = -cadence;
+            const yh = size.Y;
+            const yhi = xh - cadence;
+            const yho = xh + cadence;
+
+            return {
+                Loops: [ [ [xl, ylo], [xli, ylo], [xli, yli], [xlo, yli], [xlo, yl],
+                           [xho, yl], [xho, yli], [xhi, yli], [xhi, ylo], [xh, ylo],
+                           [xh, yho], [xhi, yho], [xhi, yhi], [xho, yhi], [xho, yh],
+                           [xlo, yh], [xlo, yhi], [xli, yhi], [xli, yho], [xl, yho] ] ],
+                Size: size,
+                Drawer: drawer,
+                Cadence: cadence,
+                CornerBox: new Rect(-cadence, -cadence, cadence, cadence),
+                MidBox: new Rect(0, 0, 0, 0),
+                Pos: pos,
+                EdgeInner: 0,
+                EdgeOuter: 0
+            };
+        }
     };
 
     window.Corners = {
@@ -215,7 +247,7 @@ $(document).ready(() => {
                 // for the moment assuming that box is square...
                 // can calculate more numbers if it ever is not
                 const wo = -frame.EdgeOuter - cadence * tighten;
-                const iae = Math.min(box.B, wi) + cadence * tighten;
+                const iae = Math.min(box.B, wi) + cadence;
 
                 return {
                     Loop: [ [iae, wo], "x-splice", [iae + cadence, wo], [iae + cadence, wi], [iae + cadence * 2, wi], [iae + cadence * 2, wo], "x-splice", [iae + cadence * 3, wo], [iae + cadence * 3, iae],
