@@ -148,7 +148,9 @@ $(document).ready(() => {
     };
 
     window.Corners = {
-        AddCornersToBuilder(builder, corner, frame, order, step) {
+        AddCornersToBuilder(builder, corner_fn, frame, order, step) {
+            let corner = corner_fn(frame);
+
             step = step || 5;
             builder.AddLoop({
                 Points: corner.Loop,
@@ -187,20 +189,24 @@ $(document).ready(() => {
                 SpliceHalfThreshold: corner.SpliceHalfThreshold
             }, false, true, new Coord(0, frame.Size.Y).Add(frame.Pos));
         },
-        Square(frame, drawer, tighten) {
-            const cadence = frame.Cadence;
-            tighten = tighten || 1
-            const box = frame.CornerBox.ExtendedBy(cadence * tighten);
-            return {
-                Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
-                Drawer: drawer,
-                SpliceHalfThreshold: cadence * 0.9
-            }
+        Square(drawer, tighten) {
+            return frame => {
+                const cadence = frame.Cadence;
+                tighten = tighten || 1
+                const box = frame.CornerBox.ExtendedBy(cadence * tighten);
+                return {
+                    Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
+                    Drawer: drawer,
+                    SpliceHalfThreshold: cadence * 0.9
+                };
+            };
         },
     };
 
     window.Middles = {
-        AddMiddlesToBuilder(builder, middle, frame, order, step) {
+        AddMiddlesToBuilder(builder, middle_fn, frame, order, step) {
+            let middle = middle_fn(frame);
+
             step = step || 5;
             const x_mid = frame.Size.X / 2;
             const y_mid = frame.Size.Y / 2;
@@ -241,16 +247,18 @@ $(document).ready(() => {
                 SpliceHalfThreshold: middle.SpliceHalfThreshold
             }, false, false, new Coord(frame.Size.X, y_mid).Add(frame.Pos), 3);
         },
-        Square(frame, drawer, tighten) {
-            const cadence = frame.Cadence;
-            tighten = tighten || 1;
-            const box = frame.MidBox.ExtendedBy(cadence * tighten);
+        Square(drawer, tighten) {
+            return frame => {
+                const cadence = frame.Cadence;
+                tighten = tighten || 1;
+                const box = frame.MidBox.ExtendedBy(cadence * tighten);
 
-            return {
-                Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
-                Drawer: drawer,
-                SpliceHalfThreshold: cadence * 0.9
-            }
+                return {
+                    Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
+                    Drawer: drawer,
+                    SpliceHalfThreshold: cadence * 0.9
+                };
+            };
         },
     };
 });
