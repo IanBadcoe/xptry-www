@@ -85,11 +85,11 @@ $(document).ready(() => {
         let cl1 = kb.AddLoop(corner_loop);
         let cl2 = kb.AddLoop(corner_loop, false, true, new Coord(0, -120));
         let cl3 = kb.AddLoop(corner_loop, true, true, new Coord(-120, -120));
-        let cl4 = kb.AddLoop(corner_loop, true, false, new Coord(-120, 0));
+//        let cl4 = kb.AddLoop(corner_loop, true, false, new Coord(-120, 0));
 
         kb.Splice(cl1, cl2, "splice", 80,);
         kb.Splice(cl1, cl3, "splice", 80);
-        kb.Splice(cl1, cl4, "splice", 80);
+//        kb.Splice(cl1, cl4, "splice", 80);
         kb.InternalSplice(cl1, "splice", 80);
 
         let knot = kb.BuildKnot();

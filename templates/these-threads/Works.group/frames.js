@@ -359,7 +359,22 @@ $(document).ready(() => {
                 const box = frame.MidBox.ExtendedBy(cadence * tighten);
 
                 return {
-                    Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
+                    Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL ],
+                    Drawer: drawer,
+                    SpliceHalfThreshold: cadence * 0.9
+                };
+            };
+        },
+        DoubleSquare(drawer, tighten) {
+            return frame => {
+                const cadence = frame.Cadence;
+                tighten = tighten || 1;
+                const box = frame.MidBox.ExtendedBy(cadence * tighten);
+                const box2 = frame.MidBox.ExtendedBy(cadence * tighten + cadence);
+
+                return {
+                    Loop: [ box.TL, box.TR, box.BR, [box2.L, box.B],
+                            box2.TL, "x-splice", box2.TR, box2.BR, [box.L, box2.B], ],
                     Drawer: drawer,
                     SpliceHalfThreshold: cadence * 0.9
                 };
