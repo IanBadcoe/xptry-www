@@ -141,7 +141,7 @@ $(document).ready(() => {
                 Drawer: drawer,
                 Cadence: cadence,
                 CornerBox: new Rect(0, 0, cadence, cadence),
-                MidBox: new Rect(-cadence / 2, -cadence / 2, cadence / 2, cadence * 1.5),
+                MidBox: new Rect(-cadence / 2, 0, cadence / 2, cadence),
                 Pos: pos
             };
         },
@@ -187,9 +187,10 @@ $(document).ready(() => {
                 SpliceHalfThreshold: corner.SpliceHalfThreshold
             }, false, true, new Coord(0, frame.Size.Y).Add(frame.Pos));
         },
-        Square(frame, drawer) {
+        Square(frame, drawer, tighten) {
             const cadence = frame.Cadence;
-            const box = frame.CornerBox.ExtendedBy(cadence);
+            tighten = tighten || 1
+            const box = frame.CornerBox.ExtendedBy(cadence * tighten);
             return {
                 Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
                 Drawer: drawer,
@@ -240,9 +241,11 @@ $(document).ready(() => {
                 SpliceHalfThreshold: middle.SpliceHalfThreshold
             }, false, false, new Coord(frame.Size.X, y_mid).Add(frame.Pos), 3);
         },
-        Square(frame, drawer) {
+        Square(frame, drawer, tighten) {
             const cadence = frame.Cadence;
-            const box = frame.MidBox.ExtendedBy(cadence);
+            tighten = tighten || 1;
+            const box = frame.MidBox.ExtendedBy(cadence * tighten);
+
             return {
                 Loop: [ box.TL, "x-splice", box.TR, box.BR, box.BL, "y-splice" ],
                 Drawer: drawer,
