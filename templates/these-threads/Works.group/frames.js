@@ -296,7 +296,7 @@ $(document).ready(() => {
                 // for the moment assuming that box is square...
                 // can calculate more numbers if it ever is not
                 const wo = -frame.EdgeOuter - cadence * tighten;
-                const iae = Math.min(box.B, wi) + cadence;
+                const iae = Math.max(box.B, wi + cadence);
 
                 return {
                     Loop: [ [iae, wo], "x-splice", [iae + cadence, wo], [iae + cadence, wi], [iae + cadence * 2, wi], [iae + cadence * 2, wo], "x-splice", [iae + cadence * 3, wo], [iae + cadence * 3, iae],
@@ -305,7 +305,27 @@ $(document).ready(() => {
                     SpliceHalfThreshold: cadence * 0.9
                 };
             };
-        }
+        },
+        ZigZag(drawer, tighten) {
+            return frame => {
+                const cadence = frame.Cadence;
+                tighten = tighten || 1
+                const box = frame.CornerBox.ExtendedBy(cadence * tighten);
+                const wi = frame.EdgeInner + cadence * tighten;
+                // for the moment assuming that box is square...
+                // can calculate more numbers if it ever is not
+                const wo = -frame.EdgeOuter - cadence * tighten;
+                const iae = Math.max(box.B, wi);
+
+                return {
+                    Loop: [ [iae, iae],
+                            [iae, wo], "x-splice", [iae + cadence, wo], [iae + cadence, wi], [iae + cadence * 2, wi], [iae + cadence * 2, wo], "x-splice", [iae + cadence * 3, wo], [iae + cadence * 3, iae],
+                            [iae, iae + cadence * 3], [wo, iae + cadence * 3], "y-splice", [wo, iae + cadence * 2], [wi, iae + cadence * 2], [wi, iae + cadence], [wo, iae + cadence], "y-splice", [wo, iae], ],
+                    Drawer: drawer,
+                    SpliceHalfThreshold: cadence * 0.9
+                };
+            };
+        },
     };
 
     window.Middles = {
