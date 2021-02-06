@@ -26,8 +26,8 @@ $(document).ready(() => {
             .css({
                 left: 50,
                 top: 50,
-                width: 400,
-                height: 1000,
+                bottom: 50,
+                right: 50,
                 position: "absolute"
             });
 
@@ -38,46 +38,41 @@ $(document).ready(() => {
 
         div.append(t);
 
-        let text = "<p><u>If it is all a conspiracy...</u><br /><br /><br />"
-            + "...it's the conspiracy to bring down crashing<br/>"
-            + "those who step from the tenth floor ledge,<br />"
-            + "the conspiracy of time to keep on ticking<br />"
-            + "whether you have enough of it or not, the con<br />"
-            + "of physics offering the same deal to everyone<br />"
-            + "on the same conditions, my thrown rock falls down,<br />"
-            + "your thrown rock falls down, everybody's rocks fall down<br />"
-            + "except when thrown so hard as to exceed<br />"
-            + "escape velocity, although there can be no escape<br />"
-            + "from a universe fair on every occasion,<br />"
-            + "you cannot bluff gravity, nor the conservation of energy,<br />"
-            + "all clocks tick the same tick,<br />"
-            + "you cannot argue with the virus, can't finesse<br />"
-            + "another half an hour of oxygen out of the empty tank,<br />"
-            + "you can bank the constants<br />"
-            + "of creation, you cannot game this system, cannot bribe<br />"
-            + "your experimental aeroplane not to crash<br />"
-            + "when your maths is wrong, the virus doesn't hate you,<br />"
-            + "and doesn't know what flavour of politics you follow<br />"
-            + "or whom you worship, the bacteria do not care,<br />"
-            + "by which I mean that caring is simply not a thing for them,<br />"
-            + "the virus doesn't <i>want</i> to kill you, doesn't <i>want</i> to spread,<br />"
-            + "isn't keeping any score of who's alive and dead,<br />"
-            + "the world's a cold and hard and wonderful place,<br />"
-            + "and I'm OK with that,<br />"
-            + "you'll be all right with a little luck,<br />"
-            + "there is no luck,<br />"
-            + "that is good:<br />"
-            + "you do not want the cosmos playing favourites,<br />"
-            + "don't want to guess the rules on a day-to-day basis,<br />"
-            + "all Nature is a conspiracy not to care<br />"
-            + "and thank goodness for that.</p>";
+        let text = "If it is all a conspiracy...\n"
+            + "...it's the conspiracy to bring down crashing\n"
+            + "those who step from the tenth floor ledge,\n"
+            + "the conspiracy of time to keep on ticking\n"
+            + "whether you have enough of it or not, the con\n"
+            + "of physics offering the same deal to everyone\n"
+            + "on the same conditions, my thrown rock falls down,\n"
+            + "your thrown rock falls down, everybody's rocks fall down\n"
+            + "except when thrown so hard as to exceed\n\n"
+            + "escape velocity, although there can be no escape\n"
+            + "from a universe fair on every occasion,\n"
+            + "you cannot bluff gravity, nor the conservation of energy,\n"
+            + "all clocks tick the same tick,\n"
+            + "you cannot argue with the virus, can't finesse\n"
+            + "another half an hour of oxygen out of the empty tank,\n"
+            + "you can bank the constants\n"
+            + "of creation, you cannot game this system, cannot bribe\n\n"
+            + "your experimental aeroplane not to crash\n"
+            + "when your maths is wrong, the virus doesn't hate you,\n\n\n\n\n\n\n"
+            + "and doesn't know what flavour of politics you follow\n"
+            + "or whom you worship, the bacteria do not care,\n"
+            + "by which I mean that caring is simply not a thing for them,\n"
+            + "the virus doesn't want to kill you, doesn't want to spread,\n"
+            + "isn't keeping any score of who's alive and dead,\n"
+            + "the world's a cold and hard and wonderful place,\n"
+            + "and I'm OK with that,\n"
+            + "you'll be all right with a little luck,\n"
+            + "there is no luck,\n"
+            + "that is good:\n"
+            + "you do not want the cosmos playing favourites,\n"
+            + "don't want to guess the rules on a day-to-day basis,\n"
+            + "all Nature is a conspiracy not to care\n"
+            + "and thank goodness for that.";
 
-        text = text.replace(/<br \/>/g, "</p><p>");
-
-        let p1 = $(text)
-            .addClass("text");
-
-        div.append(p1);
+        PDL.FormatIntoContainer(div, text, "text");
 
         return div_outer;
     }
