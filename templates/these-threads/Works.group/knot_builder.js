@@ -207,7 +207,7 @@ class KnotBuilder {
     }
 
     SplitEdge(edges, edge, new_point) {
-        let edge_idx = edges.findIndex(x => x === edge);
+        let edge_idx = edges.indexOf(edge);
 
         let new_edge = {
             from: new_point,
@@ -315,8 +315,8 @@ class KnotBuilder {
             threshold = loop1.SpliceHalfThreshold + loop2.SpliceHalfThreshold;
         }
 
-        let loop_index1 = this.loops.findIndex(x => x === loop1);
-        let loop_index2 = this.loops.findIndex(x => x === loop2);
+        let loop_index1 = this.loops.indexOf(loop1);
+        let loop_index2 = this.loops.indexOf(loop2);
 
         if (loop_index1 === -1 || loop_index2 === -1) {
             throw "not my loop, add it first";
@@ -382,8 +382,8 @@ class KnotBuilder {
         edge1.label = null;
         edge2.label = null;
 
-        let where1 = loop1.Edges.findIndex(edge => edge === edge1);
-        let where2 = loop2.Edges.findIndex(edge => edge === edge2);
+        let where1 = loop1.Edges.indexOf(edge1);
+        let where2 = loop2.Edges.indexOf(edge2);
 
         // swap the two edges destinations
         [edge1.to, edge2.to] = [edge2.to, edge1.to];
@@ -424,7 +424,7 @@ class KnotBuilder {
             threshold = loop.SpliceHalfThreshold * 2;
         }
 
-        let loop_index = this.loops.findIndex(x => x === loop);
+        let loop_index = this.loops.indexOf(loop);
 
         if (loop_index === -1) {
             throw "not my loop, add it first";
@@ -479,8 +479,8 @@ class KnotBuilder {
         edge2.label = null;
 
         // because of how we found the edges, where2 is always the greater index
-        let where1 = loop.Edges.findIndex(edge => edge === edge1);
-        let where2 = loop.Edges.findIndex(edge => edge === edge2);
+        let where1 = loop.Edges.indexOf(edge1);
+        let where2 = loop.Edges.indexOf(edge2);
 
         // swap the two edges destinations
         [edge1.to, edge2.to] = [edge2.to, edge1.to];
@@ -525,7 +525,7 @@ class KnotBuilder {
     // removes edge by removing it's "from" vertex
     // (there is a choice as to which of the removed edges two vertices remains after removing an edge)
     RemoveEdge(edges, edge) {
-        let where = edges.findIndex(x => x === edge);
+        let where = edges.indexOf(edge);
         if (where === -1) throw "no such edge";
 
         let prev = where - 1;
