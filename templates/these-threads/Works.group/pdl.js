@@ -5,7 +5,7 @@
 $(document).ready(() => {
     let fx = [ "b", "u", "i", "t", ];
 
-    let fx_regexp = /(?<!\\)\[([a-z])(?:=([,0-9 ]+))?\]/;
+    let fx_regexp = /(?<!\\)\[([a-z])(?:=([.,0-9- ]+))?\]/;
 
     let parse_args = text => {
         text = text.replace(" ", "");
@@ -112,7 +112,39 @@ $(document).ready(() => {
                 }
 
                 break;
-        }
+
+            case "n":
+                if (args.length >= 2) {
+                    div_styles["position"] = "relative";
+                    div_styles["left"] = "" + (args[0] || 0) + "em";
+                    div_styles["top"] = "" + (args[1] || 0) + "em";
+
+                    return true;
+                }
+
+                break;
+
+            case "a":
+                if (args.length >= 2) {
+                    div_styles["position"] = "absolute";
+                    div_styles["left"] = "" + (args[0] || 0) + "em";
+                    div_styles["top"] = "" + (args[1] || 0) + "em";
+
+                    return true;
+                }
+
+                break;
+
+            case "r":
+                div_styles["text-align"] = "right";
+
+                return true;
+
+            case "c":
+                div_styles["text-align"] = "center";
+
+                return true;
+            }
 
         return false;
     }
@@ -170,6 +202,33 @@ $(document).ready(() => {
         return ret;
     };
 
+    let process_escapes = text => {
+        let prev_backslash = false;
+        let ret = "";
+
+        for(let i = 0; i < text.length; i++) {
+            let char = text.charAt(i);
+
+            if (char == "\\") {
+                if (prev_backslash) {
+                    ret += "\\";
+                    prev_backslash = false;
+                }
+                else
+                {
+                    prev_backslash = true;
+                }
+            }
+            else
+            {
+                ret += char;
+                prev_backslash = false;
+            }
+        }
+
+        return ret;
+    };
+
     window.PDL = {
         FormatIntoContainer(el, text) {
             text = text.replace(/\r\n/g, "\n");
@@ -196,6 +255,7 @@ $(document).ready(() => {
                         [strophe, line] = find_line(strophe);
 
                         let built_line = process_fx(line, fx_stack, div_styles);
+                        built_line = process_escapes(built_line);
 
                         let p = $("<p>" + built_line + "</p>");
                         p.addClass("poem-line");
