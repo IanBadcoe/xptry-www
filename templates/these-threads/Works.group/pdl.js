@@ -1,3 +1,5 @@
+"use strict";
+
 // reformat a simple markdown-like language into poetry layouts
 // limitations:
 // linear poetry, not too funky in the formatting
@@ -14,11 +16,11 @@ $(document).ready(() => {
         return terms.map(x => {
             if (!x) return null;
 
-            return parseInt(x);
+            return parseFloat(x);
         });
     }
 
-    let fx_spotter = (text, first) => {
+    let fx_spotter = text => {
         let where = text.length + 1;
         let found = null;
         let args = [];
@@ -102,28 +104,35 @@ $(document).ready(() => {
         return ret;
     }
 
-    let process_div_style = (what, args, div_styles) => {
+    let process_line_style = (what, args, line_styles) => {
         switch(what) {
             case "t":
                 if (args.length && args[0]) {
-                    div_styles["margin-left"] = "" + args[0] + "em";
-
-                    return true;
+                    line_styles["margin-left"] = "" + args[0] + "em";
+                } else {
+                    // default tab
+                    line_styles["margin-left"] = "" + "3em";
                 }
 
-                break;
+                return true;
 
             case "n":
                 if (args.length >= 2) {
-                    div_styles["position"] = "relative";
-                    div_styles["left"] = "" + (args[0] || 0) + "em";
-                    div_styles["top"] = "" + (args[1] || 0) + "em";
+                    line_styles["position"] = "relative";
+                    line_styles["left"] = "" + (args[0] || 0) + "em";
+                    line_styles["top"] = "" + (args[1] || 0) + "em";
 
                     return true;
                 }
 
                 break;
+            }
 
+        return false;
+    }
+
+    let process_div_style = (what, args, div_styles) => {
+        switch(what) {
             case "a":
                 if (args.length >= 2) {
                     div_styles["position"] = "absolute";
@@ -149,7 +158,7 @@ $(document).ready(() => {
         return false;
     }
 
-    let process_fx = (text, fx_stack, div_styles) => {
+    let process_fx = (text, fx_stack, line_styles, div_styles) => {
         // reapply any on-going fx
         let ret = add_fx(fx_stack);
 
@@ -166,7 +175,8 @@ $(document).ready(() => {
                 // take all the text up to the fx
                 ret = ret + text.substring(0, where);
 
-                if (!process_div_style(what, args, div_styles)) {
+                if (!process_line_style(what, args, line_styles)
+                    && !process_div_style(what, args, div_styles)) {
                     let stack_pos = fx_stack.indexOf(what);
 
                     if (stack_pos == -1) {
@@ -252,13 +262,16 @@ $(document).ready(() => {
 
                     while(strophe.length) {
                         let line;
+                        let line_styles = {};
+
                         [strophe, line] = find_line(strophe);
 
-                        let built_line = process_fx(line, fx_stack, div_styles);
+                        let built_line = process_fx(line, fx_stack, line_styles, div_styles);
                         built_line = process_escapes(built_line);
 
                         let p = $("<p>" + built_line + "</p>");
                         p.addClass("poem-line");
+                        p.css(line_styles);
 
                         div.append(p);
                     }

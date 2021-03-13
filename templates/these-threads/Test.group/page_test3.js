@@ -33,26 +33,19 @@ $(document).ready(() => {
 
         div_outer.append(div);
 
-        let t = $("<p>Poetry description language - 1 - strophes and font effects</p>")
+        let t = $("<p>Poetry description language - 3 - advanced</p>")
             .addClass("text title");
 
         div.append(t);
 
         let text =
-              "Just type lines and hit enter at the end.\n"
-            + "Keep doing this to add to a strophe.\n"
-            + "Hit enter twice to end the strophe.\n\n"
-            + "Hit enter extra times for more space after the strophe\n"
-            + "(this is three).\n\n\n"
-            + "Surround text in \\[b][b]these for bold[b]\\[b]\n"
-            + "and \\[i][i]these for italic[i]\\[i]\n"
-            + "and \\[u][u]these for underlined[u]\\[u].\n\n"
-            + "Combinations give \\[b]\\[i][b][i]multiple effects at the same time.\n"
-            + "They continue line\nto\nline...\n\n"
-            + "...but are reset for a new strophe.\n\n\n"
-            + "Apply and remove in any order:\n"
-            + "no effect,\n\\[b][b]<--add bold,\n\\[i][i]<--add italic,\n\\[b][b]<--remove bold,\n\\[i][i]<--remove italic.\n\n"
-;
+              "\\[n=x,y]To nudge the position of a line away from its natural position, again in emdashes.  e.g:\n"
+            + "\\[n=0,0.3][n=0,0.3] - down\n"
+            + "\\[n=0,-0.3][n=0,-0.3] - up\n"
+            + "\\[n=1,0][n=1,0] - right\n"
+            + "\\[n=-1,0][n=-1,0] - left\n\n"
+            + "\\[a=10,20][a=10,20]To just\nput\na strophe anywhere\n(in emdashes from the top left).\n\n"
+            + "\\[a=30,20]\\[r][a=30,20][r]Feel free to\nuse other\neffects as well.\n\n";
 
         PDL.FormatIntoContainer(div, text, "text");
 

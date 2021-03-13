@@ -33,26 +33,29 @@ $(document).ready(() => {
 
         div_outer.append(div);
 
-        let t = $("<p>Poetry description language - 1 - strophes and font effects</p>")
+        let t = $("<p>Poetry description language - 2 - line/strophe positioning</p>")
             .addClass("text title");
 
         div.append(t);
 
         let text =
-              "Just type lines and hit enter at the end.\n"
-            + "Keep doing this to add to a strophe.\n"
-            + "Hit enter twice to end the strophe.\n\n"
-            + "Hit enter extra times for more space after the strophe\n"
-            + "(this is three).\n\n\n"
-            + "Surround text in \\[b][b]these for bold[b]\\[b]\n"
-            + "and \\[i][i]these for italic[i]\\[i]\n"
-            + "and \\[u][u]these for underlined[u]\\[u].\n\n"
-            + "Combinations give \\[b]\\[i][b][i]multiple effects at the same time.\n"
-            + "They continue line\nto\nline...\n\n"
-            + "...but are reset for a new strophe.\n\n\n"
-            + "Apply and remove in any order:\n"
-            + "no effect,\n\\[b][b]<--add bold,\n\\[i][i]<--add italic,\n\\[b][b]<--remove bold,\n\\[i][i]<--remove italic.\n\n"
-;
+              "Default strophes are left aligned at the margin\n\n"
+            + "and follow the previous one with a moderate space.\n\n"
+            + "\\[c][c] to centre\na whole\nstrophe.\n\n"
+            + "\\[r][r] to right-align\na strophe.\n\n"
+            + "To tab in a line use:\n"
+            + "\\[t][t] This (defaults to three em)\n\n"
+            + "Add a number:\n"
+            + "\\[t=1][t=1]for precise control\n"
+            + "\\[t=2][t=2]of tabbing\n"
+            + "\\[t=3][t=3]in emdash widths.\n\n"
+            + "Feel free to tab out:\n"
+            + "\\[t=-2][t=-2]using negative numbers...\n\n"
+            + "...and you can also use fractions.\n"
+            + "\\[t=0.3][t=0.3]to.\n"
+            + "\\[t=0.6][t=0.6]get\n"
+            + "\\[t=0.9][t=0.9]really\n"
+            + "\\[t=1.2][t=1.2]precise.\n\n";
 
         PDL.FormatIntoContainer(div, text, "text");
 
