@@ -255,8 +255,7 @@ $(document).ready(() => {
                 if (strophe.length) {
                     let div = $("<div/>");
                     div.addClass("poem-strophe");
-                    gap_after = Math.min(gap_after, 5);
-                    div.addClass("poem-gap" + gap_after);
+                    div.css({ "margin-bottom" : "" + gap_after * 1.5 + "em"});
 
                     let div_styles = {};
 

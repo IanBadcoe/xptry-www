@@ -183,26 +183,6 @@ div.poem-strophe {
     line-height: 1.5em;
 }
 
-div.poem-gap1 {
-    margin-bottom: 2em;
-}
-
-div.poem-gap2 {
-    margin-bottom: 4em;
-}
-
-div.poem-gap3 {
-    margin-bottom: 6em;
-}
-
-div.poem-gap4 {
-    margin-bottom: 8em;
-}
-
-div.poem-gap5 {
-    margin-bottom: 10em;
-}
-
 p.poem-line {
     padding-left: 4em;
     text-indent: -4em;
