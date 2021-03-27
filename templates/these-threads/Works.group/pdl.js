@@ -240,7 +240,7 @@ $(document).ready(() => {
     };
 
     window.PDL = {
-        FormatIntoContainer(el, text) {
+        FormatIntoContainer(el, text, css_prefix) {
             text = text.replace(/\r\n/g, "\n");
 
             while(text.length) {

@@ -33,7 +33,7 @@ $(document).ready(() => {
 
         div_outer.append(div);
 
-        let t = $("<p>Poetry description language - 1 - strophes and font effects</p>")
+        let t = $("<p>Poetry Description Language - 1 - strophes and font effects</p>")
             .addClass("text title");
 
         div.append(t);
@@ -49,7 +49,7 @@ $(document).ready(() => {
             + "and \\[u][u]these for underlined[u]\\[u].\n\n"
             + "Combinations give \\[b]\\[i][b][i]multiple effects at the same time.\n"
             + "They continue line\nto\nline...\n\n"
-            + "...but are reset for a new strophe.\n\n\n"
+            + "...but are ended for a new strophe.\n\n\n"
             + "Apply and remove in any order:\n"
             + "no effect,\n\\[b][b]<--add bold,\n\\[i][i]<--add italic,\n\\[b][b]<--remove bold,\n\\[i][i]<--remove italic.\n\n"
 ;

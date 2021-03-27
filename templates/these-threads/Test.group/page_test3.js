@@ -33,7 +33,7 @@ $(document).ready(() => {
 
         div_outer.append(div);
 
-        let t = $("<p>Poetry description language - 3 - advanced</p>")
+        let t = $("<p>Poetry Description Language - 3 - advanced</p>")
             .addClass("text title");
 
         div.append(t);
