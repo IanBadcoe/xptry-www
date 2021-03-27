@@ -181,6 +181,7 @@ div.text {
     font-weight: normal;
     font-style: normal;
     line-height: 1.5em;
+    width: fit-content;
 }
 
 p.text {
@@ -190,11 +191,22 @@ p.text {
     margin-bottom: 0;
     padding-top: 0;
     margin-top: 0;
+    display: table;
 }
 
 p.title {
     font-size: 150%;
     margin-bottom: 3em;
+}
+
+div.text-container {
+    padding: 150px;
+    position: absolute;
+    overflow: visible;
+}
+
+svg.text {
+    overflow: visible;
 }
 
 /* animations */

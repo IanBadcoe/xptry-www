@@ -23,13 +23,7 @@ $(document).ready(() => {
         let div_outer = $("<div/>").addClass("absolute fill click page");
 
         let div = $("<div/>")
-            .css({
-                left: 50,
-                top: 50,
-                bottom: 50,
-                right: 50,
-                position: "absolute"
-            });
+            .addClass("text-container");
 
         div_outer.append(div);
 
@@ -52,6 +46,30 @@ $(document).ready(() => {
 ;
 
         PDL.FormatIntoContainer(div, title, text, "text");
+
+        setTimeout(() => {
+            let ow = div.outerWidth();
+            let oh = div.outerHeight();
+
+            let svg = add_svg(div,
+                new Coord(ow, oh).Div(2),
+                new Coord(0, 0), new Coord(ow, oh));
+
+            svg.addClass("text");
+
+            let kb = new KnotBuilder;
+
+            const frame = Frames.TripleCross(new Coord(ow - 80, oh - 80), Drawers["frame3"], 15, new Coord(40, 40));
+            Frames.AddFrameToBuilder(kb, frame, 2);
+            const corner = Corners.ZigZagCrossOver(Drawers["frame2"], 0.7);
+            Corners.AddCornersToBuilder(kb, corner, frame, 3);
+            const middle = Middles.DoubleSquare(Drawers["frame1"], 0.9);
+            Middles.AddMiddlesToBuilder(kb, middle, frame, 2);
+
+            let knot = kb.BuildKnot();
+
+            knot.Draw(svg);
+        }, 1);
 
         return div_outer;
     }
