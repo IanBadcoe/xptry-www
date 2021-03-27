@@ -176,14 +176,14 @@ polygon.knot {
     position: fixed;
 }
 
-div.poem-strophe {
+div.text {
     font-family: montserrat, sans-serif;
     font-weight: normal;
     font-style: normal;
     line-height: 1.5em;
 }
 
-p.poem-line {
+p.text {
     padding-left: 4em;
     text-indent: -4em;
     padding-bottom: 0;
@@ -193,7 +193,8 @@ p.poem-line {
 }
 
 p.title {
-    font-size: 150%
+    font-size: 150%;
+    margin-bottom: 3em;
 }
 
 /* animations */

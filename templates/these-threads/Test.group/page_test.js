@@ -33,10 +33,7 @@ $(document).ready(() => {
 
         div_outer.append(div);
 
-        let t = $("<p>Poetry Description Language - 1 - strophes and font effects</p>")
-            .addClass("text title");
-
-        div.append(t);
+        let title = "Poetry Description Language - 1 - strophes and font effects";
 
         let text =
               "Just type lines and hit enter at the end.\n"
@@ -50,11 +47,11 @@ $(document).ready(() => {
             + "Combinations give \\[b]\\[i][b][i]multiple effects at the same time.\n"
             + "They continue line\nto\nline...\n\n"
             + "...but are ended for a new strophe.\n\n\n"
-            + "Apply and remove in any order:\n"
-            + "no effect,\n\\[b][b]<--add bold,\n\\[i][i]<--add italic,\n\\[b][b]<--remove bold,\n\\[i][i]<--remove italic.\n\n"
+            + "Apply and remove in any order:\n\n"
+            + "no effect,\n\\[b][b]<--add bold,\n\\[i][i]<--add italic,\n\\[b][b]<--remove bold,\n\\[i][i]<--remove italic.\nback to no effect\n\n"
 ;
 
-        PDL.FormatIntoContainer(div, text, "text");
+        PDL.FormatIntoContainer(div, title, text, "text");
 
         return div_outer;
     }

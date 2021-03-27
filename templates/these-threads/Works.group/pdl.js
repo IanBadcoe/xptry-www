@@ -240,8 +240,13 @@ $(document).ready(() => {
     };
 
     window.PDL = {
-        FormatIntoContainer(el, text, css_prefix) {
+        FormatIntoContainer(el, title, text, klass) {
             text = text.replace(/\r\n/g, "\n");
+
+            let tit_el = $("<p>" + title + "</p>")
+                .addClass(klass + " title");
+
+            el.append(tit_el);
 
             while(text.length) {
                 let fx_stack = [];
@@ -250,11 +255,10 @@ $(document).ready(() => {
                 [text, strophe, gap_after] = find_strophe(text);
 
                 // discard any empty strophes, if we need bigger breaks between
-                // strophes, then we do that by counting extra blank-lines and setting class poem-gap[1,2,3,4,5] on the strophe we have, rather than
-                // emiting empty ones
+                // strophes, then we do that by counting extra blank-lines and setting bottom-margin by that times line-height
                 if (strophe.length) {
                     let div = $("<div/>");
-                    div.addClass("poem-strophe");
+                    div.addClass(klass);
                     div.css({ "margin-bottom" : "" + gap_after * 1.5 + "em"});
 
                     let div_styles = {};
@@ -269,7 +273,7 @@ $(document).ready(() => {
                         built_line = process_escapes(built_line);
 
                         let p = $("<p>" + built_line + "</p>");
-                        p.addClass("poem-line");
+                        p.addClass(klass);
                         p.css(line_styles);
 
                         div.append(p);
