@@ -26,7 +26,6 @@ $(document).ready(() => {
 
         let text =
               "Default strophes are left aligned at the margin\n\n"
-            + "and follow the previous one with a moderate space.\n\n"
             + "\\[c][c] to centre\na whole\nstrophe.\n\n"
             + "\\[r][r] to right-align\na strophe.\n\n"
             + "To tab in a line use:\n"
@@ -36,12 +35,12 @@ $(document).ready(() => {
             + "\\[t=2][t=2]of tabbing\n"
             + "\\[t=3][t=3]in emdash widths.\n\n"
             + "Feel free to tab out:\n"
-            + "\\[t=-2][t=-2]using negative numbers...\n\n"
+            + "\\[t=-5][t=-5]using negative numbers...\n\n"
             + "...and you can also use fractions.\n"
-            + "\\[t=0.3][t=0.3]to.\n"
-            + "\\[t=0.6][t=0.6]get\n"
-            + "\\[t=0.9][t=0.9]really\n"
-            + "\\[t=1.2][t=1.2]precise.\n\n";
+            + "[t=0.3]to.\n"
+            + "[t=0.7]get\n"
+            + "[t=0.9]really\n"
+            + "[t=1.0]precise.\n\n";
 
             Page.CreateBorderedTextPage(
                 div_outer, title, text,

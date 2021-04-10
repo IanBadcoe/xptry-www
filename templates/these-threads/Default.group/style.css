@@ -181,6 +181,7 @@ div.text {
     font-weight: normal;
     font-style: normal;
     line-height: 1.5em;
+    min-width: fit-content;
 }
 
 p.text {

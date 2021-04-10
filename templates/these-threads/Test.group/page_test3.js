@@ -25,14 +25,17 @@ $(document).ready(() => {
         let title = "Poetry Description Language - 3 - advanced";
 
         let text =
-              "\\[n=x,y]To nudge the position of a line away from its natural position, again in emdashes.  e.g:\n"
+              "Repeat 1 to  4 hyphens ('-') alone on a line to add various lengths of horizontal rule:\n\\-\n--\n---\n----\n\n"
+              + "or use '=' the same way for double\n=\n\n"
+              + "or '.' for dotted\n.\n\n"
+              + "or '#' for heavy\n#\n\n\n\n"
+              + "\\[n=x,y]To nudge the position of a line away from its\nnatural position, in emdash lengths.  e.g:\n"
             + "\\[n=0,0.3][n=0,0.3] - down\n"
             + "\\[n=0,-0.3][n=0,-0.3] - up\n"
             + "\\[n=1,0][n=1,0] - right\n"
             + "\\[n=-1,0][n=-1,0] - left\n\n"
-            + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n--\n\n"
-            + "\\[a=20,20][a=20,20]To just\nput\na strophe anywhere\n(in emdashes from the top left).\n\n"
-            + "\\[a=30,20]\\[r][a=30,30][r]Feel free to\nuse other\neffects as well.\n\n";
+            + "\\[a=50,45][a=50,45]To just\nput\na strophe anywhere\n(in emdashes from the top left).\n\n"
+            + "\\[a=15,55]\\[r][a=15,55][r]Feel free to\n[b]\\[b]use other\\[b][b]\neffects as well.\n\n";
 
             Page.CreateBorderedTextPage(
                 div_outer, title, text,

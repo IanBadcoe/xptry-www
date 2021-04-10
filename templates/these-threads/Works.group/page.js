@@ -32,6 +32,52 @@ $(document).ready(() => {
                 let ow = div.outerWidth();
                 let oh = div.outerHeight();
 
+                // if we placed any strophes using the [a] "anywhere" facility, we may need to enlarge the div
+                // to accommodate them
+                // |||
+                // vvv
+                let pb = parseInt(div.css("padding-bottom"));
+                let pr = parseInt(div.css("padding-right"));
+
+                let aw = 0;
+                let ah = 0;
+
+                div.children().each((i, el) => {
+                    let $el = $(el);
+
+                    let r = $el.position().left + $el.outerWidth();
+                    let b = $el.position().top + $el.outerHeight();
+
+                    let sb = b + pb - oh;
+                    let sr = r + pr - ow;
+
+                    if (sb > ah) {
+                        ah = sb;
+                    }
+
+                    if (sr > aw) {
+                        aw = sr;
+                    }
+                });
+
+                if (ah > 0) {
+                    let h = parseInt(div.css("height"));
+
+                    div.css("height", h + ah);
+                }
+
+                if (aw > 0) {
+                    let w = parseInt(div.css("width"));
+
+                    div.css("width", w + aw);
+                }
+
+                // ^^^
+                // ---
+                // that done, just grab the size again in case it changed and off we go
+                ow = div.outerWidth();
+                oh = div.outerHeight();
+
                 let svg = add_svg(div,
                     new Coord(ow, oh).Div(2),
                     new Coord(0, 0), new Coord(ow, oh));

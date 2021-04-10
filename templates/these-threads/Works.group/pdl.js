@@ -7,7 +7,8 @@
 $(document).ready(() => {
     let fx = [ "b", "u", "i", "t", ];
 
-    let fx_regexp = /(?<!\\)\[([a-z])(?:=([.,0-9- ]+))?\]/;
+    let control_code_regexp = /(?<!\\)\[([a-z])(?:=([.,0-9- ]+))?\]/;
+    let hr_regexp = /^[-=.#]{1,4}$/
 
     let parse_args = text => {
         text = text.replace(" ", "");
@@ -29,7 +30,7 @@ $(document).ready(() => {
         // temporarily nuke any escaped backslashes
         text = text.replace(/\\\\/g, "--");
 
-        let m = text.match(fx_regexp);
+        let m = text.match(control_code_regexp);
 
         if (m) {
             found = m[1];
@@ -272,7 +273,35 @@ $(document).ready(() => {
                         let built_line = process_fx(line, fx_stack, line_styles, div_styles);
                         built_line = process_escapes(built_line);
 
-                        let p = $("<p>" + built_line + "</p>");
+                        let p;
+
+                        if (built_line.match(hr_regexp)) {
+                            p = $("<hr>");
+
+                            let border_style;
+                            switch(built_line[0]) {
+                                case "-":
+                                    border_style = "0.15em solid";
+                                    break;
+                                case "=":
+                                    border_style = "0.3em double";
+                                    break;
+                                case ".":
+                                    border_style = "0.15em dotted";
+                                    break;
+                                case "#":
+                                    border_style = "0.2em solid";
+                                    break;
+                            }
+
+                            p.css({
+                                width: "" + (25 * built_line.length) + "%",
+                                "border-top": border_style
+                            });
+                        } else {
+                            p = $("<p>" + built_line + "</p>");
+                        }
+
                         p.addClass(klass);
                         p.css(line_styles);
 
