@@ -22,21 +22,7 @@ $(document).ready(() => {
     function setup_text() {
         let div_outer = $("<div/>").addClass("absolute fill click page");
 
-        let div = $("<div/>")
-            .css({
-                left: 50,
-                top: 50,
-                bottom: 50,
-                right: 50,
-                position: "absolute"
-            });
-
-        div_outer.append(div);
-
-        let t = $("<p>Poetry Description Language - 2 - line/strophe positioning</p>")
-            .addClass("text title");
-
-        div.append(t);
+        let title = "Poetry Description Language - 2 - line/strophe positioning";
 
         let text =
               "Default strophes are left aligned at the margin\n\n"
@@ -57,7 +43,12 @@ $(document).ready(() => {
             + "\\[t=0.9][t=0.9]really\n"
             + "\\[t=1.2][t=1.2]precise.\n\n";
 
-        PDL.FormatIntoContainer(div, text, "text");
+            Page.CreateBorderedTextPage(
+                div_outer, title, text,
+                "SingleExtLoop", 2, "frame3",
+                "Square", 3, "frame2",
+                "Square", 2, "frame1"
+            );
 
         return div_outer;
     }

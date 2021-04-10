@@ -45,31 +45,12 @@ $(document).ready(() => {
             + "no effect,\n\\[b][b]<--add bold,\n\\[i][i]<--add italic,\n\\[b][b]<--remove bold,\n\\[i][i]<--remove italic.\nback to no effect\n\n"
 ;
 
-        PDL.FormatIntoContainer(div, title, text, "text");
-
-        setTimeout(() => {
-            let ow = div.outerWidth();
-            let oh = div.outerHeight();
-
-            let svg = add_svg(div,
-                new Coord(ow, oh).Div(2),
-                new Coord(0, 0), new Coord(ow, oh));
-
-            svg.addClass("text");
-
-            let kb = new KnotBuilder;
-
-            const frame = Frames.TripleCross(new Coord(ow - 80, oh - 80), Drawers["frame3"], 15, new Coord(40, 40));
-            Frames.AddFrameToBuilder(kb, frame, 2);
-            const corner = Corners.ZigZagCrossOver(Drawers["frame2"], 0.7);
-            Corners.AddCornersToBuilder(kb, corner, frame, 3);
-            const middle = Middles.DoubleSquare(Drawers["frame1"], 0.9);
-            Middles.AddMiddlesToBuilder(kb, middle, frame, 2);
-
-            let knot = kb.BuildKnot();
-
-            knot.Draw(svg);
-        }, 1);
+        Page.CreateBorderedTextPage(
+            div_outer, title, text,
+            "TripleCross", 2, "frame3",
+            "ZigZagCrossOver", 3, "frame2",
+            "DoubleSquare", 2, "frame1"
+        );
 
         return div_outer;
     }
