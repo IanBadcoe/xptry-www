@@ -22,11 +22,6 @@ $(document).ready(() => {
     function setup_text() {
         let div_outer = $("<div/>").addClass("absolute fill click page");
 
-        let div = $("<div/>")
-            .addClass("text-container");
-
-        div_outer.append(div);
-
         let title = "Poetry Description Language - 1 - strophes and font effects";
 
         let text =
