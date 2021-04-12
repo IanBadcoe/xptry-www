@@ -36,8 +36,8 @@ $(document).ready(() => {
                 // to accommodate them
                 // |||
                 // vvv
-                let pb = parseInt(div.css("padding-bottom"));
-                let pr = parseInt(div.css("padding-right"));
+                let pb = parseFloat(div.css("padding-bottom"));
+                let pr = parseFloat(div.css("padding-right"));
 
                 let aw = 0;
                 let ah = 0;
@@ -60,17 +60,24 @@ $(document).ready(() => {
                     }
                 });
 
-                if (ah > 0) {
-                    let h = parseInt(div.css("height"));
+                let h = parseFloat(div.css("height"));
+                let w = parseFloat(div.css("width"));
 
-                    div.css("height", h + ah);
-                }
-
-                if (aw > 0) {
-                    let w = parseInt(div.css("width"));
-
-                    div.css("width", w + aw);
-                }
+                // do this even if adjustment (ah/aw) is zero as we need the width set
+                // for centering to work
+                //
+                // and left/right equal to zero must be done only here, otherwise our width is expanded to the width of the parent
+                // even before we try to measure it above...
+                //
+                // and margins must not be set until here as that seems to throw out the text layout...
+                div.css({
+                    height: h + ah,
+                    width: w + ah,
+                    left: 0,
+                    right: 0,
+                    "margin-left": "auto",
+                    "margin-right": "auto",
+                });
 
                 // ^^^
                 // ---
